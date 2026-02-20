@@ -1,0 +1,535 @@
+﻿<!DOCTYPE html>
+
+<html class="dark" lang="pt-BR">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Gest�o de Den�ncias | PetFriend Admin</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3c83f6",
+                        "primary-hover": "#2563eb",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#101722",
+                        "surface-dark": "#1e2936",
+                        "surface-lighter": "#2d3b4e",
+                        "text-muted": "#94a3b8",
+                        "border-dark": "#334155",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Custom scrollbar for table/modal */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1e2936;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-100 h-screen flex overflow-hidden font-display">
+    <!-- Sidebar -->
+    <aside
+        class="w-64 bg-white dark:bg-surface-dark border-r border-slate-200 dark:border-border-dark flex-shrink-0 hidden md:flex flex-col justify-between">
+        <div>
+            <div class="h-16 flex items-center px-6 border-b border-slate-200 dark:border-border-dark">
+                <div class="flex items-center gap-2">
+                    <div
+                        class="w-8 h-8 rounded bg-primary flex items-center justify-center text-white font-bold text-xl">
+                        P</div>
+                    <span class="font-bold text-lg tracking-tight">PetFriend Admin</span>
+                </div>
+            </div>
+            <nav class="p-4 space-y-1">
+                <a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-text-muted hover:bg-slate-100 dark:hover:bg-surface-lighter rounded-lg transition-colors"
+                    href="dashboard-admin.html">
+                    <span class="material-icons text-xl">dashboard</span>
+                    <span class="font-medium">Painel</span>
+                </a>
+                <a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-text-muted hover:bg-slate-100 dark:hover:bg-surface-lighter rounded-lg transition-colors"
+                    href="admin-usuarios.html">
+                    <span class="material-icons text-xl">people</span>
+                    <span class="font-medium">Usuários</span>
+                </a>
+                <a class="flex items-center gap-3 px-4 py-3 bg-primary/10 text-primary dark:text-primary rounded-lg transition-colors border border-primary/20"
+                    href="admin-denuncias.html">
+                    <span class="material-icons text-xl">gavel</span>
+                    <span class="font-medium">Denúncias</span>
+                </a>
+                <div class="pt-4 mt-4 border-t border-slate-200 dark:border-border-dark">
+                    <p class="px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Sistema</p>
+                    <a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-text-muted hover:bg-slate-100 dark:hover:bg-surface-lighter rounded-lg transition-colors"
+                        href="admin-configuracoes.html">
+                        <span class="material-icons text-xl">settings</span>
+                        <span class="font-medium">Configurações</span>
+                    </a>
+                    <a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-text-muted hover:bg-slate-100 dark:hover:bg-surface-lighter rounded-lg transition-colors"
+                        href="admin-logs.html">
+                        <span class="material-icons text-xl">security</span>
+                        <span class="font-medium">Logs</span>
+                    </a>
+                </div>
+            </nav>
+        </div>
+        <div class="p-4 border-t border-slate-200 dark:border-border-dark">
+            <div class="flex items-center gap-3 px-4 py-2">
+                <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-blue-400 overflow-hidden"
+                    data-alt="Admin user avatar gradient">
+                    <img alt="Admin" class="w-full h-full object-cover opacity-90"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDqfOcvJnjtRNrhFi-HD1HXukbDwIjgnk91q8dxykQZhBsdlva5hrCUOHaJMpRnlHjQvnUDX_WLNhNR52NJpxDgROTmC5Un5OZQ5ru5H4SDrV3UfBeM0lbsDo56RDx9i64KxiZtK-gsjW67IQdSi7G4SFKLuncqU9bMxHKSvFhVZemYeLly9F-SjRHk_tvuAkde7JfHhIOTbPea9SCnnaQzBlBeYGuLXltaNVC4_9swuPpWVqOWEpYr6fKNAtiH45TSBT-Oi99POYk" />
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium truncate">Admin User</p>
+                    <p class="text-xs text-slate-500 dark:text-text-muted truncate">Moderator Level 3</p>
+                </div>
+                <button class="text-slate-400 hover:text-slate-200">
+                    <span class="material-icons text-lg">logout</span>
+                </button>
+            </div>
+        </div>
+    </aside>
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col relative min-w-0 overflow-hidden">
+        <!-- Top Bar -->
+        <header
+            class="h-16 bg-white dark:bg-surface-dark border-b border-slate-200 dark:border-border-dark flex items-center justify-between px-6 lg:px-8">
+            <h1 class="text-xl font-semibold">Reports Gest�o</h1>
+            <div class="flex items-center gap-4">
+                <div class="relative">
+                    <span class="material-icons absolute left-3 top-2.5 text-slate-400 text-lg">Buscar</span>
+                    <input
+                        class="pl-10 pr-4 py-2 bg-slate-100 dark:bg-surface-lighter border-none rounded-lg text-sm focus:ring-2 focus:ring-primary dark:text-white w-64 transition-all"
+                        placeholder="Buscar...ports..." type="text" />
+                </div>
+                <button class="p-2 text-slate-400 hover:text-primary transition-colors relative">
+                    <span class="material-icons">notifications</span>
+                    <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full"></span>
+                </button>
+            </div>
+        </header>
+        <!-- Content Area -->
+        <div class="flex-1 overflow-auto p-6 lg:p-8">
+            <!-- Stats / Filters Row -->
+            <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+                <div class="flex gap-2">
+                    <button
+                        class="px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium shadow-sm hover:bg-primary-hover transition-colors">All
+                        Reports</button>
+                    <button
+                        class="px-4 py-2 bg-white dark:bg-surface-dark border border-slate-200 dark:border-border-dark text-slate-600 dark:text-slate-300 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-surface-lighter transition-colors">Pendente
+                        (12)</button>
+                    <button
+                        class="px-4 py-2 bg-white dark:bg-surface-dark border border-slate-200 dark:border-border-dark text-slate-600 dark:text-slate-300 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-surface-lighter transition-colors">In
+                        Analysis (4)</button>
+                    <button
+                        class="px-4 py-2 bg-white dark:bg-surface-dark border border-slate-200 dark:border-border-dark text-slate-600 dark:text-slate-300 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-surface-lighter transition-colors">Resolvido</button>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-sm text-slate-500 dark:text-text-muted">Sort by:</span>
+                    <select
+                        class="bg-white dark:bg-surface-dark border border-slate-200 dark:border-border-dark text-slate-700 dark:text-slate-200 text-sm rounded-lg focus:ring-primary focus:border-primary p-2">
+                        <option>Data (Newest)</option>
+                        <option>Data (Oldest)</option>
+                        <option>Severity</option>
+                    </select>
+                </div>
+            </div>
+            <!-- Table Container -->
+            <div
+                class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-border-dark shadow-sm overflow-hidden">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr
+                            class="border-b border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-surface-lighter">
+                            <th
+                                class="py-4 px-6 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-text-muted w-24">
+                                ID</th>
+                            <th
+                                class="py-4 px-6 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-text-muted w-32">
+                                Status</th>
+                            <th
+                                class="py-4 px-6 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-text-muted">
+                                Reporter</th>
+                            <th
+                                class="py-4 px-6 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-text-muted">
+                                Reported User</th>
+                            <th
+                                class="py-4 px-6 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-text-muted">
+                                Tipo</th>
+                            <th
+                                class="py-4 px-6 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-text-muted w-40">
+                                Data</th>
+                            <th
+                                class="py-4 px-6 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-text-muted w-20 text-right">
+                                A��es</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200 dark:divide-border-dark text-sm">
+                        <!-- Row 1 -->
+                        <tr class="hover:bg-slate-50 dark:hover:bg-surface-lighter transition-colors group">
+                            <td class="py-4 px-6 font-medium text-slate-400">#62</td>
+                            <td class="py-4 px-6">
+                                <span
+                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400">
+                                    Pendente
+                                </span>
+                            </td>
+                            <td class="py-4 px-6 font-medium text-slate-700 dark:text-slate-200">Sarah Jenkins</td>
+                            <td class="py-4 px-6 text-slate-500 dark:text-slate-400">Mike Thompson</td>
+                            <td class="py-4 px-6"><span class="text-slate-600 dark:text-slate-300">Harassment</span>
+                            </td>
+                            <td class="py-4 px-6 text-slate-500 dark:text-slate-400">Oct 24, 2023</td>
+                            <td class="py-4 px-6 text-right">
+                                <button class="text-slate-400 hover:text-primary transition-colors"><span
+                                        class="material-icons text-xl">visibility</span></button>
+                            </td>
+                        </tr>
+                        <!-- Row 2: Selected Row (Conceptually behind modal) -->
+                        <tr class="bg-primary/5 dark:bg-primary/10 border-l-4 border-primary">
+                            <td class="py-4 px-6 font-medium text-primary">#56</td>
+                            <td class="py-4 px-6">
+                                <span
+                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 animate-pulse">
+                                    In Analysis
+                                </span>
+                            </td>
+                            <td class="py-4 px-6 font-medium text-slate-700 dark:text-slate-200">Alice Miller</td>
+                            <td class="py-4 px-6 text-slate-500 dark:text-slate-400">Bob Davidson</td>
+                            <td class="py-4 px-6"><span class="text-red-500 font-medium">Fraud</span></td>
+                            <td class="py-4 px-6 text-slate-500 dark:text-slate-400">Oct 23, 2023</td>
+                            <td class="py-4 px-6 text-right">
+                                <button class="text-primary hover:text-primary-hover transition-colors"><span
+                                        class="material-icons text-xl">edit_note</span></button>
+                            </td>
+                        </tr>
+                        <!-- Row 3 -->
+                        <tr class="hover:bg-slate-50 dark:hover:bg-surface-lighter transition-colors">
+                            <td class="py-4 px-6 font-medium text-slate-400">#55</td>
+                            <td class="py-4 px-6">
+                                <span
+                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                                    Resolvido
+                                </span>
+                            </td>
+                            <td class="py-4 px-6 font-medium text-slate-700 dark:text-slate-200">John Doe</td>
+                            <td class="py-4 px-6 text-slate-500 dark:text-slate-400">Emily Stone</td>
+                            <td class="py-4 px-6"><span class="text-slate-600 dark:text-slate-300">Late Arrival</span>
+                            </td>
+                            <td class="py-4 px-6 text-slate-500 dark:text-slate-400">Oct 22, 2023</td>
+                            <td class="py-4 px-6 text-right">
+                                <button class="text-slate-400 hover:text-primary transition-colors"><span
+                                        class="material-icons text-xl">visibility</span></button>
+                            </td>
+                        </tr>
+                        <!-- Row 4 -->
+                        <tr class="hover:bg-slate-50 dark:hover:bg-surface-lighter transition-colors">
+                            <td class="py-4 px-6 font-medium text-slate-400">#52</td>
+                            <td class="py-4 px-6">
+                                <span
+                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                                    Resolvido
+                                </span>
+                            </td>
+                            <td class="py-4 px-6 font-medium text-slate-700 dark:text-slate-200">Karen White</td>
+                            <td class="py-4 px-6 text-slate-500 dark:text-slate-400">System</td>
+                            <td class="py-4 px-6"><span class="text-slate-600 dark:text-slate-300">Technical
+                                    Issue</span></td>
+                            <td class="py-4 px-6 text-slate-500 dark:text-slate-400">Oct 20, 2023</td>
+                            <td class="py-4 px-6 text-right">
+                                <button class="text-slate-400 hover:text-primary transition-colors"><span
+                                        class="material-icons text-xl">visibility</span></button>
+                            </td>
+                        </tr>
+                        <!-- Filler Row to show density -->
+                        <tr class="hover:bg-slate-50 dark:hover:bg-surface-lighter transition-colors opacity-50">
+                            <td class="py-4 px-6 font-medium text-slate-400">#51</td>
+                            <td class="py-4 px-6">
+                                <span
+                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                                    Resolvido
+                                </span>
+                            </td>
+                            <td class="py-4 px-6 font-medium text-slate-700 dark:text-slate-200">David G.</td>
+                            <td class="py-4 px-6 text-slate-500 dark:text-slate-400">Linda H.</td>
+                            <td class="py-4 px-6"><span class="text-slate-600 dark:text-slate-300">Property
+                                    Damage</span></td>
+                            <td class="py-4 px-6 text-slate-500 dark:text-slate-400">Oct 19, 2023</td>
+                            <td class="py-4 px-6 text-right">
+                                <button class="text-slate-400 hover:text-primary transition-colors"><span
+                                        class="material-icons text-xl">visibility</span></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- Pagination -->
+            <div class="flex items-center justify-between mt-4 text-sm text-slate-500 dark:text-text-muted">
+                <p>Showing 1 to 5 of 56 entries</p>
+                <div class="flex gap-1">
+                    <button
+                        class="px-3 py-1 rounded border border-slate-200 dark:border-border-dark hover:bg-slate-100 dark:hover:bg-surface-lighter disabled:opacity-50"
+                        disabled="">Prev</button>
+                    <button class="px-3 py-1 rounded border border-primary bg-primary text-white">1</button>
+                    <button
+                        class="px-3 py-1 rounded border border-slate-200 dark:border-border-dark hover:bg-slate-100 dark:hover:bg-surface-lighter">2</button>
+                    <button
+                        class="px-3 py-1 rounded border border-slate-200 dark:border-border-dark hover:bg-slate-100 dark:hover:bg-surface-lighter">3</button>
+                    <button
+                        class="px-3 py-1 rounded border border-slate-200 dark:border-border-dark hover:bg-slate-100 dark:hover:bg-surface-lighter">Next</button>
+                </div>
+            </div>
+        </div>
+        <!-- MODAL OVERLAY -->
+        <div class="absolute inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+            <!-- Modal Card -->
+            <div
+                class="bg-white dark:bg-surface-dark w-full max-w-4xl rounded-xl shadow-2xl border border-slate-200 dark:border-border-dark flex flex-col max-h-[90vh]">
+                <!-- Modal Header -->
+                <div
+                    class="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-surface-lighter rounded-t-xl">
+                    <div class="flex items-center gap-3">
+                        <span
+                            class="px-2 py-1 bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400 text-xs font-bold uppercase rounded">Fraud</span>
+                        <h2 class="text-lg font-bold text-slate-800 dark:text-white">Report Analysis #56</h2>
+                        <span class="text-sm text-slate-500 dark:text-text-muted">Oct 23, 2023 • 14:30 PM</span>
+                    </div>
+                    <button class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
+                        <span class="material-icons">Fechar</span>
+                    </button>
+                </div>
+                <!-- Modal Body - Scrollable -->
+                <div class="p-6 overflow-y-auto custom-scrollbar flex-1">
+                    <!-- Profiles Comparison -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <!-- Reporter Card -->
+                        <div
+                            class="bg-slate-50 dark:bg-background-dark rounded-lg p-4 border border-slate-200 dark:border-border-dark relative overflow-hidden">
+                            <div class="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
+                            <h3
+                                class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-text-muted mb-4">
+                                Reporter (Victim)</h3>
+                            <div class="flex items-start gap-4">
+                                <img alt="Profile picture of a smiling woman with glasses, the reporter"
+                                    class="w-16 h-16 rounded-full object-cover border-2 border-white dark:border-surface-lighter shadow-sm"
+                                    data-alt="Profile picture of a smiling woman with glasses, the reporter"
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfN-4sviP_85eau2DDcf7IWWhpsTvb3SKSYWAaIUi_5QmKJmymJi5Hb5Yl6CzEBxH-bTSydSMLlEPvtDm_TFAZqDnWHUZBCy22ub-efvP0-vz5ctRR1__Yz32YQhmW6oYwl6RFDCMK-up9FRdO8VN79OlMV-_-I1mcB3PuhddBz2pR9jSUbOkhM8mjtmqvsTqQ0wnXDhBZaWN0A4qMdAGmsIEPsLbXz5gqp7mD8JykY4_2pGvC9mi6xQOM75FC9D3J9dPMMu4L1II" />
+                                <div>
+                                    <h4 class="text-lg font-bold text-slate-800 dark:text-white">Alice Miller</h4>
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="text-sm text-slate-500 dark:text-text-muted">Pet Dono</span>
+                                        <span class="text-slate-300">•</span>
+                                        <div class="flex items-center text-yellow-500 text-sm">
+                                            <span class="material-icons text-sm">star</span>
+                                            <span class="ml-1 font-medium text-slate-700 dark:text-slate-300">5.0</span>
+                                        </div>
+                                    </div>
+                                    <div class="text-xs text-slate-400 dark:text-slate-500">ID: USR-99281 • Member since
+                                        2021</div>
+                                </div>
+                            </div>
+                            <div class="mt-4 pt-3 border-t border-slate-200 dark:border-surface-lighter flex gap-2">
+                                <span
+                                    class="px-2 py-1 bg-slate-200 dark:bg-surface-lighter rounded text-xs text-slate-600 dark:text-slate-400">Total
+                                    Spent: $1,200</span>
+                                <span
+                                    class="px-2 py-1 bg-slate-200 dark:bg-surface-lighter rounded text-xs text-slate-600 dark:text-slate-400">0
+                                    Prior Reports</span>
+                            </div>
+                        </div>
+                        <!-- Reported User Card -->
+                        <div
+                            class="bg-slate-50 dark:bg-background-dark rounded-lg p-4 border border-slate-200 dark:border-border-dark relative overflow-hidden">
+                            <div class="absolute top-0 left-0 w-1 h-full bg-red-500"></div>
+                            <h3
+                                class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-text-muted mb-4">
+                                Reported User</h3>
+                            <div class="flex items-start gap-4">
+                                <img alt="Profile picture of a man with a beard, the reported user"
+                                    class="w-16 h-16 rounded-full object-cover border-2 border-white dark:border-surface-lighter shadow-sm"
+                                    data-alt="Profile picture of a man with a beard, the reported user"
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuB4hB6XFQ19sir2jDvH3HFKRUBjbwbgclFA6WgHQC6JJYVank_N-UmXCQYygeyj9RQ5sqiYAaal0RJ_hI_e4qVs1rABU8lRJamtx713J4Tdj4wa9ZwWQUhncoUKBVBppaikF-9yScxKvpv3VwYcaZbax6lFC8NGvV2pil1t4yfaEZzKu7591flNbxnrrQJD0ijD9ou8nSUzz_OjVqLjkbGjQGLNLADjFZMA2VePM7-B1ApBjbV7T-HBXFFj8vo2pUex7U9rYWm60J4" />
+                                <div>
+                                    <h4 class="text-lg font-bold text-slate-800 dark:text-white">Bob Davidson</h4>
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="text-sm text-slate-500 dark:text-text-muted">Dog Walker</span>
+                                        <span class="text-slate-300">•</span>
+                                        <div class="flex items-center text-yellow-500 text-sm">
+                                            <span class="material-icons text-sm">star</span>
+                                            <span class="ml-1 font-medium text-slate-700 dark:text-slate-300">4.2</span>
+                                        </div>
+                                    </div>
+                                    <div class="text-xs text-slate-400 dark:text-slate-500">ID: WKR-44512 • Member since
+                                        2022</div>
+                                </div>
+                            </div>
+                            <div class="mt-4 pt-3 border-t border-slate-200 dark:border-surface-lighter flex gap-2">
+                                <span
+                                    class="px-2 py-1 bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 rounded text-xs font-medium">2
+                                    Prior Avisos</span>
+                                <span
+                                    class="px-2 py-1 bg-slate-200 dark:bg-surface-lighter rounded text-xs text-slate-600 dark:text-slate-400">Total
+                                    Earned: $450</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Incident Detalhes -->
+                    <div class="mb-8">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-sm font-bold uppercase text-slate-500 dark:text-text-muted">Incident
+                                Description</h3>
+                            <a class="text-primary hover:text-primary-hover text-sm font-medium flex items-center gap-1"
+                                href="#">
+                                <span class="material-icons text-sm">open_in_new</span> Ver Booking #1180
+                            </a>
+                        </div>
+                        <div
+                            class="bg-slate-50 dark:bg-background-dark p-4 rounded-lg border border-slate-200 dark:border-border-dark">
+                            <p class="text-slate-700 dark:text-slate-300 leading-relaxed">
+                                "The walker, Bob, did not show up for the scheduled 30-minute walk on Tuesday at 2 PM.
+                                However, at 2:35 PM, I received a notification that the walk was marked as 'Complete'
+                                and I was charged. I checked my home security camera, and no one came to the door during
+                                that time. I tried messaging him, but he Bloqueado me immediately."
+                            </p>
+                            <div class="mt-4 flex gap-2">
+                                <div class="relative w-24 h-24 rounded-lg overflow-hidden group cursor-pointer">
+                                    <img alt="Screenshot of chat log showing Bloqueado message"
+                                        class="w-full h-full object-cover"
+                                        data-alt="Screenshot of chat log showing Bloqueado message"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuAzIwrHkc63HzwaWQiit1MZt8NbBSP6sW_m2oFmVrjLS-7YaMOSTFztGWTvLKWy2_fyqnXv6d503mrE1uhbLGMBukn-a6hvUao-3iQ3TF85TXlXo-o6yltn5OD3sspn0ZZbSTtUKrMfzBN45_VDg4ExhsXS7mbYPmrUK5p4EN7J9uZieUeWkGLEbc87UMJud-HxIAXgNSFja4Z9mFISJD3-uBpvAHzdhHuBFHux4v_2-IFTq8N2uvbQBO4as3BK6BMMYOhR8-FbZ1Y" />
+                                    <div
+                                        class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <span class="material-icons text-white">zoom_in</span>
+                                    </div>
+                                </div>
+                                <div class="relative w-24 h-24 rounded-lg overflow-hidden group cursor-pointer">
+                                    <img alt="Screenshot of camera feed showing empty porch"
+                                        class="w-full h-full object-cover"
+                                        data-alt="Screenshot of camera feed showing empty porch"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUlVQ24yFk7P8hj0fYd7OxpGwxu5r_Fcknz22YK3FilNtdKae4KJ-l7Z7CyMKSy5qhdy8AkgmZuBAEwDEmHCqeTk4K4A3D_MuC-5uR7D1-2HxqSqDryVglueK0DZ-86Kpn7O3OAaBDX9XE_isdJRqNvLYuGlZ0mfEdOc0VbzmJee1M926rfdm1Vl13WMVjvsjtf1sw9OS50ne2bTaPBm71n9DrFCCFwGPyjsv6jkBfgTKqE5dEngbW48x0g51yq-wq6nDjQNKwg_8" />
+                                    <div
+                                        class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <span class="material-icons text-white">zoom_in</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Admin Action -->
+                    <div>
+                        <h3 class="text-sm font-bold uppercase text-slate-500 dark:text-text-muted mb-3">Admin Verdict
+                        </h3>
+                        <form class="space-y-4" onsubmit="event.preventDefault();">
+                            <!-- Radio Group -->
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                <label class="cursor-pointer relative">
+                                    <input class="peer sr-only" name="verdict" type="radio" />
+                                    <div
+                                        class="p-4 rounded-lg border border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-surface-lighter hover:bg-slate-100 dark:hover:bg-slate-700 peer-checked:border-slate-500 peer-checked:bg-slate-200 dark:peer-checked:bg-slate-600 transition-all text-center">
+                                        <div class="text-slate-500 dark:text-slate-400 mb-1"><span
+                                                class="material-icons">archive</span></div>
+                                        <span class="font-semibold text-sm">No Action / Archive</span>
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer relative">
+                                    <input class="peer sr-only" name="verdict" type="radio" />
+                                    <div
+                                        class="p-4 rounded-lg border border-yellow-200 dark:border-yellow-900/50 bg-slate-50 dark:bg-surface-lighter hover:bg-yellow-50 dark:hover:bg-yellow-900/20 peer-checked:border-yellow-500 peer-checked:bg-yellow-50 dark:peer-checked:bg-yellow-900/30 transition-all text-center">
+                                        <div class="text-yellow-600 dark:text-yellow-500 mb-1"><span
+                                                class="material-icons">Aviso</span></div>
+                                        <span class="font-semibold text-sm text-yellow-700 dark:text-yellow-500">Issue
+                                            Aviso</span>
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer relative">
+                                    <input class="peer sr-only" name="verdict" type="radio" />
+                                    <div
+                                        class="p-4 rounded-lg border border-orange-200 dark:border-orange-900/50 bg-slate-50 dark:bg-surface-lighter hover:bg-orange-50 dark:hover:bg-orange-900/20 peer-checked:border-orange-500 peer-checked:bg-orange-50 dark:peer-checked:bg-orange-900/30 transition-all text-center">
+                                        <div class="text-orange-600 dark:text-orange-500 mb-1"><span
+                                                class="material-icons">timer_off</span></div>
+                                        <span class="font-semibold text-sm text-orange-700 dark:text-orange-500">Suspend
+                                            (7 Days)</span>
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer relative">
+                                    <input checked="" class="peer sr-only" name="verdict" type="radio" />
+                                    <div
+                                        class="p-4 rounded-lg border border-red-200 dark:border-red-900/50 bg-slate-50 dark:bg-surface-lighter hover:bg-red-50 dark:hover:bg-red-900/20 peer-checked:border-red-500 peer-checked:bg-red-50 dark:peer-checked:bg-red-900/30 transition-all text-center ring-2 ring-red-500 dark:ring-red-600 ring-offset-2 dark:ring-offset-surface-dark">
+                                        <div class="text-red-600 dark:text-red-500 mb-1"><span
+                                                class="material-icons">block</span></div>
+                                        <span class="font-semibold text-sm text-red-700 dark:text-red-500">Permanent
+                                            Ban</span>
+                                    </div>
+                                </label>
+                            </div>
+                            <!-- Text Area -->
+                            <div class="relative">
+                                <textarea
+                                    class="w-full bg-slate-50 dark:bg-surface-lighter border border-slate-200 dark:border-border-dark rounded-lg p-4 text-sm focus:ring-2 focus:ring-primary focus:border-transparent dark:text-white placeholder-slate-400"
+                                    placeholder="Enter reasoning for decision (Internal Note)..."
+                                    rows="4">Based on the provided evidence and previous history of no-shows, a ban is recommended. The user marked a service complete without attending.</textarea>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <!-- Modal Footer -->
+                <div
+                    class="px-6 py-4 border-t border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-surface-lighter rounded-b-xl flex justify-end gap-3">
+                    <button
+                        class="px-5 py-2.5 rounded-lg border border-slate-300 dark:border-border-dark text-slate-700 dark:text-slate-300 font-medium hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">Cancelar</button>
+                    <button
+                        class="px-5 py-2.5 rounded-lg bg-primary hover:bg-primary-hover text-white font-medium shadow-md shadow-primary/30 transition-all flex items-center gap-2">
+                        <span class="material-icons text-sm">check_circle</span>
+                        Submit Decision
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+

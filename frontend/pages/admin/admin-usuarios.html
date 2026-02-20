@@ -1,0 +1,485 @@
+﻿<!DOCTYPE html>
+
+<html class="dark" lang="pt-BR">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Gest�o de Usu�rios | PetFriend Admin</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <!-- Tailwind Configuration -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3c83f6",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#101722",
+                        "surface-dark": "#182430",
+                        "surface-darker": "#0d141c",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <style>
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #101722;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #2d3b4e;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3c83f6;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark font-display text-slate-800 dark:text-slate-200 antialiased overflow-hidden">
+    <div class="flex h-screen w-full">
+        <!-- Sidebar -->
+        <aside
+            class="w-64 flex-shrink-0 bg-surface-darker border-r border-slate-800 flex flex-col transition-all duration-300">
+            <!-- Logo -->
+            <div class="h-16 flex items-center px-6 border-b border-slate-800/50">
+                <div class="flex items-center gap-2 text-primary font-bold text-xl">
+                    <span class="material-icons">pets</span>
+                    <span>PetFriend<span class="text-white">Admin</span></span>
+                </div>
+            </div>
+            <!-- Nav Links -->
+            <nav class="flex-1 overflow-y-auto py-6 px-3 space-y-1">
+                <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-colors group"
+                    href="dashboard-admin.html">
+                    <span class="material-icons text-[20px] group-hover:text-primary transition-colors">dashboard</span>
+                    <span class="text-sm font-medium">Painel</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white bg-primary/10 border-l-4 border-primary transition-colors"
+                    href="admin-usuarios.html">
+                    <span class="material-icons text-[20px] text-primary">people</span>
+                    <span class="text-sm font-medium">Usuários</span>
+                </a>
+                <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-colors group"
+                    href="admin-denuncias.html">
+                    <span
+                        class="material-icons text-[20px] group-hover:text-primary transition-colors">gavel</span>
+                    <span class="text-sm font-medium">Denúncias</span>
+                </a>
+                <div class="pt-4 mt-4 border-t border-slate-800">
+                    <p class="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Sistema</p>
+                    <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-colors group"
+                        href="admin-configuracoes.html">
+                        <span
+                            class="material-icons text-[20px] group-hover:text-primary transition-colors">settings</span>
+                        <span class="text-sm font-medium">Configurações</span>
+                    </a>
+                    <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-colors group"
+                        href="admin-logs.html">
+                        <span
+                            class="material-icons text-[20px] group-hover:text-primary transition-colors">security</span>
+                        <span class="text-sm font-medium">Logs</span>
+                    </a>
+                </div>
+            </nav>
+            <!-- User Profile -->
+            <div class="p-4 border-t border-slate-800">
+                <div class="flex items-center gap-3">
+                    <img class="h-9 w-9 rounded-full object-cover border border-slate-700" data-alt="Admin user avatar"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCIVd5pNwSUFrtnaShEowhcFbAsAlelu-IF3dBt35se-qApaCCo_xNxlDLNoJ6t8HhNhLLABDdqFaqBFdEJLBYlV6Qe11-hrks-B4B0hCBt0GQ70ShzPOuADwk8fMoufe4fNfOTJPwG0BHXFqrTx9HE1U_pQPkMpn_o6Nz4_5dpID1zQZYBChC-Ypi8ti91X3mXTp4EbIPByGUGF_BCI8bA3LMbyZIri6VY8gbBtqCbLLpbpJ0TNIOkLocixszuFoRgHHaKFta-F_4" />
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-white truncate">Admin User</p>
+                        <p class="text-xs text-slate-500 truncate">superAdmin@petfriend.com</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        <!-- Main Content -->
+        <main class="flex-1 flex flex-col min-w-0 bg-background-light dark:bg-background-dark relative">
+            <!-- Header (White requested, but styled to fit dark mode context with slight tint if needed, pure white here as requested with dark text contrast handled) -->
+            <header
+                class="bg-white dark:bg-surface-dark border-b border-slate-200 dark:border-slate-800 h-16 flex items-center justify-between px-8 z-10 sticky top-0">
+                <!-- Breadcrumbs/Title -->
+                <div>
+                    <h1 class="text-xl font-bold text-slate-800 dark:text-white">Usu�rios</h1>
+                    <div class="flex items-center gap-2 text-xs text-slate-500">
+                        <span>Admin</span>
+                        <span class="material-icons text-[10px]">chevron_right</span>
+                        <span>Gest�o</span>
+                        <span class="material-icons text-[10px]">chevron_right</span>
+                        <span class="text-primary font-medium">List</span>
+                    </div>
+                </div>
+                <!-- Right Header Controls -->
+                <div class="flex items-center gap-4">
+                    <div class="relative">
+                        <span class="material-icons absolute left-3 top-2.5 text-slate-400 text-[20px]">Buscar</span>
+                        <input
+                            class="pl-10 pr-4 py-2 bg-slate-100 dark:bg-background-dark border-none rounded-lg text-sm focus:ring-2 focus:ring-primary w-64 text-slate-700 dark:text-slate-300 placeholder-slate-400"
+                            placeholder="Global Buscar..." type="text" />
+                    </div>
+                    <button class="relative p-2 text-slate-400 hover:text-primary transition-colors">
+                        <span class="material-icons">notifications</span>
+                        <span
+                            class="absolute top-1.5 right-1.5 h-2 w-2 bg-red-500 rounded-full border-2 border-white dark:border-surface-dark"></span>
+                    </button>
+                </div>
+            </header>
+            <!-- Page Content -->
+            <div class="flex-1 overflow-y-auto p-8">
+                <!-- Filters & Action Bar -->
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                    <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+                        <!-- Buscar usu�rios -->
+                        <div class="relative flex-1 sm:flex-none">
+                            <span
+                                class="material-icons absolute left-3 top-2.5 text-slate-400 text-[18px]">Buscar</span>
+                            <input
+                                class="pl-9 pr-4 py-2 bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:border-primary focus:ring-1 focus:ring-primary w-full sm:w-64 text-slate-700 dark:text-slate-200"
+                                placeholder="Buscar usu�rios..." type="text" />
+                        </div>
+                        <!-- Filter Tipo -->
+                        <div class="relative">
+                            <select
+                                class="pl-3 pr-8 py-2 bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:border-primary focus:ring-1 focus:ring-primary text-slate-700 dark:text-slate-200 appearance-none cursor-pointer">
+                                <option>All Tipos</option>
+                                <option>Donos</option>
+                                <option>Cuidadores</option>
+                            </select>
+                            <span
+                                class="material-icons absolute right-2 top-2.5 text-slate-400 text-[18px] pointer-events-none">expand_more</span>
+                        </div>
+                        <!-- Filter Status -->
+                        <div class="relative">
+                            <select
+                                class="pl-3 pr-8 py-2 bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:border-primary focus:ring-1 focus:ring-primary text-slate-700 dark:text-slate-200 appearance-none cursor-pointer">
+                                <option>All Status</option>
+                                <option>Ativo</option>
+                                <option>InAtivo</option>
+                                <option>Suspended</option>
+                            </select>
+                            <span
+                                class="material-icons absolute right-2 top-2.5 text-slate-400 text-[18px] pointer-events-none">expand_more</span>
+                        </div>
+                    </div>
+                    <button
+                        class="flex items-center gap-2 bg-primary hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-lg shadow-primary/20">
+                        <span class="material-icons text-[18px]">Adicionar</span>
+                        <span>Novo</span>
+                    </button>
+                </div>
+                <!-- Table Card -->
+                <div
+                    class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm">
+                            <thead
+                                class="bg-slate-50 dark:bg-surface-darker/50 border-b border-slate-200 dark:border-slate-700 text-slate-500 uppercase tracking-wider font-semibold text-xs">
+                                <tr>
+                                    <th class="px-6 py-4">User</th>
+                                    <th class="px-6 py-4">Tipo</th>
+                                    <th class="px-6 py-4">Status</th>
+                                    <th class="px-6 py-4">Registration Data</th>
+                                    <th class="px-6 py-4 text-right">A��es</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
+                                <!-- Row 1 -->
+                                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors group">
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-3">
+                                            <img class="h-10 w-10 rounded-full object-cover"
+                                                data-alt="Portrait of Sarah Jenkins"
+                                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAowEXjJ6G9IUi50SjvuOCB4rxh1jGj8Qyv9GAF3ZKvYr1lcQ8vpBZ3GVs-8ax9ccbMfXqN_SN_8jCThuKDrG2opWaOgeHHs6PKLXUM53u-EVzBGOoffuNyWOmWAviPwS6JTSwY0nsrQzvq36vWLAWgQsH0Qh4y_3a8ynOoxH04uUR6EPUpCHcCAqotnUA6CYzmA_wdYZ3ddpBX9tCVT7Slzr3A1af4Ht_nRhV6s8fpYacuP3Gf0clCoCHCqu56CNqsdn7bEokWw8k" />
+                                            <div>
+                                                <div class="font-medium text-slate-900 dark:text-white">Sarah Jenkins
+                                                </div>
+                                                <div class="text-slate-500 text-xs">sarah.j@example.com</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-2 text-slate-700 dark:text-slate-300">
+                                            <span class="material-icons">pets</span>
+                                            <span>Dono</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-500/10 dark:text-green-400 border border-green-200 dark:border-green-500/20">
+                                            Ativo
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 text-slate-500">
+                                        Oct 24, 2023
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <button
+                                            class="text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors">
+                                            <span class="material-icons">more_vert</span>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <!-- Row 2 (Selected Context) -->
+                                <tr class="bg-primary/5 hover:bg-primary/10 transition-colors group">
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-3">
+                                            <img class="h-10 w-10 rounded-full object-cover ring-2 ring-primary ring-offset-2 ring-offset-surface-dark"
+                                                data-alt="Portrait of Michael Chen"
+                                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWb3_pcR_7gxUywBOtOhser5EhG2hX9S0vPh36HJgY3UpnV1WTe1KAQyWYro_2KVRqe-MzR_-b9rYzkkwvbwXcM-ZANBcsb5IYh0-nBKZKD9AxPLvStZHE15uZz1IbB5RnYRV48n5KlUUCQtsiaL0w3GLYEb4oHfFpT-FYH7qT3xWduwqrnMjVNKnh4dUApPBBDIq6u5lDxHrUnHj2FRLJVySaWTPswwbo33W2qsRcQvyTxoCIEUCfvsEZN2xU4E3qNntYUcIxz9U" />
+                                            <div>
+                                                <div class="font-medium text-slate-900 dark:text-white">Michael Chen
+                                                </div>
+                                                <div class="text-slate-500 text-xs">m.chen@Cuidador.net</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-2 text-slate-700 dark:text-slate-300">
+                                            <span
+                                                class="material-icons text-amber-500 text-[18px]">volunteer_activism</span>
+                                            <span>Cuidador</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-500/10 dark:text-green-400 border border-green-200 dark:border-green-500/20">
+                                            Ativo
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 text-slate-500">
+                                        Sep 12, 2023
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <button class="text-primary hover:text-primary transition-colors">
+                                            <span class="material-icons">more_vert</span>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <!-- Row 3 -->
+                                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors group">
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-3">
+                                            <img class="h-10 w-10 rounded-full object-cover"
+                                                data-alt="Portrait of Emily Davis"
+                                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuD2jmz4ydKqz_8zUToImQms7nKA-KMYnVpJId6ycCwWnFm0pR3EiRErlXKIORkR_aZsj5qPsP1_EI59A8KfCxgWFN1rvD1Yz0W2nJ9hjUHaDb7lMg3KCdUY1TMN932JINynop345HTaU3xEY9Mj9ckkQvUS6hUgJRaE733D6z88Q4gF2X30hmmyRUA7wEmjjH_Arnx8ezAFuK66ViCH28crALJPXbhH1o3oTN6eg6QvmD40DxT7-WMty7GqRaIIt-tCZwrbeKTf1Ic" />
+                                            <div>
+                                                <div class="font-medium text-slate-900 dark:text-white">Emily Davis
+                                                </div>
+                                                <div class="text-slate-500 text-xs">emily.d@example.com</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-2 text-slate-700 dark:text-slate-300">
+                                            <span class="material-icons">pets</span>
+                                            <span>Dono</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-600">
+                                            InAtivo
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 text-slate-500">
+                                        Nov 01, 2023
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <button
+                                            class="text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors">
+                                            <span class="material-icons">more_vert</span>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <!-- Row 4 -->
+                                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors group">
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">
+                                                JD</div>
+                                            <div>
+                                                <div class="font-medium text-slate-900 dark:text-white">John Doe</div>
+                                                <div class="text-slate-500 text-xs">john.doe@example.com</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-2 text-slate-700 dark:text-slate-300">
+                                            <span class="material-icons">pets</span>
+                                            <span>Dono</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-500/10 dark:text-red-400 border border-red-200 dark:border-red-500/20">
+                                            Suspended
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 text-slate-500">
+                                        Aug 15, 2023
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <button
+                                            class="text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors">
+                                            <span class="material-icons">more_vert</span>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Pagination -->
+                    <div
+                        class="px-6 py-4 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between">
+                        <div class="text-sm text-slate-500">
+                            Showing <span class="font-medium text-slate-900 dark:text-white">1</span> to <span
+                                class="font-medium text-slate-900 dark:text-white">4</span> of <span
+                                class="font-medium text-slate-900 dark:text-white">24</span> results
+                        </div>
+                        <div class="flex gap-2">
+                            <button
+                                class="px-3 py-1 border border-slate-200 dark:border-slate-700 rounded text-sm text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50">Previous</button>
+                            <button
+                                class="px-3 py-1 border border-slate-200 dark:border-slate-700 rounded text-sm text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800">Next</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <!-- User Detalhes Modal (Fixed Position) -->
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <!-- Modal Content -->
+            <div
+                class="bg-white dark:bg-surface-dark w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-700 transform transition-all scale-100">
+                <!-- Modal Header with Cover Image look -->
+                <div class="h-24 bg-gradient-to-r from-primary/80 to-blue-600 relative">
+                    <button class="absolute top-4 right-4 text-white/80 hover:text-white">
+                        <span class="material-icons">Fechar</span>
+                    </button>
+                </div>
+                <!-- Modal Body -->
+                <div class="px-8 pb-8 relative">
+                    <!-- Avatar overlapping header -->
+                    <div class="-mt-12 mb-6 flex justify-between items-end">
+                        <img class="h-24 w-24 rounded-full border-4 border-white dark:border-surface-dark object-cover shadow-lg bg-surface-dark"
+                            data-alt="Portrait of Michael Chen"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuD0UDaGmkfgeYvQ2M6WV15V2nQ8OtnS46YjNhvsDTn3pmzxxnFgtguYc4mjopEvpYJm_XLhEHaucagw-KGvyCzv-Rpige0vpsYxy-JedmyKpF92MRlLPRORzZtkQyXjRerlYTZ9su7ThAwopPdJ0M5Piv2kaQRrLgpxl6aD3ceT849eXRKFPnymh-RX_7YYGhqvvBfflgQC7O9K57x6aWTyO9CWM50HpOoXKKTz88ZVRYoi341X4B8UxWzAvhcpeM9B9dggxeNNx4c" />
+                        <div class="flex gap-2 mb-1">
+                            <button
+                                class="p-2 rounded-full border border-slate-200 dark:border-slate-600 text-slate-500 hover:text-primary hover:border-primary transition-colors">
+                                <span class="material-icons text-[20px]">Editar</span>
+                            </button>
+                            <button
+                                class="p-2 rounded-full border border-slate-200 dark:border-slate-600 text-slate-500 hover:text-red-500 hover:border-red-500 transition-colors">
+                                <span class="material-icons text-[20px]">block</span>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- User Informa��o -->
+                    <div class="mb-6">
+                        <div class="flex items-center gap-2 mb-1">
+                            <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Michael Chen</h2>
+                            <span class="material-icons text-primary text-sm" title="Verified">verified</span>
+                        </div>
+                        <p class="text-slate-500 text-sm mb-4">Cuidador • Member since Sep 2023</p>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-300">
+                                <span class="material-icons text-slate-400 text-[18px]">Email</span>
+                                <span class="truncate">m.chen@Cuidador.net</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-300">
+                                <span class="material-icons text-slate-400 text-[18px]">Telefone</span>
+                                <span>+1 (555) 0123-4567</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-300">
+                                <span class="material-icons text-slate-400 text-[18px]">location_on</span>
+                                <span>San Francisco, CA</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-300">
+                                <span class="material-icons text-slate-400 text-[18px]">language</span>
+                                <span>English, Spanish</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Statistics Cards -->
+                    <div class="grid grid-cols-3 gap-4 mb-6">
+                        <div
+                            class="bg-slate-50 dark:bg-background-dark p-4 rounded-xl border border-slate-100 dark:border-slate-700 text-center">
+                            <div class="text-xs text-slate-500 uppercase tracking-wider font-semibold mb-1">Pets</div>
+                            <div class="text-xl font-bold text-slate-900 dark:text-white">3</div>
+                        </div>
+                        <div
+                            class="bg-slate-50 dark:bg-background-dark p-4 rounded-xl border border-slate-100 dark:border-slate-700 text-center">
+                            <div class="text-xs text-slate-500 uppercase tracking-wider font-semibold mb-1">Bookings
+                            </div>
+                            <div class="text-xl font-bold text-slate-900 dark:text-white">12</div>
+                        </div>
+                        <div class="bg-primary/10 p-4 rounded-xl border border-primary/20 text-center">
+                            <div class="text-xs text-primary uppercase tracking-wider font-semibold mb-1">Total Spent
+                            </div>
+                            <div class="text-xl font-bold text-primary">$1,240</div>
+                        </div>
+                    </div>
+                    <!-- Atividades Recentes Snippet -->
+                    <div>
+                        <h3 class="text-sm font-semibold text-slate-900 dark:text-white mb-3">Atividades Recentes</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-start gap-3 text-sm">
+                                <div class="mt-1 h-2 w-2 rounded-full bg-green-500 flex-shrink-0"></div>
+                                <div>
+                                    <p class="text-slate-700 dark:text-slate-300">Completed booking with <span
+                                            class="font-medium text-white">Luna (Dog)</span></p>
+                                    <p class="text-xs text-slate-500">2 hours ago</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3 text-sm">
+                                <div class="mt-1 h-2 w-2 rounded-full bg-primary flex-shrink-0"></div>
+                                <div>
+                                    <p class="text-slate-700 dark:text-slate-300">UpDatad profile picture</p>
+                                    <p class="text-xs text-slate-500">Yesterday at 4:30 PM</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
