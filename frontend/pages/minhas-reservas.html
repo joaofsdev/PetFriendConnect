@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Meus Agendamentos - PetFriend Connect</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3c83f6",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#101722",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark font-display text-slate-800 dark:text-slate-100 min-h-screen flex flex-col">
+    <!-- Navbar -->
+    <nav class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center gap-2">
+                    <div class="bg-primary/10 p-2 rounded-lg">
+                        <span class="material-icons text-primary">pets</span>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight text-slate-900 dark:text-white">PetFriend
+                        Connect</span>
+                </div>
+                <div class="hidden sm:flex sm:space-x-8 items-center">
+                    <a class="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white px-3 py-2 text-sm font-medium"
+                        href="encontrar-cuidadores.html">Buscar Cuidadores</a>
+                    <a class="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white px-3 py-2 text-sm font-medium"
+                        href="meus-pets.html">Meus Pets</a>
+                    <a class="border-b-2 border-primary text-slate-900 dark:text-white px-3 py-2 text-sm font-medium h-full flex items-center"
+                        href="minhas-reservas.html">Meus Agendamentos</a>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button class="p-2 rounded-full text-slate-400 hover:text-slate-500 dark:hover:text-slate-300">
+                        <span class="material-icons">notifications_none</span>
+                    </button>
+                    <div class="flex items-center gap-2 cursor-pointer">
+                        <img alt="Foto de perfil do usuário" class="h-8 w-8 rounded-full border border-slate-200"
+                            data-alt="User profile photo"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuD_0bEStulETIlhYskX_G_hv340MMzxExNTfEx3gbXNVad_LnMjlkeMzWi2arKUn9HvCQS6275Bdiet1_8dRfjQCKCRSl_MjjBLdRY3tx-no9r4i_HK6GsSba9R7uN-vLAjTpdjtMteoiTI_V5uDML_whcEIOdiy-6JqWIqra3InLXiiPD0fDdjzBKBF8pnvO3kqaEbMa_PzRRFxkf1PD33xN1IRWXSnqLhiIcpmkDBjFWvRfTzw6WE8FCBiUJg_v3bd5_zY0L9KJA" />
+                        <span class="text-sm font-medium text-slate-700 dark:text-slate-300 hidden md:block">Mariana
+                            Costa</span>
+                        <span class="material-icons text-slate-400 text-sm hidden md:block">expand_more</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <!-- Main Content -->
+    <main class="flex-grow py-10 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto">
+            <!-- Header Section -->
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-slate-900 dark:text-white">Meus Agendamentos</h1>
+                <p class="mt-2 text-slate-500 dark:text-slate-400">Gerencie seus próximos serviços e histórico de
+                    cuidados.</p>
+            </div>
+            <!-- Tabs -->
+            <div class="border-b border-slate-200 dark:border-slate-700 mb-8">
+                <nav aria-label="Tabs" class="-mb-px flex space-x-8">
+                    <a class="border-primary text-primary whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2"
+                        href="#">
+                        Próximas
+                        <span class="bg-primary text-white py-0.5 px-2 rounded-full text-xs">3</span>
+                    </a>
+                    <a class="border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 dark:text-slate-400 dark:hover:text-slate-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
+                        href="#">
+                        Concluídas
+                    </a>
+                    <a class="border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 dark:text-slate-400 dark:hover:text-slate-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
+                        href="#">
+                        Canceladas
+                    </a>
+                    <a class="border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 dark:text-slate-400 dark:hover:text-slate-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
+                        href="#">
+                        Todas
+                    </a>
+                </nav>
+            </div>
+            <!-- Booking List -->
+            <div class="space-y-6">
+                <!-- Card 1: Confirmada -->
+                <div
+                    class="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-shadow duration-200">
+                    <div class="p-6">
+                        <!-- Card Header -->
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="flex items-center gap-3">
+                                <span
+                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 border border-green-200 dark:border-green-800">
+                                    <span class="w-1.5 h-1.5 bg-green-500 rounded-full mr-1.5"></span>
+                                    Confirmada
+                                </span>
+                                <span class="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                                    <span class="material-icons text-sm">event</span>
+                                    15 a 17 de Outubro
+                                </span>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-lg font-bold text-slate-900 dark:text-white">R$ 150,00</p>
+                            </div>
+                        </div>
+                        <!-- Card Body: Caregiver & Service Info -->
+                        <div class="flex flex-col sm:flex-row gap-6 items-start sm:items-center">
+                            <!-- Caregiver Info -->
+                            <div class="flex items-center gap-4 flex-1">
+                                <div class="relative">
+                                    <img alt="Foto de perfil da cuidadora"
+                                        class="h-14 w-14 rounded-full object-cover border-2 border-white dark:border-slate-700 shadow-sm"
+                                        data-alt="Caregiver profile photo female"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1p57m8yeOqRHdkBEYTSToEUQLYKuYO42IOhyMEppDTmLYSobWAJnBC3K8QM_xdnge2mwbFViYhQ8XOVtPfTmFvNqDOFuT4BRH1Fl9vrSeUmrQsMpdcotNoRR-wx3tdpR-a81124UDy_1csf4XOt8E_sT5MJeLF9GlcHUilEDUg1kAyTJrooXW85gG_SCbudCa1dzurVD8oQ0Q9vYYnSqfWbJ5-3wQ1KoC_QgLDpt8ff4gKnWymt2aW6jvKuNSwbCdfuaNzpwmzi0" />
+                                    <div
+                                        class="absolute -bottom-1 -right-1 bg-primary text-white rounded-full p-1 border-2 border-white dark:border-slate-800">
+                                        <span class="material-icons text-[12px] block">verified</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h3 class="text-base font-semibold text-slate-900 dark:text-white">Ana Silva</h3>
+                                    <p class="text-sm text-slate-500 dark:text-slate-400">Cuidadora • 4.9 <span
+                                            class="text-yellow-400 text-xs">★</span></p>
+                                </div>
+                            </div>
+                            <!-- Divider (Mobile hidden) -->
+                            <div class="hidden sm:block w-px h-10 bg-slate-200 dark:bg-slate-700"></div>
+                            <!-- Pet & Service Details -->
+                            <div class="flex-1 space-y-1">
+                                <div class="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
+                                    <span class="material-icons text-primary text-lg">home</span>
+                                    <span class="font-medium">Hospedagem</span>
+                                </div>
+                                <div class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+                                    <span class="material-icons text-slate-400 text-lg">pets</span>
+                                    <span>Para: <span class="font-medium text-slate-700 dark:text-slate-300">Rex</span>
+                                        (Golden Retriever)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Card Footer: Actions -->
+                        <div class="mt-6 pt-6 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-3">
+                            <button
+                                class="px-4 py-2 text-sm font-medium text-red-600 bg-white border border-red-200 rounded-lg hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 dark:bg-transparent dark:border-red-800 dark:text-red-400 dark:hover:bg-red-900/10 transition-colors">
+                                Cancelar
+                            </button>
+                            <button
+                                class="px-4 py-2 text-sm font-medium text-primary bg-primary/10 border border-transparent rounded-lg hover:bg-primary/20 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary dark:bg-primary/20 dark:hover:bg-primary/30 transition-colors">
+                                Ver detalhes
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Card 2: Pendente -->
+                <div
+                    class="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-shadow duration-200">
+                    <div class="p-6">
+                        <!-- Card Header -->
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="flex items-center gap-3">
+                                <span
+                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300 border border-yellow-200 dark:border-yellow-800">
+                                    <span class="w-1.5 h-1.5 bg-yellow-500 rounded-full mr-1.5 animate-pulse"></span>
+                                    Pendente
+                                </span>
+                                <span class="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                                    <span class="material-icons text-sm">schedule</span>
+                                    Amanhã, 14:00
+                                </span>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-lg font-bold text-slate-900 dark:text-white">R$ 40,00</p>
+                            </div>
+                        </div>
+                        <!-- Card Body -->
+                        <div class="flex flex-col sm:flex-row gap-6 items-start sm:items-center">
+                            <!-- Caregiver Info -->
+                            <div class="flex items-center gap-4 flex-1">
+                                <img alt="Foto de perfil do cuidador"
+                                    class="h-14 w-14 rounded-full object-cover border-2 border-white dark:border-slate-700 shadow-sm"
+                                    data-alt="Caregiver profile photo male"
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBNZxdoo9Namq62UGNs4q2-2TO_q9wC5gSvf2rm1718nnI-qkUbkcTcZcqa3HQxzV-oFx58Izq0Uqy76RdvsxAgSSDbnZybAV2eD5ABKsWzjbucV1l3fLCiM27t467z_SLjpbGM8XXrT9bALVe0m3oWD0lOYlNXViM62yKq1eGnfbZItABoEcahfrImvgSDXiju_IN6_IPmKLwrVFLXmiETzJZXe8X_4A6oAMZ9fQnLM1z3scoaN2bULXXo2-p_C6NmLDw5Dmy6p9s" />
+                                <div>
+                                    <h3 class="text-base font-semibold text-slate-900 dark:text-white">Bruno Santos</h3>
+                                    <p class="text-sm text-slate-500 dark:text-slate-400">Passeador • 5.0 <span
+                                            class="text-yellow-400 text-xs">★</span></p>
+                                </div>
+                            </div>
+                            <div class="hidden sm:block w-px h-10 bg-slate-200 dark:bg-slate-700"></div>
+                            <!-- Pet & Service Details -->
+                            <div class="flex-1 space-y-1">
+                                <div class="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
+                                    <span class="material-icons text-primary text-lg">directions_walk</span>
+                                    <span class="font-medium">Passeio (1h)</span>
+                                </div>
+                                <div class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+                                    <span class="material-icons text-slate-400 text-lg">pets</span>
+                                    <span>Para: <span class="font-medium text-slate-700 dark:text-slate-300">Luna</span>
+                                        (SRD)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Card Footer -->
+                        <div class="mt-6 pt-6 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-3">
+                            <button
+                                class="px-4 py-2 text-sm font-medium text-red-600 bg-white border border-red-200 rounded-lg hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 dark:bg-transparent dark:border-red-800 dark:text-red-400 dark:hover:bg-red-900/10 transition-colors">
+                                Cancelar
+                            </button>
+                            <button
+                                class="px-4 py-2 text-sm font-medium text-primary bg-primary/10 border border-transparent rounded-lg hover:bg-primary/20 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary dark:bg-primary/20 dark:hover:bg-primary/30 transition-colors">
+                                Ver detalhes
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Card 3: Confirmada -->
+                <div
+                    class="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-shadow duration-200">
+                    <div class="p-6">
+                        <!-- Card Header -->
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="flex items-center gap-3">
+                                <span
+                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 border border-green-200 dark:border-green-800">
+                                    <span class="w-1.5 h-1.5 bg-green-500 rounded-full mr-1.5"></span>
+                                    Confirmada
+                                </span>
+                                <span class="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                                    <span class="material-icons text-sm">event</span>
+                                    22 de Outubro, 09:00
+                                </span>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-lg font-bold text-slate-900 dark:text-white">R$ 60,00</p>
+                            </div>
+                        </div>
+                        <!-- Card Body -->
+                        <div class="flex flex-col sm:flex-row gap-6 items-start sm:items-center">
+                            <!-- Caregiver Info -->
+                            <div class="flex items-center gap-4 flex-1">
+                                <img alt="Foto de perfil da cuidadora"
+                                    class="h-14 w-14 rounded-full object-cover border-2 border-white dark:border-slate-700 shadow-sm"
+                                    data-alt="Caregiver profile photo female smiling"
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVgWucQQ2DAEbHscQfDu3kSYnDgHjucvOcywzOnyLqt2tPxEPAQPAzAr97UktbyrcqkWtjg4r9srL76P39u03XI7dEIUwawuUk5tStmNfhwZM7fkQEK6K8thDa_bI3VKhJIGw7La_ryXq5Pq0QOJs-tYm1Wy3mQHYGFsj6gMRkaR_YsHPCPX0bOKCvGoUp6KMjlFRNXWh3PbhCyX4Ys-RY84SmNO1sPRJmWTFGLErwfSSrOfAbfskiwum2MEwTULeDH-jStZI4a_w" />
+                                <div>
+                                    <h3 class="text-base font-semibold text-slate-900 dark:text-white">Carla Mendez</h3>
+                                    <p class="text-sm text-slate-500 dark:text-slate-400">Veterinária • 5.0 <span
+                                            class="text-yellow-400 text-xs">★</span></p>
+                                </div>
+                            </div>
+                            <div class="hidden sm:block w-px h-10 bg-slate-200 dark:bg-slate-700"></div>
+                            <!-- Pet & Service Details -->
+                            <div class="flex-1 space-y-1">
+                                <div class="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
+                                    <span class="material-icons text-primary text-lg">medical_services</span>
+                                    <span class="font-medium">Visita Veterinária</span>
+                                </div>
+                                <div class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+                                    <span class="material-icons text-slate-400 text-lg">pets</span>
+                                    <span>Para: <span class="font-medium text-slate-700 dark:text-slate-300">Thor</span>
+                                        (Bulldog)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Card Footer -->
+                        <div class="mt-6 pt-6 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-3">
+                            <button
+                                class="px-4 py-2 text-sm font-medium text-red-600 bg-white border border-red-200 rounded-lg hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 dark:bg-transparent dark:border-red-800 dark:text-red-400 dark:hover:bg-red-900/10 transition-colors">
+                                Cancelar
+                            </button>
+                            <button
+                                class="px-4 py-2 text-sm font-medium text-primary bg-primary/10 border border-transparent rounded-lg hover:bg-primary/20 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary dark:bg-primary/20 dark:hover:bg-primary/30 transition-colors">
+                                Ver detalhes
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Pagination / Load More (Optional context filler) -->
+            <div class="mt-10 flex justify-center">
+                <button
+                    class="text-sm font-medium text-slate-500 hover:text-primary transition-colors flex items-center gap-2">
+                    Carregar mais agendamentos
+                    <span class="material-icons text-sm">expand_more</span>
+                </button>
+            </div>
+        </div>
+    </main>
+    <!-- Simple Footer -->
+    <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-8 mt-auto">
+        <div
+            class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <p class="text-sm text-slate-400 dark:text-slate-500">© 2023 PetFriend Connect. Todos os direitos reservados.
+            </p>
+            <div class="flex space-x-6 text-sm text-slate-500 dark:text-slate-400">
+                <a class="hover:text-slate-900 dark:hover:text-white" href="#">Ajuda</a>
+                <a class="hover:text-slate-900 dark:hover:text-white" href="#">Privacidade</a>
+                <a class="hover:text-slate-900 dark:hover:text-white" href="#">Termos</a>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Encontrar Cuidadores - PetFriend Connect</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#3c83f6",
+                        "primary-dark": "#2563eb",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#101722",
+                        success: "#10b981",
+                    },
+                    fontFamily: {
+                        display: ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px",
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        /* Custom styles for range slider thumb */
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: #3c83f6;
+            cursor: pointer;
+            margin-top: -6px;
+        }
+
+        input[type="range"]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #e2e8f0;
+            border-radius: 2px;
+        }
+
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark font-display text-slate-800 dark:text-slate-100 min-h-screen flex flex-col">
+    <!-- Navbar -->
+    <header class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center gap-2">
+                    <div class="bg-primary/10 p-2 rounded-lg">
+                        <span class="material-icons text-primary">pets</span>
+                    </div>
+                    <span class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">PetFriend
+                        Connect</span>
+                </div>
+                <!-- Desktop Nav -->
+                <nav class="hidden md:flex space-x-8">
+                    <a class="text-primary font-medium" href="encontrar-cuidadores.html">Encontrar Cuidadores</a>
+                    <a class="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors"
+                        href="meus-pets.html">Meus Pets</a>
+                    <a class="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors"
+                        href="minhas-reservas.html">Minhas Reservas</a>
+                </nav>
+                <!-- User Actions -->
+                <div class="flex items-center gap-4">
+                    <button class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-white">
+                        <span class="material-icons">favorite_border</span>
+                    </button>
+                    <button
+                        class="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-200 hover:text-primary transition-colors">
+                        <img alt="Profile Avatar"
+                            class="h-8 w-8 rounded-full object-cover border border-slate-200 dark:border-slate-700"
+                            data-alt="User profile avatar of a smiling woman"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuD1GgCdtxIW8xPELvQJbh9qaJqxnG6fUjdYaTBe5XPh1i_JuriaVomNJ43ZPFrizUvKjWb90fT3GhOCfEAfiWa_55BlONisN40gPjUb6diHQGQSJZeYLgJeRI0tzTMwGzJ71MDawi1F8ygRxpVXzGrWgoFUR1YI6l1F-n5Epmop_j6sb8TMBAhSj-6cXoojYn4BB-7MgY6c9UX5lB5mxp2U5zn-a5i5uzwvJfbeKDFBHvqlujISrDb1W9YvY58757oIBROMhnxSs8o" />
+                        <span>Maria</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- Search Bar Section -->
+    <div class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 py-4 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row gap-4">
+                <!-- Location Input -->
+                <div class="relative flex-grow md:w-1/3">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <span class="material-icons text-slate-400 text-xl">location_on</span>
+                    </div>
+                    <input
+                        class="block w-full pl-10 pr-3 py-2.5 border border-slate-200 dark:border-slate-700 rounded-lg leading-5 bg-slate-50 dark:bg-slate-800 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary sm:text-sm"
+                        placeholder="Zip code or neighborhood (e.g. Vila Madalena)" type="text" value="São Paulo, SP" />
+                </div>
+                <!-- Service Type Multi-Select (Simulated) -->
+                <div class="relative flex-grow md:w-1/3 group">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <span class="material-icons text-slate-400 text-xl">pets</span>
+                    </div>
+                    <button
+                        class="w-full text-left pl-10 pr-10 py-2.5 border border-slate-200 dark:border-slate-700 rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-sm flex items-center justify-between focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary">
+                        <span class="truncate">Walking, Boarding</span>
+                        <span class="material-icons text-slate-400 text-xl">expand_more</span>
+                    </button>
+                </div>
+                <!-- Dates Input -->
+                <div class="relative flex-grow md:w-1/4">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <span class="material-icons text-slate-400 text-xl">date_range</span>
+                    </div>
+                    <input
+                        class="block w-full pl-10 pr-3 py-2.5 border border-slate-200 dark:border-slate-700 rounded-lg leading-5 bg-slate-50 dark:bg-slate-800 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary sm:text-sm"
+                        placeholder="Select dates" type="text" />
+                </div>
+                <!-- Search Button -->
+                <button
+                    class="md:w-auto px-6 py-2.5 bg-primary hover:bg-primary-dark text-white font-medium rounded-lg shadow-sm transition-colors flex items-center justify-center gap-2">
+                    <span class="material-icons text-sm">search</span>
+                    Search
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <!-- Sidebar Filters -->
+        <aside class="hidden lg:block lg:col-span-1 space-y-8">
+            <div class="sticky top-24">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-lg font-bold text-slate-900 dark:text-white">
+                        Filters
+                    </h2>
+                    <button class="text-sm text-primary hover:underline">Reset</button>
+                </div>
+                <!-- Price Range Filter -->
+                <div
+                    class="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm mb-6">
+                    <h3 class="text-sm font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                        <span class="material-icons text-primary text-base">payments</span>
+                        Price Range (per night)
+                    </h3>
+                    <div class="px-2">
+                        <div class="flex justify-between text-xs text-slate-500 mb-2">
+                            <span>R$ 20</span>
+                            <span>R$ 200+</span>
+                        </div>
+                        <input class="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer" max="200"
+                            min="20" type="range" value="80" />
+                        <div class="mt-4 flex gap-3">
+                            <div class="w-1/2">
+                                <label class="text-xs text-slate-400">Min</label>
+                                <div class="relative">
+                                    <span class="absolute left-2 top-2 text-slate-400 text-sm">R$</span>
+                                    <input
+                                        class="w-full pl-8 py-1.5 text-sm border border-slate-200 dark:border-slate-700 rounded bg-slate-50 dark:bg-slate-800"
+                                        type="number" value="20" />
+                                </div>
+                            </div>
+                            <div class="w-1/2">
+                                <label class="text-xs text-slate-400">Max</label>
+                                <div class="relative">
+                                    <span class="absolute left-2 top-2 text-slate-400 text-sm">R$</span>
+                                    <input
+                                        class="w-full pl-8 py-1.5 text-sm border border-slate-200 dark:border-slate-700 rounded bg-slate-50 dark:bg-slate-800"
+                                        type="number" value="120" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Rating Filter -->
+                <div
+                    class="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm mb-6">
+                    <h3 class="text-sm font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
+                        <span class="material-icons text-primary text-base">star</span>
+                        Rating
+                    </h3>
+                    <div class="space-y-2">
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <input class="h-4 w-4 text-primary border-slate-300 rounded focus:ring-primary"
+                                type="checkbox" />
+                            <span
+                                class="flex items-center text-sm text-slate-600 dark:text-slate-300 group-hover:text-primary transition-colors">
+                                <span class="material-icons text-yellow-400 text-sm mr-1">star</span>
+                                5 Stars only
+                            </span>
+                        </label>
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <input checked="" class="h-4 w-4 text-primary border-slate-300 rounded focus:ring-primary"
+                                type="checkbox" />
+                            <span
+                                class="flex items-center text-sm text-slate-600 dark:text-slate-300 group-hover:text-primary transition-colors">
+                                <span class="material-icons text-yellow-400 text-sm mr-1">star</span>
+                                4.5 Stars &amp; up
+                            </span>
+                        </label>
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <input class="h-4 w-4 text-primary border-slate-300 rounded focus:ring-primary"
+                                type="checkbox" />
+                            <span
+                                class="flex items-center text-sm text-slate-600 dark:text-slate-300 group-hover:text-primary transition-colors">
+                                <span class="material-icons text-yellow-400 text-sm mr-1">star</span>
+                                4 Stars &amp; up
+                            </span>
+                        </label>
+                    </div>
+                </div>
+                <!-- Additional Amenities -->
+                <div
+                    class="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                    <h3 class="text-sm font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
+                        <span class="material-icons text-primary text-base">add_circle_outline</span>
+                        More Filters
+                    </h3>
+                    <div class="space-y-2">
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input class="h-4 w-4 text-primary border-slate-300 rounded focus:ring-primary"
+                                type="checkbox" />
+                            <span class="text-sm text-slate-600 dark:text-slate-300">Has fenced yard</span>
+                        </label>
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input class="h-4 w-4 text-primary border-slate-300 rounded focus:ring-primary"
+                                type="checkbox" />
+                            <span class="text-sm text-slate-600 dark:text-slate-300">No other pets</span>
+                        </label>
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input class="h-4 w-4 text-primary border-slate-300 rounded focus:ring-primary"
+                                type="checkbox" />
+                            <span class="text-sm text-slate-600 dark:text-slate-300">Puppy care exp.</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        <!-- Search Results Grid -->
+        <div class="lg:col-span-3">
+            <div class="flex justify-between items-center mb-6">
+                <p class="text-slate-500 dark:text-slate-400">
+                    Showing
+                    <span class="font-semibold text-slate-900 dark:text-white">142</span>
+                    caregivers near
+                    <span class="font-semibold text-slate-900 dark:text-white">São Paulo</span>
+                </p>
+                <div class="flex items-center gap-2">
+                    <span class="text-sm text-slate-500 dark:text-slate-400">Sort by:</span>
+                    <select
+                        class="text-sm border-none bg-transparent font-medium text-slate-900 dark:text-white focus:ring-0 cursor-pointer">
+                        <option>Recommended</option>
+                        <option>Price: Low to High</option>
+                        <option>Price: High to Low</option>
+                        <option>Rating</option>
+                    </select>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                <!-- Card 1 -->
+                <div
+                    class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden hover:shadow-lg hover:border-primary/30 transition-all duration-300 group flex flex-col">
+                    <div class="relative h-48 bg-slate-100">
+                        <img alt="Happy dog looking at camera in park" class="w-full h-full object-cover"
+                            data-alt="Happy dog looking at camera in park"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_Oyp7m-_dXjJ7o7-Ee4YyG8TPOK3Qt3ZOhOySOHNBMBBKB_NBV1knIh5Z782JukVbJkYDGrekqMlBSR0wOSwrW7pU8YdqZQ7Dap76NZR1SYquXkI7o_e1o_dJNhkuy8eG-pC_ISy2m8SCZ_tcVLgkZBNb5RgJ6V-57U-uJ50KmC-t1lN2Yfzjp1krgroeLaA30Vx8aUeKy9Nd1elj3m538699Qy7P6M8VuSkijbNu544m1U_xNFVCK60ExYSxieQ1gh6adEEzJaE" />
+                        <div class="absolute top-3 right-3">
+                            <button
+                                class="bg-white/90 dark:bg-slate-800/90 p-1.5 rounded-full hover:text-red-500 transition-colors shadow-sm">
+                                <span class="material-icons text-xl">favorite_border</span>
+                            </button>
+                        </div>
+                        <div class="absolute -bottom-10 left-4">
+                            <img alt="Caregiver profile photo"
+                                class="w-20 h-20 rounded-full border-4 border-white dark:border-slate-900 object-cover shadow-sm"
+                                data-alt="Caregiver profile photo smiling woman"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBer3D05oeSpnSogYidOU_TfhvpN-vPtTOiKfIo6iQbG31SmwABGPRFE_qHeSQio4V0pHpAmg-F8VzQsXUiE9xxILPgMe634gFzJfX55bK1u12GdPXJ6RYCxGrYsgOd4vqQh_cEDu-ZfK7WswZla6sMiXLl0JpPUeaXdvaU26EhnQSMtuBWigXcc7-XGyR508dIyl3bYg8eg2aS6Jj6HP_73kQOy_k4SslX_sMSDCASrJynxVvWZl42bmePu2dYD0BCg0Dff_bO2mk" />
+                        </div>
+                    </div>
+                    <div class="p-4 pt-12 flex flex-col flex-grow">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-1">
+                                    Ana Silva
+                                    <span class="material-icons text-success text-base" title="Verified">verified</span>
+                                </h3>
+                                <p class="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                                    <span class="material-icons text-xs">location_on</span>
+                                    Vila Madalena, SP
+                                </p>
+                            </div>
+                            <div class="flex flex-col items-end">
+                                <div class="text-lg font-bold text-primary">R$ 50</div>
+                                <div class="text-xs text-slate-500">per night</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center mb-3">
+                            <span class="material-icons text-yellow-400 text-lg">star</span>
+                            <span class="font-bold text-slate-900 dark:text-white ml-1">4.9</span>
+                            <span class="text-slate-400 text-sm ml-1">(124 reviews)</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span
+                                class="px-2 py-1 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 text-xs font-medium rounded">Walking</span>
+                            <span
+                                class="px-2 py-1 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 text-xs font-medium rounded">Boarding</span>
+                            <span
+                                class="px-2 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs font-medium rounded">+2
+                                more</span>
+                        </div>
+                        <div class="mt-auto pt-4 border-t border-slate-100 dark:border-slate-800">
+                            <p class="text-sm text-slate-600 dark:text-slate-300 line-clamp-2 mb-4 italic">
+                                "I absolutely love dogs and have a big fenced yard for them to
+                                run around in..."
+                            </p>
+                            <button
+                                class="w-full py-2.5 bg-white border border-primary text-primary hover:bg-primary hover:text-white font-medium rounded-lg transition-colors duration-200">
+                                Ver perfil
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Card 2 -->
+                <div
+                    class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden hover:shadow-lg hover:border-primary/30 transition-all duration-300 group flex flex-col">
+                    <div class="relative h-48 bg-slate-100">
+                        <img alt="Dog sitting on couch" class="w-full h-full object-cover"
+                            data-alt="Dog sitting comfortably on a couch"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAj1DL0jRu1dxDYHUIWiG2Lw4P1Kmsny4MNweO2mZnd4CDwF9lIm33ZS13iR0ZLZXBQI-LxF5cl8_aA3J8dwnGsHOIM3tskvgq7ax7Yoxa9hon5Fhkp0Hu9hoqGim_eNiEu9r2FiMvY284HqM0NqlrrB0pK4cGK6LUl7eStswVfBEam5b7TazRoE1clL5E-lDtni9jYoHqd9oRLLdnUNcU193AIUZQaJ4m9JVpSyORNssFQZzfdt35l5bsUZwH_zGYdgHY62JexI38" />
+                        <div class="absolute top-3 right-3">
+                            <button
+                                class="bg-white/90 dark:bg-slate-800/90 p-1.5 rounded-full hover:text-red-500 transition-colors shadow-sm">
+                                <span class="material-icons text-xl">favorite_border</span>
+                            </button>
+                        </div>
+                        <div class="absolute -bottom-10 left-4">
+                            <img alt="Caregiver profile photo"
+                                class="w-20 h-20 rounded-full border-4 border-white dark:border-slate-900 object-cover shadow-sm"
+                                data-alt="Caregiver profile photo serious man"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBEpd7k0CIebfo3c91T2TzhFqvio6N9J6DSIV66Xk7-HFOI9O4n_9M3dHVO54vNMqqhYYWW1Y1hmjxxm-z5MX3NmG0SbslCsFrnsjVPV6OvDON-gkuWJSB8jID2Fre-feQ5qBFlc7qEmGvgMgxkvpcbXAu3ON6AAWdYRU4Dm6E3BlsjwUppCINlTVKt5LXJ5FfDoIOgV4FKEyeq7zfmD5P50lBO7alojQY2vjpNKLaFkc9Jq6lEvxJmhUusuE29D1e5V8yGx8ysTI0" />
+                        </div>
+                    </div>
+                    <div class="p-4 pt-12 flex flex-col flex-grow">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-1">
+                                    Carlos Mendes
+                                </h3>
+                                <p class="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                                    <span class="material-icons text-xs">location_on</span>
+                                    Pinheiros, SP
+                                </p>
+                            </div>
+                            <div class="flex flex-col items-end">
+                                <div class="text-lg font-bold text-primary">R$ 65</div>
+                                <div class="text-xs text-slate-500">per night</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center mb-3">
+                            <span class="material-icons text-yellow-400 text-lg">star</span>
+                            <span class="font-bold text-slate-900 dark:text-white ml-1">5.0</span>
+                            <span class="text-slate-400 text-sm ml-1">(42 reviews)</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span
+                                class="px-2 py-1 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 text-xs font-medium rounded">Walking</span>
+                            <span
+                                class="px-2 py-1 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 text-xs font-medium rounded">Day
+                                Care</span>
+                        </div>
+                        <div class="mt-auto pt-4 border-t border-slate-100 dark:border-slate-800">
+                            <p class="text-sm text-slate-600 dark:text-slate-300 line-clamp-2 mb-4 italic">
+                                "Professional trainer with 5 years of experience. I specialize
+                                in energetic dogs..."
+                            </p>
+                            <button
+                                class="w-full py-2.5 bg-white border border-primary text-primary hover:bg-primary hover:text-white font-medium rounded-lg transition-colors duration-200">
+                                Ver perfil
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Card 3 -->
+                <div
+                    class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden hover:shadow-lg hover:border-primary/30 transition-all duration-300 group flex flex-col">
+                    <div class="relative h-48 bg-slate-100">
+                        <img alt="Two dogs playing in garden" class="w-full h-full object-cover"
+                            data-alt="Two dogs playing happily in garden"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuA4XIaVgAk6fyDGos4OtHqLBp7GHCCSkbAfQgrTovb38AASfBEm-9MBknpiYp4yoJs-yNzFLTxbbHDGqoqrRQZ-Op5Ln4wG9n5uKFiIEv1BDrOgKh0MFIv-TyFPQ9lHNI1U0sx6_JxNJWReNRoBW3siNLqaMMl92fVvZLFT3UFJGz_ZgyZirBjev9EejnmWOzPhbZUTIFg2m2m2Voqa-Hu6LAqCCvY3vYzQdJ6fU73-igPS1LVzNb1y4AAeX_P16_P6LiHGNofVaqw" />
+                        <div class="absolute top-3 right-3">
+                            <button
+                                class="bg-white/90 dark:bg-slate-800/90 p-1.5 rounded-full hover:text-red-500 transition-colors shadow-sm">
+                                <span class="material-icons text-xl">favorite_border</span>
+                            </button>
+                        </div>
+                        <div class="absolute -bottom-10 left-4">
+                            <img alt="Caregiver profile photo"
+                                class="w-20 h-20 rounded-full border-4 border-white dark:border-slate-900 object-cover shadow-sm"
+                                data-alt="Caregiver profile photo friendly woman"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8gywIbaTuq2KAAkcOsh1zsaCmWZOWi_MMTMt6ZzWHaBgm-HNKOfobJSk7VTPFTiVkU-MUof9XMMZKn6gsXYtrX1yUQBMdz-ZKE6fVh_df_ZlAU4I4VzQf3OUdR4KqllvFHhRU6T5xZbI1z36DTatuTSuET1bKofzCHfQAkiH3w-Qr-hOzc8I-rac4yISHovfryejKo2t6qNHokrvs2WTt_f5NPx2hI-pL7hBg3Uy1EBSnJLiEileHZD4g-vKHy2VI_d56ypBCX4M" />
+                        </div>
+                    </div>
+                    <div class="p-4 pt-12 flex flex-col flex-grow">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-1">
+                                    Mariana Costa
+                                    <span class="material-icons text-success text-base" title="Verified">verified</span>
+                                </h3>
+                                <p class="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                                    <span class="material-icons text-xs">location_on</span>
+                                    Jardins, SP
+                                </p>
+                            </div>
+                            <div class="flex flex-col items-end">
+                                <div class="text-lg font-bold text-primary">R$ 90</div>
+                                <div class="text-xs text-slate-500">per night</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center mb-3">
+                            <span class="material-icons text-yellow-400 text-lg">star</span>
+                            <span class="font-bold text-slate-900 dark:text-white ml-1">4.7</span>
+                            <span class="text-slate-400 text-sm ml-1">(89 reviews)</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span
+                                class="px-2 py-1 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 text-xs font-medium rounded">Boarding</span>
+                            <span
+                                class="px-2 py-1 bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300 text-xs font-medium rounded">Sitting</span>
+                        </div>
+                        <div class="mt-auto pt-4 border-t border-slate-100 dark:border-slate-800">
+                            <p class="text-sm text-slate-600 dark:text-slate-300 line-clamp-2 mb-4 italic">
+                                "Experienced vet student offering loving care. I can
+                                administer medications..."
+                            </p>
+                            <button
+                                class="w-full py-2.5 bg-white border border-primary text-primary hover:bg-primary hover:text-white font-medium rounded-lg transition-colors duration-200">
+                                Ver perfil
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Card 4 -->
+                <div
+                    class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden hover:shadow-lg hover:border-primary/30 transition-all duration-300 group flex flex-col">
+                    <div class="relative h-48 bg-slate-100">
+                        <img alt="Dog running in field" class="w-full h-full object-cover"
+                            data-alt="Dog running joyfully in an open field"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAP_lGF1PVWZsc7zU98J3_pDYWiOCtj0g1MEZ0_WAGnnEL1u9gpXC9k_7QwbrZJZUSVfIPxhXLfco7DgPae-zBUDpUAj2e8h4obHPthNmymQVI8wZzdqVSrnkjKFH5RgruvAO2NMzskOOovX24xcNkUxy6AFG7Gow-9v6pTWTLBxeaXXgZlFOvhs_v_FMvgnaWC6dxTpGK3lgcjSOVL5mSgu7vMXjXRwnrGDWLy0XyQOEglxMJbmvzuhTyPLZtEN4tvEx1JfAPLDvg" />
+                        <div class="absolute top-3 right-3">
+                            <button
+                                class="bg-white/90 dark:bg-slate-800/90 p-1.5 rounded-full hover:text-red-500 transition-colors shadow-sm">
+                                <span class="material-icons text-xl">favorite_border</span>
+                            </button>
+                        </div>
+                        <div class="absolute -bottom-10 left-4">
+                            <img alt="Caregiver profile photo"
+                                class="w-20 h-20 rounded-full border-4 border-white dark:border-slate-900 object-cover shadow-sm"
+                                data-alt="Caregiver profile photo smiling man"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlJiLF-8zrR88X14JWnimbrMfUpcvU04hisrZN0pGEjkCrX_cPZbFnAmqdKCl_-aX3OxAVSRqAwhuGzyNbjgPnwCnxx4snxR7S4YGTh2EPjIanyyf4FrAkcZ_YSjIL7rtwWGfXlcBLekXE9HFHGRcO0W3nQq64Wn1O7XNNWm9LTt8Fuupe9d4RVaVunTjcmtmLHH7QTyXttsTR1zEoNJt73xuWU1bMrHEzpCJbrhbUHhZZ1YXsmHarJ96WdMQ7UYzdaFdfUcEllDU" />
+                        </div>
+                    </div>
+                    <div class="p-4 pt-12 flex flex-col flex-grow">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-1">
+                                    Pedro Santos
+                                </h3>
+                                <p class="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                                    <span class="material-icons text-xs">location_on</span>
+                                    Moema, SP
+                                </p>
+                            </div>
+                            <div class="flex flex-col items-end">
+                                <div class="text-lg font-bold text-primary">R$ 45</div>
+                                <div class="text-xs text-slate-500">per walk</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center mb-3">
+                            <span class="material-icons text-yellow-400 text-lg">star</span>
+                            <span class="font-bold text-slate-900 dark:text-white ml-1">4.8</span>
+                            <span class="text-slate-400 text-sm ml-1">(15 reviews)</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span
+                                class="px-2 py-1 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 text-xs font-medium rounded">Walking</span>
+                        </div>
+                        <div class="mt-auto pt-4 border-t border-slate-100 dark:border-slate-800">
+                            <p class="text-sm text-slate-600 dark:text-slate-300 line-clamp-2 mb-4 italic">
+                                "Avid runner looking for a companion to join me on my morning
+                                jogs around Ibirapuera..."
+                            </p>
+                            <button
+                                class="w-full py-2.5 bg-white border border-primary text-primary hover:bg-primary hover:text-white font-medium rounded-lg transition-colors duration-200">
+                                Ver perfil
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Card 5 -->
+                <div
+                    class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden hover:shadow-lg hover:border-primary/30 transition-all duration-300 group flex flex-col">
+                    <div class="relative h-48 bg-slate-100">
+                        <img alt="Cat resting on sofa" class="w-full h-full object-cover"
+                            data-alt="Fluffy cat resting peacefully on sofa"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuB4wGpmE7rl7Lr_Cz9bXLEOMa_692kWkXlpXurFiZrX0m3f_LoJakcON7KKRtWIByUwvReq57TilGXDF2P5uN0YBxj1XgqTU2FI-Nkqlig7-3QvUxXQ4iazLV8IAnzYvt4LC-QXxHpBlNLNXWXspF_SM1hYgKAo-b0fg3EtgwCohbpFMUcS_cQk_WgKKfXRV_AljnpA4jwzAjw88MZRKnElUXHSaBf3yyyRrEIMa_k6Lk6z7ikpJ8ZItG615Mq88HDKagBRl1mRX7E" />
+                        <div class="absolute top-3 right-3">
+                            <button
+                                class="bg-white/90 dark:bg-slate-800/90 p-1.5 rounded-full hover:text-red-500 transition-colors shadow-sm">
+                                <span class="material-icons text-xl">favorite_border</span>
+                            </button>
+                        </div>
+                        <div class="absolute -bottom-10 left-4">
+                            <img alt="Caregiver profile photo"
+                                class="w-20 h-20 rounded-full border-4 border-white dark:border-slate-900 object-cover shadow-sm"
+                                data-alt="Caregiver profile photo stylish woman"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQ72heXzIuwipV32AiTFUZQ08mhU21JuXOiaq6MLdbDfR7g2OKXCdclyczQaJeltCAinT2T3Es0wX4jMHwtR73SZ211obxGiIQ_aKK_cQGgAtxiMC2g-siRJSLdbSrTR-XO3IgWJGIwSbuosc1HrCnwcJiuvwREz0etC7ukC1vkUiazs-MSpOMSvdJC2K3y4DimkUJIlVpF-ic-4-RPPUqX9gGGK6861_MyIRW3av39AGZc3GxiOvv1mWmWVuNRVJUY53nU8O-09o" />
+                        </div>
+                    </div>
+                    <div class="p-4 pt-12 flex flex-col flex-grow">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-1">
+                                    Julia Lima
+                                    <span class="material-icons text-success text-base" title="Verified">verified</span>
+                                </h3>
+                                <p class="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                                    <span class="material-icons text-xs">location_on</span>
+                                    Itaim Bibi, SP
+                                </p>
+                            </div>
+                            <div class="flex flex-col items-end">
+                                <div class="text-lg font-bold text-primary">R$ 70</div>
+                                <div class="text-xs text-slate-500">per visit</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center mb-3">
+                            <span class="material-icons text-yellow-400 text-lg">star</span>
+                            <span class="font-bold text-slate-900 dark:text-white ml-1">5.0</span>
+                            <span class="text-slate-400 text-sm ml-1">(210 reviews)</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span
+                                class="px-2 py-1 bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300 text-xs font-medium rounded">Sitting</span>
+                            <span
+                                class="px-2 py-1 bg-pink-50 dark:bg-pink-900/20 text-pink-700 dark:text-pink-300 text-xs font-medium rounded">Cat
+                                Care</span>
+                        </div>
+                        <div class="mt-auto pt-4 border-t border-slate-100 dark:border-slate-800">
+                            <p class="text-sm text-slate-600 dark:text-slate-300 line-clamp-2 mb-4 italic">
+                                "Cat whisperer! I specialize in shy or anxious cats and making
+                                them feel safe..."
+                            </p>
+                            <button
+                                class="w-full py-2.5 bg-white border border-primary text-primary hover:bg-primary hover:text-white font-medium rounded-lg transition-colors duration-200">
+                                Ver perfil
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Card 6 -->
+                <div
+                    class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden hover:shadow-lg hover:border-primary/30 transition-all duration-300 group flex flex-col">
+                    <div class="relative h-48 bg-slate-100">
+                        <img alt="Two dogs running on beach" class="w-full h-full object-cover"
+                            data-alt="Two dogs running joyfully on beach"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuByGM2i7V3J-XtrCLFCkl5ByqgpjiPfYDwKrtMCAzWAsEkTPuapX1W0Qa2MYhqLKMQzKLXusZ0zwkxuR7-mDuLvL2B7PhCt1wfYm3UAyroL1J2KMk-a1wU3tHwq5VFPr_7W9iCa3y4e-5FYUOYFW_JhvQCF93eadh6q1mrNori9NZeL6ulUorttdnW9oBir6DRmas-coTixJhFoizvlu4JTwg9WSF3JyNsy0ZDvcFTYDA6WPuORnnnGkNQmfRrECR-9SZltI8MEuvk" />
+                        <div class="absolute top-3 right-3">
+                            <button
+                                class="bg-white/90 dark:bg-slate-800/90 p-1.5 rounded-full hover:text-red-500 transition-colors shadow-sm">
+                                <span class="material-icons text-xl">favorite_border</span>
+                            </button>
+                        </div>
+                        <div class="absolute -bottom-10 left-4">
+                            <img alt="Caregiver profile photo"
+                                class="w-20 h-20 rounded-full border-4 border-white dark:border-slate-900 object-cover shadow-sm"
+                                data-alt="Caregiver profile photo serious man with glasses"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCXx9Qn_IzHvr2jD-vCprvOkoyd8eOMLh-aGdl5sw01fuGGCYyLn5cVxReCbNuzBLNrF0RfRKaTlQF_wGEOt6yP7zL-KV7OD1wXwVUqyZlGa-qd079SYIGT2XY98euNfN_5YNVS2upopO_J4Islymt3fTpMxXsoVjX1INp0gj0Wl05nsfpc5KV5Q82SYGVN7cJ-d2A7Bc7wjWgycJqHYB9lXkHcuaLEVUnyAQ9phTFsPrCQzqSpmKN9SDpEolbt9V-j2c7ldMtTUwg" />
+                        </div>
+                    </div>
+                    <div class="p-4 pt-12 flex flex-col flex-grow">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-1">
+                                    Roberto Jr.
+                                </h3>
+                                <p class="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                                    <span class="material-icons text-xs">location_on</span>
+                                    Perdizes, SP
+                                </p>
+                            </div>
+                            <div class="flex flex-col items-end">
+                                <div class="text-lg font-bold text-primary">R$ 55</div>
+                                <div class="text-xs text-slate-500">per walk</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center mb-3">
+                            <span class="material-icons text-yellow-400 text-lg">star</span>
+                            <span class="font-bold text-slate-900 dark:text-white ml-1">4.6</span>
+                            <span class="text-slate-400 text-sm ml-1">(34 reviews)</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span
+                                class="px-2 py-1 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 text-xs font-medium rounded">Walking</span>
+                            <span
+                                class="px-2 py-1 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 text-xs font-medium rounded">Day
+                                Care</span>
+                        </div>
+                        <div class="mt-auto pt-4 border-t border-slate-100 dark:border-slate-800">
+                            <p class="text-sm text-slate-600 dark:text-slate-300 line-clamp-2 mb-4 italic">
+                                "Passionate about animal behavior and providing structured,
+                                fun walks for high energy dogs."
+                            </p>
+                            <button
+                                class="w-full py-2.5 bg-white border border-primary text-primary hover:bg-primary hover:text-white font-medium rounded-lg transition-colors duration-200">
+                                Ver perfil
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Pagination -->
+            <div class="flex items-center justify-between border-t border-slate-200 dark:border-slate-800 mt-10 pt-6">
+                <div class="flex flex-1 justify-between sm:hidden">
+                    <a class="relative inline-flex items-center rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                        href="#">Previous</a>
+                    <a class="relative ml-3 inline-flex items-center rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                        href="#">Next</a>
+                </div>
+                <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+                    <div>
+                        <p class="text-sm text-slate-700 dark:text-slate-300">
+                            Showing <span class="font-medium">1</span> to
+                            <span class="font-medium">6</span> of
+                            <span class="font-medium">142</span> results
+                        </p>
+                    </div>
+                    <div>
+                        <nav aria-label="Pagination" class="isolate inline-flex -space-x-px rounded-md shadow-sm">
+                            <a class="relative inline-flex items-center rounded-l-md px-2 py-2 text-slate-400 ring-1 ring-inset ring-slate-300 dark:ring-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 focus:z-20 focus:outline-offset-0"
+                                href="#">
+                                <span class="sr-only">Previous</span>
+                                <span class="material-icons text-sm">chevron_left</span>
+                            </a>
+                            <a aria-current="page"
+                                class="relative z-10 inline-flex items-center bg-primary px-4 py-2 text-sm font-semibold text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                                href="#">1</a>
+                            <a class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-slate-900 dark:text-slate-200 ring-1 ring-inset ring-slate-300 dark:ring-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 focus:z-20 focus:outline-offset-0"
+                                href="#">2</a>
+                            <a class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-slate-900 dark:text-slate-200 ring-1 ring-inset ring-slate-300 dark:ring-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 focus:z-20 focus:outline-offset-0"
+                                href="#">3</a>
+                            <span
+                                class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-slate-700 dark:text-slate-400 ring-1 ring-inset ring-slate-300 dark:ring-slate-700 focus:outline-offset-0">...</span>
+                            <a class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-slate-900 dark:text-slate-200 ring-1 ring-inset ring-slate-300 dark:ring-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 focus:z-20 focus:outline-offset-0"
+                                href="#">12</a>
+                            <a class="relative inline-flex items-center rounded-r-md px-2 py-2 text-slate-400 ring-1 ring-inset ring-slate-300 dark:ring-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 focus:z-20 focus:outline-offset-0"
+                                href="#">
+                                <span class="sr-only">Next</span>
+                                <span class="material-icons text-sm">chevron_right</span>
+                            </a>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <!-- Footer Simplified -->
+    <footer class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 mt-auto">
+        <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+            <p class="text-center text-sm text-slate-400">
+                © 2023 PetFriend Connect. All rights reserved.
+            </p>
+        </div>
+    </footer>
+</body>
+
+</html>

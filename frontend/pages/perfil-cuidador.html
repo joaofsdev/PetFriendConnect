@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Perfil do Cuidador - PetFriend Connect</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3c83f6",
+                        "primary-dark": "#2563eb",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#101722",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-100 font-display antialiased min-h-screen flex flex-col">
+    <!-- Navbar -->
+    <nav
+        class="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center gap-2">
+                        <span class="material-icons text-primary text-3xl">pets</span>
+                        <span class="font-bold text-xl tracking-tight text-slate-900 dark:text-white">PetFriend
+                            Connect</span>
+                    </div>
+                    <div class="hidden md:ml-10 md:flex md:space-x-8">
+                        <a class="border-b-2 border-primary text-slate-900 dark:text-white inline-flex items-center px-1 pt-1 text-sm font-medium"
+                            href="encontrar-cuidadores.html">Encontrar Cuidadores</a>
+                        <a class="border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                            href="meus-pets.html">Meus Pets</a>
+                        <a class="border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                            href="minhas-reservas.html">Reservas</a>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button class="p-1 rounded-full text-slate-400 hover:text-slate-500 focus:outline-none">
+                        <span class="sr-only">Ver notificações</span>
+                        <span class="material-icons">notifications</span>
+                    </button>
+                    <div class="flex items-center gap-2">
+                        <img alt="User profile" class="h-8 w-8 rounded-full bg-slate-100 object-cover"
+                            data-alt="Small thumbnail of a smiling woman"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuD3Mli0_dDP7SEQ3Ms2u3mvicJ30TpYOJ4s3ktf6cAjEtrR9XS954I7ivR1obIeEhA-GsCMuysxh1MkPwoEVIsX1HZS9Rbg7BqFzrQCe6MQlElsjEwv2RIUEdcXxQ3RpGM8vMedNy3rJy91bTy7DErcoSW3s9zY42e8Zj4PzEeLNT1M1gQW-f95O7naRLZkDqZaBXiXNoBL-frySzWYX7R3bfADb6PGumxAac12hVZEge4frbRyLwabv8oDXxopD3nmgQW7Uhw5Xsc" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <!-- Main Content -->
+    <main class="flex-grow py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+        <!-- Hero Profile Section -->
+        <div
+            class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-8 mb-8">
+            <div class="flex flex-col md:flex-row gap-8 items-start">
+                <!-- Profile Image -->
+                <div class="flex-shrink-0 relative">
+                    <img alt="Carlos Silva Caregiver"
+                        class="h-32 w-32 md:h-40 md:w-40 rounded-full object-cover border-4 border-white dark:border-slate-800 shadow-md"
+                        data-alt="Portrait of a friendly man smiling outdoors"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDnB0gYyLH49PxdKkDfROB9oaf29jhnQRBTZAcI0H-HzAEaVf6ULSeOfmhQQpaITWphyxXY7Y849RQBmsPdEW4h6LmYymb4zOBXRlYRsXpwEnI5pPP7Vzlqhb1TKjY0Ay5jxh9gCkgSS9SFYPflS23RYH4FrZ3U8B9lG30YrzIhAmYYjaj63aoPyCJunUqL-pq475J34kfQiu3ujl3xbDWEinfyPxtmiVSXumybhhsr11R_m0UaMGJ0Av2kg3V5i3alL5348UTXGoI" />
+                    <div class="absolute bottom-1 right-1 bg-green-500 border-2 border-white dark:border-slate-900 h-6 w-6 rounded-full flex items-center justify-center"
+                        title="Verified">
+                        <span class="material-icons text-white text-[14px]">verified</span>
+                    </div>
+                </div>
+                <!-- Info -->
+                <div class="flex-1 min-w-0">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-2">
+                        <h1 class="text-3xl font-bold text-slate-900 dark:text-white truncate">Carlos Silva</h1>
+                        <div class="mt-2 sm:mt-0 flex items-center bg-primary/10 px-3 py-1 rounded-full">
+                            <span class="text-sm font-semibold text-primary">Large Dog Specialist</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4 mb-4 text-sm">
+                        <div class="flex items-center text-yellow-500">
+                            <span class="material-icons text-xl">star</span>
+                            <span class="material-icons text-xl">star</span>
+                            <span class="material-icons text-xl">star</span>
+                            <span class="material-icons text-xl">star</span>
+                            <span class="material-icons text-xl">star</span>
+                            <span class="ml-1 font-bold text-slate-900 dark:text-white text-base">5.0</span>
+                            <span class="ml-1 text-slate-500 dark:text-slate-400">(124 reviews)</span>
+                        </div>
+                        <span class="text-slate-300 dark:text-slate-700">|</span>
+                        <div class="flex items-center text-slate-500 dark:text-slate-400">
+                            <span class="material-icons text-lg mr-1">location_on</span>
+                            Sao Paulo, SP
+                        </div>
+                    </div>
+                    <p class="text-slate-600 dark:text-slate-300 text-lg leading-relaxed max-w-3xl">
+                        Hi, I'm Carlos! With over 5 years of experience, I specialize in handling energetic large dogs
+                        like German Shepherds and Golden Retrievers. I believe every dog deserves an adventure, not just
+                        a walk. Certified in pet first aid and fully insured.
+                    </p>
+                    <div class="mt-6 flex gap-3">
+                        <span
+                            class="inline-flex items-center px-3 py-1 rounded-lg text-sm font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                            <span class="material-icons text-sm mr-1">check_circle</span> Reliable
+                        </span>
+                        <span
+                            class="inline-flex items-center px-3 py-1 rounded-lg text-sm font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                            <span class="material-icons text-sm mr-1">check_circle</span> Active
+                        </span>
+                        <span
+                            class="inline-flex items-center px-3 py-1 rounded-lg text-sm font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                            <span class="material-icons text-sm mr-1">check_circle</span> Experienced
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Split Layout: Services & Booking -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+            <!-- Left Column: Services & Details -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Services List -->
+                <div
+                    class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
+                    <div class="px-6 py-5 border-b border-slate-100 dark:border-slate-800">
+                        <h2 class="text-xl font-bold text-slate-900 dark:text-white">Services &amp; Pricing</h2>
+                    </div>
+                    <div class="divide-y divide-slate-100 dark:divide-slate-800">
+                        <!-- Service Item 1 -->
+                        <div
+                            class="p-6 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group cursor-pointer flex items-center justify-between">
+                            <div class="flex items-start gap-4">
+                                <div
+                                    class="p-3 rounded-lg bg-blue-50 dark:bg-slate-800 text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+                                    <span class="material-icons text-2xl">directions_walk</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Dog Walking (1
+                                        Hour)</h3>
+                                    <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">A vigorous walk in the
+                                        park, perfect for high energy breeds. Includes poop bags and water.</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <span class="block text-xl font-bold text-slate-900 dark:text-white">$25</span>
+                                <span class="text-xs text-slate-400">per walk</span>
+                            </div>
+                        </div>
+                        <!-- Service Item 2 -->
+                        <div
+                            class="p-6 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group cursor-pointer flex items-center justify-between">
+                            <div class="flex items-start gap-4">
+                                <div
+                                    class="p-3 rounded-lg bg-blue-50 dark:bg-slate-800 text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+                                    <span class="material-icons text-2xl">home</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-slate-900 dark:text-white">House Visit</h3>
+                                    <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">30-minute check-in.
+                                        Feeding, playtime, and potty break. Great for puppies or seniors.</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <span class="block text-xl font-bold text-slate-900 dark:text-white">$20</span>
+                                <span class="text-xs text-slate-400">per visit</span>
+                            </div>
+                        </div>
+                        <!-- Service Item 3 -->
+                        <div
+                            class="p-6 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group cursor-pointer flex items-center justify-between">
+                            <div class="flex items-start gap-4">
+                                <div
+                                    class="p-3 rounded-lg bg-blue-50 dark:bg-slate-800 text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+                                    <span class="material-icons text-2xl">nightlight</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Overnight Pet
+                                        Sitting</h3>
+                                    <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">I stay at your home to
+                                        keep your pet comfortable. Includes morning and evening walks.</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <span class="block text-xl font-bold text-slate-900 dark:text-white">$60</span>
+                                <span class="text-xs text-slate-400">per night</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Reviews Snapshot -->
+                <div
+                    class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-xl font-bold text-slate-900 dark:text-white">Latest Reviews</h2>
+                        <a class="text-primary font-medium hover:text-primary-dark text-sm" href="#">View all 124</a>
+                    </div>
+                    <div class="space-y-6">
+                        <div class="border-b border-slate-100 dark:border-slate-800 pb-6 last:border-0 last:pb-0">
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-center gap-3">
+                                    <img alt="Reviewer Sarah" class="h-10 w-10 rounded-full"
+                                        data-alt="Reviewer profile picture"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCxinL8fGnKpClmmSam4jH0ttmSHN-9nnUYMGYYkwjMTQ5jB-Gk86fghzcPlnMIGlm4gmWIiK__SNmdtdTXqrFKdTN641BwaKZFgPyKDgyiok6307hGW1dX4XqU-AfCciv6zCKv0VJvWWP1hDnDfsfYifZata25lOn1eHpIZ-9qdHkSaPB7FEGXJOsbjmSzJTX62qeLYkHsDuhRWynuzJ3NqocRWAE_8RqYL1vrsTX-bybUSwLKUVYawMMwRv6RND0o3ZidOVTJhrk" />
+                                    <div>
+                                        <p class="font-semibold text-slate-900 dark:text-white text-sm">Sarah Jenkins
+                                        </p>
+                                        <p class="text-xs text-slate-500">October 24, 2023</p>
+                                    </div>
+                                </div>
+                                <div class="flex text-yellow-400">
+                                    <span class="material-icons text-sm">star</span>
+                                    <span class="material-icons text-sm">star</span>
+                                    <span class="material-icons text-sm">star</span>
+                                    <span class="material-icons text-sm">star</span>
+                                    <span class="material-icons text-sm">star</span>
+                                </div>
+                            </div>
+                            <p class="mt-3 text-slate-600 dark:text-slate-300 text-sm">Carlos was amazing with my Great
+                                Dane, Max! Max can be a handful on the leash, but Carlos handled him perfectly. Highly
+                                recommend!</p>
+                        </div>
+                        <div class="border-b border-slate-100 dark:border-slate-800 pb-6 last:border-0 last:pb-0">
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-center gap-3">
+                                    <img alt="Reviewer Mike" class="h-10 w-10 rounded-full"
+                                        data-alt="Reviewer profile picture"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBvBMjIaw5FnN491dVnE_kPGDw9PAupjnWSjHtJ4QDIyiAjDHduNkk3QRd3LaybZUf-amKgX7JXCdOoNDB1g1WUH2d3fKLY1f9pVfozyDBpflBjZ4QeN54yFibD4sYXAhSQGadhVqgtkU_HOT_1cWQx4jnSmNcb9WOYFFLpvdiXpeGWAELj2j48eTuiQj1rKxgIAK813x135kfPgdJoriguScQfMyc5qwY0dZdLxn1JqEUTrcmTH9WXN3IMY4f4LUlhm2cXC6nq8qA" />
+                                    <div>
+                                        <p class="font-semibold text-slate-900 dark:text-white text-sm">Mike Ross</p>
+                                        <p class="text-xs text-slate-500">October 10, 2023</p>
+                                    </div>
+                                </div>
+                                <div class="flex text-yellow-400">
+                                    <span class="material-icons text-sm">star</span>
+                                    <span class="material-icons text-sm">star</span>
+                                    <span class="material-icons text-sm">star</span>
+                                    <span class="material-icons text-sm">star</span>
+                                    <span class="material-icons text-sm">star</span>
+                                </div>
+                            </div>
+                            <p class="mt-3 text-slate-600 dark:text-slate-300 text-sm">Very professional and punctual.
+                                My dogs loved him instantly.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Right Column: Booking Widget (Sticky) -->
+            <div class="lg:col-span-1">
+                <div
+                    class="bg-white dark:bg-slate-900 rounded-xl shadow-lg border border-slate-200 dark:border-slate-800 sticky top-24 overflow-hidden">
+                    <div class="p-6">
+                        <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-4">Availability</h2>
+                        <!-- Month Selector -->
+                        <div class="flex items-center justify-between mb-4">
+                            <button class="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full text-slate-500">
+                                <span class="material-icons">chevron_left</span>
+                            </button>
+                            <span class="font-semibold text-slate-900 dark:text-white">November 2023</span>
+                            <button class="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full text-slate-500">
+                                <span class="material-icons">chevron_right</span>
+                            </button>
+                        </div>
+                        <!-- Calendar Grid -->
+                        <div class="grid grid-cols-7 gap-1 text-center text-sm mb-2">
+                            <div class="text-slate-400 font-medium py-1">Su</div>
+                            <div class="text-slate-400 font-medium py-1">Mo</div>
+                            <div class="text-slate-400 font-medium py-1">Tu</div>
+                            <div class="text-slate-400 font-medium py-1">We</div>
+                            <div class="text-slate-400 font-medium py-1">Th</div>
+                            <div class="text-slate-400 font-medium py-1">Fr</div>
+                            <div class="text-slate-400 font-medium py-1">Sa</div>
+                        </div>
+                        <div class="grid grid-cols-7 gap-1 text-sm">
+                            <!-- Empty days previous month -->
+                            <div class="p-2"></div>
+                            <div class="p-2"></div>
+                            <div class="p-2"></div>
+                            <!-- Days -->
+                            <!-- Past/Booked -->
+                            <button
+                                class="p-2 rounded-lg text-slate-400 bg-slate-100 dark:bg-slate-800 line-through cursor-not-allowed"
+                                disabled="">1</button>
+                            <button
+                                class="p-2 rounded-lg text-slate-400 bg-slate-100 dark:bg-slate-800 line-through cursor-not-allowed"
+                                disabled="">2</button>
+                            <!-- Available -->
+                            <button
+                                class="p-2 rounded-lg text-slate-900 dark:text-white hover:bg-primary/20 dark:hover:bg-primary/30 font-medium relative group">3
+                                <span
+                                    class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-green-500 rounded-full"></span>
+                            </button>
+                            <button
+                                class="p-2 rounded-lg text-slate-900 dark:text-white hover:bg-primary/20 dark:hover:bg-primary/30 font-medium relative group">4
+                                <span
+                                    class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-green-500 rounded-full"></span>
+                            </button>
+                            <!-- Booked -->
+                            <button
+                                class="p-2 rounded-lg text-slate-400 bg-slate-100 dark:bg-slate-800 cursor-not-allowed"
+                                disabled="">5</button>
+                            <button
+                                class="p-2 rounded-lg text-slate-900 dark:text-white hover:bg-primary/20 dark:hover:bg-primary/30 font-medium relative group">6
+                                <span
+                                    class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-green-500 rounded-full"></span>
+                            </button>
+                            <!-- Selected -->
+                            <button
+                                class="p-2 rounded-lg bg-primary text-white font-bold shadow-md transform scale-105">7</button>
+                            <button
+                                class="p-2 rounded-lg text-slate-900 dark:text-white hover:bg-primary/20 dark:hover:bg-primary/30 font-medium relative group">8
+                                <span
+                                    class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-green-500 rounded-full"></span>
+                            </button>
+                            <button
+                                class="p-2 rounded-lg text-slate-400 bg-slate-100 dark:bg-slate-800 cursor-not-allowed"
+                                disabled="">9</button>
+                            <button
+                                class="p-2 rounded-lg text-slate-400 bg-slate-100 dark:bg-slate-800 cursor-not-allowed"
+                                disabled="">10</button>
+                            <button
+                                class="p-2 rounded-lg text-slate-900 dark:text-white hover:bg-primary/20 dark:hover:bg-primary/30 font-medium relative group">11
+                                <span
+                                    class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-green-500 rounded-full"></span>
+                            </button>
+                            <button
+                                class="p-2 rounded-lg text-slate-900 dark:text-white hover:bg-primary/20 dark:hover:bg-primary/30 font-medium relative group">12
+                                <span
+                                    class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-green-500 rounded-full"></span>
+                            </button>
+                            <button
+                                class="p-2 rounded-lg text-slate-900 dark:text-white hover:bg-primary/20 dark:hover:bg-primary/30 font-medium relative group">13
+                                <span
+                                    class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-green-500 rounded-full"></span>
+                            </button>
+                            <button
+                                class="p-2 rounded-lg text-slate-900 dark:text-white hover:bg-primary/20 dark:hover:bg-primary/30 font-medium relative group">14
+                                <span
+                                    class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-green-500 rounded-full"></span>
+                            </button>
+                            <button
+                                class="p-2 rounded-lg text-slate-900 dark:text-white hover:bg-primary/20 dark:hover:bg-primary/30 font-medium relative group">15
+                                <span
+                                    class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-green-500 rounded-full"></span>
+                            </button>
+                            <button
+                                class="p-2 rounded-lg text-slate-400 bg-slate-100 dark:bg-slate-800 cursor-not-allowed"
+                                disabled="">16</button>
+                            <button
+                                class="p-2 rounded-lg text-slate-400 bg-slate-100 dark:bg-slate-800 cursor-not-allowed"
+                                disabled="">17</button>
+                            <button
+                                class="p-2 rounded-lg text-slate-900 dark:text-white hover:bg-primary/20 dark:hover:bg-primary/30 font-medium relative group">18
+                                <span
+                                    class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-green-500 rounded-full"></span>
+                            </button>
+                            <button
+                                class="p-2 rounded-lg text-slate-900 dark:text-white hover:bg-primary/20 dark:hover:bg-primary/30 font-medium relative group">19
+                                <span
+                                    class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-green-500 rounded-full"></span>
+                            </button>
+                            <button
+                                class="p-2 rounded-lg text-slate-900 dark:text-white hover:bg-primary/20 dark:hover:bg-primary/30 font-medium relative group">20
+                                <span
+                                    class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-green-500 rounded-full"></span>
+                            </button>
+                            <button
+                                class="p-2 rounded-lg text-slate-900 dark:text-white hover:bg-primary/20 dark:hover:bg-primary/30 font-medium relative group">21
+                                <span
+                                    class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-green-500 rounded-full"></span>
+                            </button>
+                            <button
+                                class="p-2 rounded-lg text-slate-900 dark:text-white hover:bg-primary/20 dark:hover:bg-primary/30 font-medium relative group">22
+                                <span
+                                    class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-green-500 rounded-full"></span>
+                            </button>
+                            <button
+                                class="p-2 rounded-lg text-slate-900 dark:text-white hover:bg-primary/20 dark:hover:bg-primary/30 font-medium relative group">23
+                                <span
+                                    class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-green-500 rounded-full"></span>
+                            </button>
+                            <button
+                                class="p-2 rounded-lg text-slate-900 dark:text-white hover:bg-primary/20 dark:hover:bg-primary/30 font-medium relative group">24
+                                <span
+                                    class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-green-500 rounded-full"></span>
+                            </button>
+                            <button
+                                class="p-2 rounded-lg text-slate-900 dark:text-white hover:bg-primary/20 dark:hover:bg-primary/30 font-medium relative group">25
+                                <span
+                                    class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-green-500 rounded-full"></span>
+                            </button>
+                            <button
+                                class="p-2 rounded-lg text-slate-900 dark:text-white hover:bg-primary/20 dark:hover:bg-primary/30 font-medium relative group">26
+                                <span
+                                    class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-green-500 rounded-full"></span>
+                            </button>
+                            <button
+                                class="p-2 rounded-lg text-slate-900 dark:text-white hover:bg-primary/20 dark:hover:bg-primary/30 font-medium relative group">27
+                                <span
+                                    class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-green-500 rounded-full"></span>
+                            </button>
+                            <button
+                                class="p-2 rounded-lg text-slate-900 dark:text-white hover:bg-primary/20 dark:hover:bg-primary/30 font-medium relative group">28
+                                <span
+                                    class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-green-500 rounded-full"></span>
+                            </button>
+                            <button
+                                class="p-2 rounded-lg text-slate-900 dark:text-white hover:bg-primary/20 dark:hover:bg-primary/30 font-medium relative group">29
+                                <span
+                                    class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-green-500 rounded-full"></span>
+                            </button>
+                            <button
+                                class="p-2 rounded-lg text-slate-900 dark:text-white hover:bg-primary/20 dark:hover:bg-primary/30 font-medium relative group">30
+                                <span
+                                    class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-green-500 rounded-full"></span>
+                            </button>
+                        </div>
+                        <!-- Legend -->
+                        <div class="flex items-center justify-center gap-4 mt-4 text-xs text-slate-500">
+                            <div class="flex items-center gap-1">
+                                <span class="w-2 h-2 rounded-full bg-green-500"></span> Available
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <span class="w-2 h-2 rounded-full bg-slate-300"></span> Booked
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Summary & CTA -->
+                    <div class="p-6 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-800">
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-sm text-slate-500 dark:text-slate-400">Selected date</span>
+                            <span class="font-bold text-slate-900 dark:text-white">Nov 7, 2023</span>
+                        </div>
+                        <div class="flex justify-between items-center mb-6">
+                            <span class="text-sm text-slate-500 dark:text-slate-400">Total estimation</span>
+                            <span class="font-bold text-slate-900 dark:text-white text-lg">$25.00</span>
+                        </div>
+                        <button
+                            class="w-full bg-primary hover:bg-primary-dark text-white font-bold py-3 px-4 rounded-lg shadow-md transition-colors flex items-center justify-center gap-2">
+                            Agendar Serviço
+                            <span class="material-icons text-sm">arrow_forward</span>
+                        </button>
+                        <p class="text-center text-xs text-slate-400 mt-3">Free cancellation up to 24h before.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 mt-auto">
+        <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center gap-2 mb-4 md:mb-0">
+                    <span class="material-icons text-primary">pets</span>
+                    <span class="font-bold text-slate-900 dark:text-white">PetFriend Connect</span>
+                </div>
+                <div class="flex space-x-6">
+                    <a class="text-slate-500 hover:text-slate-900 dark:hover:text-white text-sm" href="#">About</a>
+                    <a class="text-slate-500 hover:text-slate-900 dark:hover:text-white text-sm" href="#">Safety</a>
+                    <a class="text-slate-500 hover:text-slate-900 dark:hover:text-white text-sm" href="#">Help</a>
+                    <a class="text-slate-500 hover:text-slate-900 dark:hover:text-white text-sm" href="#">Terms</a>
+                </div>
+                <div class="mt-4 md:mt-0 text-xs text-slate-400">
+                    © 2023 PetFriend Connect. All rights reserved.
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>
