@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Minha Agenda - PetFriend Connect</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3c83f6",
+                        "primary-dark": "#2563eb",
+                        "secondary-green": "#10b981",
+                        "secondary-gray": "#9ca3af",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#101722",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1f2937",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <style>
+        /* Custom scrollbar for clean look */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-100 font-display antialiased min-h-screen flex flex-col">
+    <!-- Header Navigation -->
+    <header
+        class="bg-surface-light dark:bg-surface-dark border-b border-slate-200 dark:border-slate-800 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <div class="flex-shrink-0 flex items-center">
+                        <span class="material-icons text-primary text-3xl mr-2">pets</span>
+                        <span class="font-bold text-xl tracking-tight text-slate-900 dark:text-white">PetFriend
+                            Connect</span>
+                    </div>
+                    <nav class="hidden sm:ml-10 sm:flex sm:space-x-8">
+                        <a class="border-transparent text-slate-500 dark:text-slate-400 hover:border-slate-300 hover:text-slate-700 dark:hover:text-slate-200 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                            href="dashboard.cuidador.html">
+                            Painel
+                        </a>
+                        <a class="border-transparent text-slate-500 dark:text-slate-400 hover:border-slate-300 hover:text-slate-700 dark:hover:text-slate-200 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                            href="meus-servicos.html">
+                            Serviços
+                        </a>
+                        <a class="border-primary text-primary dark:text-primary inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                            href="minha-agenda.html">
+                            Minha Agenda
+                        </a>
+                        <a class="border-transparent text-slate-500 dark:text-slate-400 hover:border-slate-300 hover:text-slate-700 dark:hover:text-slate-200 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                            href="configuracoes.html">
+                            Configurações
+                        </a>
+                    </nav>
+                </div>
+                <div class="flex items-center">
+                    <button
+                        class="p-2 rounded-full text-slate-400 hover:text-slate-500 dark:hover:text-slate-300 relative">
+                        <span class="material-icons">notifications</span>
+                        <span
+                            class="absolute top-2 right-2 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white dark:ring-slate-800"></span>
+                    </button>
+                    <div class="ml-4 flex items-center">
+                        <img alt="Profile" class="h-8 w-8 rounded-full object-cover ring-2 ring-primary/20"
+                            data-alt="Portrait of a smiling woman"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBBsMRL-R4WFIG6LTNIPQltnfXpDsKTElCT_v7u7fGRcMnPzTsni8F5wDAwrFaqM_wBLFVrDhHdqg0do8Ro8irg6NxvtRY0cdxI9hwBOh6zgCrRJvbMdJ7ZX5CTsb8QfHRa1zS4lVP9i-XE4xI_g3R2b10cgiJiO3LFxP46OKhBV8Zn-4SDOACdkNlsd34BuqiNtNQPMhR6SMIWYYPi2Lk_k4rCdcK2ZUZrvo22iRKhq8eEzcHGxXcgGKBebpS2tjdmmmgvX2hojw" />
+                        <span class="ml-2 text-sm font-medium text-slate-700 dark:text-slate-200 hidden md:block">Ana
+                            Silva</span>
+                        <span class="material-icons text-slate-400 ml-1 text-sm">expand_more</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- Main Content -->
+    <main class="flex-1 py-8 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col lg:flex-row gap-8 h-full">
+            <!-- Left Column: Calendar -->
+            <section class="flex-1 flex flex-col h-full space-y-4">
+                <div class="flex items-center justify-between mb-2">
+                    <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Outubro 2023</h1>
+                    <div class="flex space-x-2">
+                        <button
+                            class="p-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors">
+                            <span class="material-icons text-sm">chevron_left</span>
+                        </button>
+                        <button
+                            class="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-sm font-medium text-slate-600 dark:text-slate-300 transition-colors">
+                            Hoje
+                        </button>
+                        <button
+                            class="p-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors">
+                            <span class="material-icons text-sm">chevron_right</span>
+                        </button>
+                    </div>
+                </div>
+                <!-- Calendar Card -->
+                <div
+                    class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden flex-1 flex flex-col">
+                    <!-- Weekday Headers -->
+                    <div
+                        class="grid grid-cols-7 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
+                        <div
+                            class="py-3 text-center text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
+                            Dom</div>
+                        <div
+                            class="py-3 text-center text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
+                            Seg</div>
+                        <div
+                            class="py-3 text-center text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
+                            Ter</div>
+                        <div
+                            class="py-3 text-center text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
+                            Qua</div>
+                        <div
+                            class="py-3 text-center text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
+                            Qui</div>
+                        <div
+                            class="py-3 text-center text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
+                            Sex</div>
+                        <div
+                            class="py-3 text-center text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
+                            Sáb</div>
+                    </div>
+                    <!-- Calendar Grid -->
+                    <div class="grid grid-cols-7 flex-1 auto-rows-fr bg-slate-200 dark:bg-slate-700 gap-px">
+                        <!-- Previous Month Days -->
+                        <div
+                            class="bg-surface-light dark:bg-surface-dark min-h-[100px] p-2 text-slate-400 dark:text-slate-600">
+                            28</div>
+                        <div
+                            class="bg-surface-light dark:bg-surface-dark min-h-[100px] p-2 text-slate-400 dark:text-slate-600">
+                            29</div>
+                        <div
+                            class="bg-surface-light dark:bg-surface-dark min-h-[100px] p-2 text-slate-400 dark:text-slate-600">
+                            30</div>
+                        <!-- Current Month Days -->
+                        <div
+                            class="bg-surface-light dark:bg-surface-dark min-h-[100px] p-2 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer group">
+                            <span
+                                class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-primary">1</span>
+                        </div>
+                        <div
+                            class="bg-surface-light dark:bg-surface-dark min-h-[100px] p-2 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer group relative">
+                            <span
+                                class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-primary">2</span>
+                            <div class="mt-1 space-y-1">
+                                <div
+                                    class="px-2 py-1 rounded text-xs font-medium bg-secondary-green/10 text-secondary-green truncate border-l-2 border-secondary-green">
+                                    09:00 - Disp.
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            class="bg-surface-light dark:bg-surface-dark min-h-[100px] p-2 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer group">
+                            <span
+                                class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-primary">3</span>
+                            <div class="mt-1 space-y-1">
+                                <div
+                                    class="px-2 py-1 rounded text-xs font-medium bg-primary/10 text-primary truncate border-l-2 border-primary">
+                                    14:00 - Thor
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            class="bg-surface-light dark:bg-surface-dark min-h-[100px] p-2 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer group">
+                            <span
+                                class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-primary">4</span>
+                        </div>
+                        <div
+                            class="bg-surface-light dark:bg-surface-dark min-h-[100px] p-2 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer group">
+                            <span
+                                class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-primary">5</span>
+                            <div class="mt-1 space-y-1">
+                                <div
+                                    class="px-2 py-1 rounded text-xs font-medium bg-secondary-gray/10 text-secondary-gray truncate border-l-2 border-secondary-gray">
+                                    Indisponível
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            class="bg-surface-light dark:bg-surface-dark min-h-[100px] p-2 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer group">
+                            <span
+                                class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-primary">6</span>
+                        </div>
+                        <div
+                            class="bg-surface-light dark:bg-surface-dark min-h-[100px] p-2 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer group">
+                            <span
+                                class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-primary">7</span>
+                        </div>
+                        <!-- Week 2 -->
+                        <div
+                            class="bg-surface-light dark:bg-surface-dark min-h-[100px] p-2 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer group">
+                            <span
+                                class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-primary">8</span>
+                        </div>
+                        <div
+                            class="bg-surface-light dark:bg-surface-dark min-h-[100px] p-2 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer group">
+                            <span
+                                class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-primary">9</span>
+                            <div class="mt-1 space-y-1">
+                                <div
+                                    class="px-2 py-1 rounded text-xs font-medium bg-secondary-green/10 text-secondary-green truncate border-l-2 border-secondary-green">
+                                    08:00 - Disp.
+                                </div>
+                                <div
+                                    class="px-2 py-1 rounded text-xs font-medium bg-secondary-green/10 text-secondary-green truncate border-l-2 border-secondary-green">
+                                    13:00 - Disp.
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            class="bg-surface-light dark:bg-surface-dark min-h-[100px] p-2 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer group ring-2 ring-primary ring-inset z-10">
+                            <span
+                                class="w-6 h-6 flex items-center justify-center rounded-full bg-primary text-white text-sm font-bold">10</span>
+                            <div class="mt-1 space-y-1">
+                                <div
+                                    class="px-2 py-1 rounded text-xs font-medium bg-primary/10 text-primary truncate border-l-2 border-primary">
+                                    10:00 - Luna
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            class="bg-surface-light dark:bg-surface-dark min-h-[100px] p-2 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer group">
+                            <span
+                                class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-primary">11</span>
+                        </div>
+                        <div
+                            class="bg-surface-light dark:bg-surface-dark min-h-[100px] p-2 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer group">
+                            <span
+                                class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-primary">12</span>
+                            <div class="mt-1 space-y-1">
+                                <div
+                                    class="px-2 py-1 rounded text-xs font-medium bg-secondary-gray/10 text-secondary-gray truncate border-l-2 border-secondary-gray">
+                                    Feriado
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            class="bg-surface-light dark:bg-surface-dark min-h-[100px] p-2 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer group">
+                            <span
+                                class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-primary">13</span>
+                        </div>
+                        <div
+                            class="bg-surface-light dark:bg-surface-dark min-h-[100px] p-2 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer group">
+                            <span
+                                class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-primary">14</span>
+                        </div>
+                        <!-- Week 3 (Placeholder for brevity, full grid would be populated) -->
+                        <div
+                            class="bg-surface-light dark:bg-surface-dark min-h-[100px] p-2 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer group">
+                            <span
+                                class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-primary">15</span>
+                        </div>
+                        <div
+                            class="bg-surface-light dark:bg-surface-dark min-h-[100px] p-2 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer group">
+                            <span
+                                class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-primary">16</span>
+                        </div>
+                        <div
+                            class="bg-surface-light dark:bg-surface-dark min-h-[100px] p-2 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer group">
+                            <span
+                                class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-primary">17</span>
+                        </div>
+                        <div
+                            class="bg-surface-light dark:bg-surface-dark min-h-[100px] p-2 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer group">
+                            <span
+                                class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-primary">18</span>
+                        </div>
+                        <div
+                            class="bg-surface-light dark:bg-surface-dark min-h-[100px] p-2 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer group">
+                            <span
+                                class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-primary">19</span>
+                        </div>
+                        <div
+                            class="bg-surface-light dark:bg-surface-dark min-h-[100px] p-2 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer group">
+                            <span
+                                class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-primary">20</span>
+                        </div>
+                        <div
+                            class="bg-surface-light dark:bg-surface-dark min-h-[100px] p-2 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer group">
+                            <span
+                                class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-primary">21</span>
+                        </div>
+                        <!-- Week 4 -->
+                        <div
+                            class="bg-surface-light dark:bg-surface-dark min-h-[100px] p-2 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer group">
+                            <span
+                                class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-primary">22</span>
+                        </div>
+                        <div
+                            class="bg-surface-light dark:bg-surface-dark min-h-[100px] p-2 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer group">
+                            <span
+                                class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-primary">23</span>
+                        </div>
+                        <div
+                            class="bg-surface-light dark:bg-surface-dark min-h-[100px] p-2 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer group">
+                            <span
+                                class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-primary">24</span>
+                        </div>
+                        <div
+                            class="bg-surface-light dark:bg-surface-dark min-h-[100px] p-2 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer group">
+                            <span
+                                class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-primary">25</span>
+                        </div>
+                        <div
+                            class="bg-surface-light dark:bg-surface-dark min-h-[100px] p-2 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer group">
+                            <span
+                                class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-primary">26</span>
+                        </div>
+                        <div
+                            class="bg-surface-light dark:bg-surface-dark min-h-[100px] p-2 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer group">
+                            <span
+                                class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-primary">27</span>
+                        </div>
+                        <div
+                            class="bg-surface-light dark:bg-surface-dark min-h-[100px] p-2 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer group">
+                            <span
+                                class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-primary">28</span>
+                        </div>
+                        <!-- Week 5 -->
+                        <div
+                            class="bg-surface-light dark:bg-surface-dark min-h-[100px] p-2 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer group">
+                            <span
+                                class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-primary">29</span>
+                        </div>
+                        <div
+                            class="bg-surface-light dark:bg-surface-dark min-h-[100px] p-2 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer group">
+                            <span
+                                class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-primary">30</span>
+                        </div>
+                        <div
+                            class="bg-surface-light dark:bg-surface-dark min-h-[100px] p-2 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer group">
+                            <span
+                                class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-primary">31</span>
+                        </div>
+                        <div
+                            class="bg-surface-light dark:bg-surface-dark min-h-[100px] p-2 text-slate-400 dark:text-slate-600">
+                            1</div>
+                        <div
+                            class="bg-surface-light dark:bg-surface-dark min-h-[100px] p-2 text-slate-400 dark:text-slate-600">
+                            2</div>
+                        <div
+                            class="bg-surface-light dark:bg-surface-dark min-h-[100px] p-2 text-slate-400 dark:text-slate-600">
+                            3</div>
+                        <div
+                            class="bg-surface-light dark:bg-surface-dark min-h-[100px] p-2 text-slate-400 dark:text-slate-600">
+                            4</div>
+                    </div>
+                </div>
+                <!-- Legend -->
+                <div class="flex items-center space-x-6 text-sm px-1">
+                    <div class="flex items-center">
+                        <span class="w-3 h-3 rounded-full bg-secondary-green mr-2"></span>
+                        <span class="text-slate-600 dark:text-slate-400">Disponível</span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="w-3 h-3 rounded-full bg-primary mr-2"></span>
+                        <span class="text-slate-600 dark:text-slate-400">Agendado</span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="w-3 h-3 rounded-full bg-secondary-gray mr-2"></span>
+                        <span class="text-slate-600 dark:text-slate-400">Indisponível</span>
+                    </div>
+                </div>
+            </section>
+            <!-- Right Column: Sidebar Panels -->
+            <aside class="w-full lg:w-96 space-y-6 flex flex-col">
+                <!-- Availability Form Panel -->
+                <div
+                    class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6">
+                    <div class="flex items-center mb-6">
+                        <span class="material-icons text-primary mr-2">edit_calendar</span>
+                        <h2 class="text-lg font-semibold text-slate-900 dark:text-white">Definir Disponibilidade</h2>
+                    </div>
+                    <form class="space-y-4">
+                        <!-- Date Range -->
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Intervalo
+                                de Datas</label>
+                            <div class="flex space-x-2">
+                                <div class="relative flex-1">
+                                    <input
+                                        class="w-full rounded-lg border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-primary focus:border-primary pl-9"
+                                        placeholder="10/10/2023" type="text" value="10/10/2023" />
+                                    <span
+                                        class="material-icons absolute left-2.5 top-2 text-slate-400 text-sm">calendar_today</span>
+                                </div>
+                                <span class="text-slate-400 self-center">-</span>
+                                <div class="relative flex-1">
+                                    <input
+                                        class="w-full rounded-lg border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-primary focus:border-primary pl-9"
+                                        placeholder="10/10/2023" type="text" value="10/10/2023" />
+                                    <span
+                                        class="material-icons absolute left-2.5 top-2 text-slate-400 text-sm">calendar_today</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Time Range -->
+                        <div>
+                            <label
+                                class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Horário</label>
+                            <div class="flex space-x-2">
+                                <div class="relative flex-1">
+                                    <input
+                                        class="w-full rounded-lg border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-primary focus:border-primary"
+                                        type="time" value="09:00" />
+                                </div>
+                                <span class="text-slate-400 self-center">-</span>
+                                <div class="relative flex-1">
+                                    <input
+                                        class="w-full rounded-lg border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:ring-primary focus:border-primary"
+                                        type="time" value="12:00" />
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Status Selection -->
+                        <div>
+                            <label
+                                class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Status</label>
+                            <div class="flex gap-4">
+                                <label class="flex items-center cursor-pointer">
+                                    <input checked=""
+                                        class="form-radio text-secondary-green focus:ring-secondary-green border-slate-300"
+                                        name="status" type="radio" />
+                                    <span class="ml-2 text-sm text-slate-700 dark:text-slate-300">Disponível</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer">
+                                    <input
+                                        class="form-radio text-secondary-gray focus:ring-secondary-gray border-slate-300"
+                                        name="status" type="radio" />
+                                    <span class="ml-2 text-sm text-slate-700 dark:text-slate-300">Indisponível</span>
+                                </label>
+                            </div>
+                        </div>
+                        <!-- Weekly Repeat -->
+                        <div class="flex items-center pt-2">
+                            <input class="h-4 w-4 text-primary focus:ring-primary border-slate-300 rounded"
+                                id="repeat-weekly" type="checkbox" />
+                            <label class="ml-2 block text-sm text-slate-700 dark:text-slate-300" for="repeat-weekly">
+                                Repetir semanalmente
+                            </label>
+                        </div>
+                        <!-- Actions -->
+                        <div class="flex space-x-3 pt-4 border-t border-slate-100 dark:border-slate-700/50 mt-4">
+                            <button
+                                class="flex-1 px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors"
+                                type="button">
+                                Cancelar
+                            </button>
+                            <button
+                                class="flex-1 px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors"
+                                type="submit">
+                                Salvar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <!-- Daily Details List -->
+                <div
+                    class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 flex-1 flex flex-col">
+                    <div
+                        class="p-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30">
+                        <h3 class="font-semibold text-slate-900 dark:text-white">Detalhes do dia: 10 de Outubro</h3>
+                    </div>
+                    <div class="p-4 space-y-3 flex-1 overflow-y-auto max-h-[400px]">
+                        <!-- Available Slot -->
+                        <div
+                            class="group flex items-center justify-between p-3 rounded-lg border border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all hover:shadow-sm">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-1.5 h-10 bg-secondary-green rounded-full"></div>
+                                <div>
+                                    <div class="text-sm font-semibold text-slate-900 dark:text-white">08:00 - 09:00
+                                    </div>
+                                    <div
+                                        class="text-xs text-secondary-green font-medium bg-secondary-green/10 px-2 py-0.5 rounded-full w-fit mt-0.5">
+                                        Disponível</div>
+                                </div>
+                            </div>
+                            <div class="flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button
+                                    class="p-1.5 rounded-md hover:bg-white dark:hover:bg-slate-600 text-slate-400 hover:text-primary transition-colors">
+                                    <span class="material-icons text-lg">edit</span>
+                                </button>
+                                <button
+                                    class="p-1.5 rounded-md hover:bg-white dark:hover:bg-slate-600 text-slate-400 hover:text-red-500 transition-colors">
+                                    <span class="material-icons text-lg">delete</span>
+                                </button>
+                            </div>
+                        </div>
+                        <!-- Booked Slot -->
+                        <div
+                            class="group flex items-center justify-between p-3 rounded-lg border border-primary/20 bg-primary/5 dark:bg-primary/10 transition-all hover:shadow-sm">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-1.5 h-10 bg-primary rounded-full"></div>
+                                <div>
+                                    <div class="text-sm font-semibold text-slate-900 dark:text-white">10:00 - 11:00
+                                    </div>
+                                    <div class="flex items-center mt-0.5">
+                                        <div
+                                            class="text-xs text-primary font-medium bg-primary/10 px-2 py-0.5 rounded-full w-fit mr-2">
+                                            Agendado</div>
+                                        <span class="text-xs text-slate-500 dark:text-slate-400">Pet: Luna</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex space-x-1">
+                                <button
+                                    class="p-1.5 rounded-md hover:bg-white dark:hover:bg-slate-600 text-slate-400 hover:text-primary transition-colors"
+                                    title="Ver Detalhes">
+                                    <span class="material-icons text-lg">visibility</span>
+                                </button>
+                            </div>
+                        </div>
+                        <!-- Available Slot -->
+                        <div
+                            class="group flex items-center justify-between p-3 rounded-lg border border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all hover:shadow-sm">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-1.5 h-10 bg-secondary-green rounded-full"></div>
+                                <div>
+                                    <div class="text-sm font-semibold text-slate-900 dark:text-white">13:00 - 17:00
+                                    </div>
+                                    <div
+                                        class="text-xs text-secondary-green font-medium bg-secondary-green/10 px-2 py-0.5 rounded-full w-fit mt-0.5">
+                                        Disponível</div>
+                                </div>
+                            </div>
+                            <div class="flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button
+                                    class="p-1.5 rounded-md hover:bg-white dark:hover:bg-slate-600 text-slate-400 hover:text-primary transition-colors">
+                                    <span class="material-icons text-lg">edit</span>
+                                </button>
+                                <button
+                                    class="p-1.5 rounded-md hover:bg-white dark:hover:bg-slate-600 text-slate-400 hover:text-red-500 transition-colors">
+                                    <span class="material-icons text-lg">delete</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Empty state helper (hidden in this view but good for robustness) -->
+                    <!-- <div class="flex flex-col items-center justify-center h-48 text-center px-4">
+                        <span class="material-icons text-slate-300 text-4xl mb-2">event_busy</span>
+                        <p class="text-sm text-slate-500">Nenhum horário definido para este dia.</p>
+                     </div> -->
+                </div>
+            </aside>
+        </div>
+    </main>
+</body>
+
+</html>

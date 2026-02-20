@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Painel do Cuidador - PetFriend Connect</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3c83f6",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#101722",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Custom scrollbar for calendar */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-200 h-screen overflow-hidden flex font-display">
+    <!-- Sidebar -->
+    <aside
+        class="w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col justify-between h-full shadow-sm z-10 hidden lg:flex">
+        <div>
+            <!-- Logo -->
+            <div class="h-16 flex items-center px-6 border-b border-slate-100 dark:border-slate-800">
+                <div class="flex items-center gap-2 text-primary font-bold text-xl">
+                    <span class="material-icons">pets</span>
+                    <span>PetFriend</span>
+                </div>
+            </div>
+            <!-- Navigation -->
+            <nav class="p-4 space-y-1">
+                <a class="flex items-center gap-3 px-4 py-3 bg-primary/10 text-primary rounded-lg font-medium" href="dashboard.cuidador.html">
+                    <span class="material-icons text-[20px]">dashboard</span>
+                    Painel
+                </a>
+                <a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white rounded-lg transition-colors font-medium"
+                    href="minha-agenda.html">
+                    <span class="material-icons text-[20px]">calendar_today</span>
+                    Agenda
+                </a>
+                <a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white rounded-lg transition-colors font-medium"
+                    href="minhas-reservas.html">
+                    <span class="material-icons text-[20px]">assignment</span>
+                    Minhas Reservas
+                    <span class="ml-auto bg-red-500 text-white text-xs px-2 py-0.5 rounded-full font-bold">2</span>
+                </a>
+                <a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white rounded-lg transition-colors font-medium"
+                    href="meus-servicos.html">
+                    <span class="material-icons text-[20px]">medical_services</span>
+                    Meus Serviços
+                </a>
+                <a class="flex items-center gap-3 px-4 py-3 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white rounded-lg transition-colors font-medium"
+                    href="configuracoes.html">
+                    <span class="material-icons text-[20px]">settings</span>
+                    Configurações
+                </a>
+            </nav>
+        </div>
+        <!-- User Profile -->
+        <div class="p-4 border-t border-slate-100 dark:border-slate-800">
+            <div
+                class="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer transition-colors">
+                <img alt="Profile Picture"
+                    class="w-10 h-10 rounded-full object-cover border border-slate-200 dark:border-slate-700"
+                    data-alt="Smiling professional woman profile picture"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCVCf39p1QqwspKPNyCVrdpWLs8Eo66WIiPY_TN8y5CEX_crdEqUkvQcN8IKdR4OpQ4yvI6JXpkSBdx_TQL-phHXPPx8es5QRBz4W7EPzopZqnohAWmQLqg5WP48r7mc-y7e8vl1KLedvP8rhYR73MAEqhjBguTa2VdZpJywykINxI14qXeXCjShkYJ8_4sFcXlAWncdHkvcDFRZAkSe1z7jAQBSoKXjsPBFu5acciST7lRgU4bbxz011F3ksEZG4iK4oLJQFYOAvA" />
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-semibold text-slate-900 dark:text-white truncate">Ana Silva</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 truncate">Cuidadora Profissional</p>
+                </div>
+                <span class="material-icons text-slate-400 text-sm">expand_more</span>
+            </div>
+        </div>
+    </aside>
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-full overflow-hidden">
+        <!-- Top Header (Mobile & Desktop) -->
+        <header
+            class="h-16 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-6 lg:px-8">
+            <h1 class="text-xl font-bold text-slate-800 dark:text-white">Painel do Cuidador</h1>
+            <div class="flex items-center gap-4">
+                <button class="relative p-2 text-slate-400 hover:text-primary transition-colors">
+                    <span class="material-icons">notifications</span>
+                    <span
+                        class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-white dark:border-slate-900"></span>
+                </button>
+                <button class="lg:hidden p-2 text-slate-600">
+                    <span class="material-icons">menu</span>
+                </button>
+            </div>
+        </header>
+        <!-- Dashboard Content Scrollable Area -->
+        <div class="flex-1 overflow-y-auto p-6 lg:p-8">
+            <!-- Summary Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <!-- Card 1 -->
+                <div
+                    class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-start justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-slate-500 dark:text-slate-400 mb-1">Bookings Today</p>
+                        <h3 class="text-3xl font-bold text-slate-800 dark:text-white">2</h3>
+                        <p class="text-xs text-green-600 font-medium mt-2 flex items-center gap-1">
+                            <span class="material-icons text-[16px]">trending_up</span>
+                            Active now
+                        </p>
+                    </div>
+                    <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center text-primary">
+                        <span class="material-icons">event_available</span>
+                    </div>
+                </div>
+                <!-- Card 2 -->
+                <div
+                    class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-start justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-slate-500 dark:text-slate-400 mb-1">Weekly Bookings</p>
+                        <h3 class="text-3xl font-bold text-slate-800 dark:text-white">8</h3>
+                        <p class="text-xs text-slate-500 mt-2">Next: Tomorrow at 9AM</p>
+                    </div>
+                    <div class="w-12 h-12 bg-purple-500/10 rounded-lg flex items-center justify-center text-purple-600">
+                        <span class="material-icons">date_range</span>
+                    </div>
+                </div>
+                <!-- Card 3 -->
+                <div
+                    class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-start justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-slate-500 dark:text-slate-400 mb-1">Monthly Earnings</p>
+                        <h3 class="text-3xl font-bold text-slate-800 dark:text-white">R$ 1.200</h3>
+                        <p class="text-xs text-green-600 font-medium mt-2 flex items-center gap-1">
+                            <span class="material-icons text-[16px]">arrow_upward</span>
+                            +12% from last month
+                        </p>
+                    </div>
+                    <div class="w-12 h-12 bg-green-500/10 rounded-lg flex items-center justify-center text-green-600">
+                        <span class="material-icons">attach_money</span>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-col xl:flex-row gap-8 h-[calc(100%-180px)] min-h-[600px]">
+                <!-- Weekly Calendar Section -->
+                <div
+                    class="flex-1 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col">
+                    <div class="p-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                        <div>
+                            <h2 class="font-bold text-lg text-slate-800 dark:text-white">Weekly Calendar</h2>
+                            <p class="text-sm text-slate-500 dark:text-slate-400">October 23 - 29, 2023</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button class="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-500">
+                                <span class="material-icons">chevron_left</span>
+                            </button>
+                            <button
+                                class="px-3 py-1.5 text-sm font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-md">Today</button>
+                            <button class="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-500">
+                                <span class="material-icons">chevron_right</span>
+                            </button>
+                            <button
+                                class="ml-2 flex items-center gap-1 bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors">
+                                <span class="material-icons text-[16px]">add</span>
+                                Add Block
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Calendar Grid -->
+                    <div class="flex-1 overflow-auto relative">
+                        <!-- Header Row (Days) -->
+                        <div
+                            class="grid grid-cols-8 border-b border-slate-200 dark:border-slate-800 min-w-[800px] sticky top-0 bg-white dark:bg-slate-900 z-10">
+                            <div
+                                class="h-12 border-r border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50">
+                            </div> <!-- Time Col -->
+                            <div
+                                class="h-12 border-r border-slate-100 dark:border-slate-800 flex flex-col items-center justify-center">
+                                <span class="text-xs text-slate-500 font-medium">MON</span>
+                                <span class="text-sm font-bold text-slate-800 dark:text-white">23</span>
+                            </div>
+                            <div
+                                class="h-12 border-r border-slate-100 dark:border-slate-800 flex flex-col items-center justify-center bg-primary/5">
+                                <span class="text-xs text-primary font-medium">TUE</span>
+                                <span class="text-sm font-bold text-primary">24</span>
+                            </div>
+                            <div
+                                class="h-12 border-r border-slate-100 dark:border-slate-800 flex flex-col items-center justify-center">
+                                <span class="text-xs text-slate-500 font-medium">WED</span>
+                                <span class="text-sm font-bold text-slate-800 dark:text-white">25</span>
+                            </div>
+                            <div
+                                class="h-12 border-r border-slate-100 dark:border-slate-800 flex flex-col items-center justify-center">
+                                <span class="text-xs text-slate-500 font-medium">THU</span>
+                                <span class="text-sm font-bold text-slate-800 dark:text-white">26</span>
+                            </div>
+                            <div
+                                class="h-12 border-r border-slate-100 dark:border-slate-800 flex flex-col items-center justify-center">
+                                <span class="text-xs text-slate-500 font-medium">FRI</span>
+                                <span class="text-sm font-bold text-slate-800 dark:text-white">27</span>
+                            </div>
+                            <div
+                                class="h-12 border-r border-slate-100 dark:border-slate-800 flex flex-col items-center justify-center bg-slate-50/50 dark:bg-slate-800/20">
+                                <span class="text-xs text-slate-500 font-medium">SAT</span>
+                                <span class="text-sm font-bold text-slate-800 dark:text-white">28</span>
+                            </div>
+                            <div
+                                class="h-12 flex flex-col items-center justify-center bg-slate-50/50 dark:bg-slate-800/20">
+                                <span class="text-xs text-slate-500 font-medium">SUN</span>
+                                <span class="text-sm font-bold text-slate-800 dark:text-white">29</span>
+                            </div>
+                        </div>
+                        <!-- Time Slots Grid -->
+                        <div class="grid grid-cols-8 min-w-[800px] relative h-[720px]">
+                            <!-- 8am to 6pm ~ 10 hours * 72px -->
+                            <!-- Times Column -->
+                            <div
+                                class="flex flex-col text-xs text-slate-400 font-medium text-right pr-2 border-r border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50">
+                                <div class="h-[72px] -mt-2.5">08:00</div>
+                                <div class="h-[72px] -mt-2.5">09:00</div>
+                                <div class="h-[72px] -mt-2.5">10:00</div>
+                                <div class="h-[72px] -mt-2.5">11:00</div>
+                                <div class="h-[72px] -mt-2.5">12:00</div>
+                                <div class="h-[72px] -mt-2.5">13:00</div>
+                                <div class="h-[72px] -mt-2.5">14:00</div>
+                                <div class="h-[72px] -mt-2.5">15:00</div>
+                                <div class="h-[72px] -mt-2.5">16:00</div>
+                                <div class="h-[72px] -mt-2.5">17:00</div>
+                            </div>
+                            <!-- Columns Lines Background -->
+                            <div
+                                class="col-span-7 grid grid-cols-7 absolute inset-0 left-[12.5%] h-full pointer-events-none">
+                                <div class="border-r border-slate-100 dark:border-slate-800 h-full"></div>
+                                <div class="border-r border-slate-100 dark:border-slate-800 h-full bg-primary/5"></div>
+                                <!-- Today Highlight -->
+                                <div class="border-r border-slate-100 dark:border-slate-800 h-full"></div>
+                                <div class="border-r border-slate-100 dark:border-slate-800 h-full"></div>
+                                <div class="border-r border-slate-100 dark:border-slate-800 h-full"></div>
+                                <div class="border-r border-slate-100 dark:border-slate-800 h-full bg-slate-50/30">
+                                </div>
+                                <div class="h-full bg-slate-50/30"></div>
+                            </div>
+                            <!-- Horizontal Lines Background -->
+                            <div class="col-span-8 absolute inset-0 w-full h-full pointer-events-none flex flex-col">
+                                <div
+                                    class="h-[72px] border-b border-slate-100 dark:border-slate-800 border-dashed w-full">
+                                </div>
+                                <div
+                                    class="h-[72px] border-b border-slate-100 dark:border-slate-800 border-dashed w-full">
+                                </div>
+                                <div
+                                    class="h-[72px] border-b border-slate-100 dark:border-slate-800 border-dashed w-full">
+                                </div>
+                                <div
+                                    class="h-[72px] border-b border-slate-100 dark:border-slate-800 border-dashed w-full">
+                                </div>
+                                <div
+                                    class="h-[72px] border-b border-slate-100 dark:border-slate-800 border-dashed w-full">
+                                </div>
+                                <div
+                                    class="h-[72px] border-b border-slate-100 dark:border-slate-800 border-dashed w-full">
+                                </div>
+                                <div
+                                    class="h-[72px] border-b border-slate-100 dark:border-slate-800 border-dashed w-full">
+                                </div>
+                                <div
+                                    class="h-[72px] border-b border-slate-100 dark:border-slate-800 border-dashed w-full">
+                                </div>
+                                <div
+                                    class="h-[72px] border-b border-slate-100 dark:border-slate-800 border-dashed w-full">
+                                </div>
+                            </div>
+                            <!-- Events Overlay Layer -->
+                            <div class="col-span-7 grid grid-cols-7 absolute inset-0 left-[12.5%] h-full w-[87.5%]">
+                                <!-- Event 1: Tue 10:00 - 11:30 -->
+                                <div class="relative col-start-2">
+                                    <div
+                                        class="absolute top-[144px] h-[108px] w-[95%] left-[2.5%] bg-primary/10 border-l-4 border-primary rounded-r-md p-2 hover:bg-primary/20 cursor-pointer transition-colors shadow-sm">
+                                        <div class="text-xs font-bold text-primary mb-0.5">10:00 - 11:30</div>
+                                        <div class="font-bold text-sm text-slate-800 dark:text-slate-100 truncate">Dog
+                                            Walking</div>
+                                        <div
+                                            class="text-xs text-slate-600 dark:text-slate-400 flex items-center gap-1 mt-1">
+                                            <span class="material-icons text-[12px]">pets</span> Thor
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Event 2: Tue 14:00 - 16:00 -->
+                                <div class="relative col-start-2">
+                                    <div
+                                        class="absolute top-[432px] h-[144px] w-[95%] left-[2.5%] bg-purple-100 dark:bg-purple-900/30 border-l-4 border-purple-500 rounded-r-md p-2 hover:bg-purple-200 dark:hover:bg-purple-900/50 cursor-pointer transition-colors shadow-sm">
+                                        <div class="text-xs font-bold text-purple-700 dark:text-purple-400 mb-0.5">14:00
+                                            - 16:00</div>
+                                        <div class="font-bold text-sm text-slate-800 dark:text-slate-100 truncate">Pet
+                                            Sitting</div>
+                                        <div
+                                            class="text-xs text-slate-600 dark:text-slate-400 flex items-center gap-1 mt-1">
+                                            <span class="material-icons text-[12px]">pets</span> Bolinha
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Event 3: Wed 09:00 - 10:00 -->
+                                <div class="relative col-start-3">
+                                    <div
+                                        class="absolute top-[72px] h-[72px] w-[95%] left-[2.5%] bg-primary/10 border-l-4 border-primary rounded-r-md p-2 hover:bg-primary/20 cursor-pointer transition-colors shadow-sm">
+                                        <div class="text-xs font-bold text-primary mb-0.5">09:00 - 10:00</div>
+                                        <div class="font-bold text-sm text-slate-800 dark:text-slate-100 truncate">Visit
+                                        </div>
+                                        <div
+                                            class="text-xs text-slate-600 dark:text-slate-400 flex items-center gap-1 mt-1">
+                                            <span class="material-icons text-[12px]">pets</span> Rex
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Event 4: Fri 15:00 - 16:00 -->
+                                <div class="relative col-start-5">
+                                    <div
+                                        class="absolute top-[504px] h-[72px] w-[95%] left-[2.5%] bg-green-100 dark:bg-green-900/30 border-l-4 border-green-500 rounded-r-md p-2 hover:bg-green-200 dark:hover:bg-green-900/50 cursor-pointer transition-colors shadow-sm">
+                                        <div class="text-xs font-bold text-green-700 dark:text-green-400 mb-0.5">15:00 -
+                                            16:00</div>
+                                        <div class="font-bold text-sm text-slate-800 dark:text-slate-100 truncate">
+                                            Grooming</div>
+                                        <div
+                                            class="text-xs text-slate-600 dark:text-slate-400 flex items-center gap-1 mt-1">
+                                            <span class="material-icons text-[12px]">pets</span> Luna
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Upcoming Appointments Sidebar -->
+                <div class="w-full xl:w-96 flex flex-col gap-6">
+                    <div
+                        class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm p-6 flex flex-col h-full">
+                        <div class="flex items-center justify-between mb-6">
+                            <h2 class="font-bold text-lg text-slate-800 dark:text-white">Upcoming</h2>
+                            <a class="text-sm text-primary font-medium hover:underline" href="#">View All</a>
+                        </div>
+                        <div class="space-y-4 overflow-y-auto pr-1 custom-scroll">
+                            <!-- Appointment 1 -->
+                            <div
+                                class="flex items-start gap-4 p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-100 dark:border-slate-800">
+                                <div class="relative">
+                                    <img alt="Bolinha Cat" class="w-12 h-12 rounded-full object-cover shadow-sm"
+                                        data-alt="Close up of a fluffy white cat face"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCpXXFppE_vrxi2ewQlF5rfdxJKLNw1AHbDCNYDuOwIcjUBG6G_CWCaAqfuLsSFN6Huhthu2qsnrDtyhFfDrCtzR_Lm7k2YBMNqnXE2slDm7g5R8xUB3itb-BCjfHG8k2CuiHpKqw_jOdtkEX6i12e7h9KurMWDBfpFIg8dnOLoSpsSM_cz-ymCGkbsBsEh6DUAVB-Jpn97bkYkOJMt3-bGbBtdqRjgD9Q_gAoYEqPQlMo1jFCm-ZJ5zZg7QVfnbgkli1FQ_Y-XEVY" />
+                                    <div
+                                        class="absolute -bottom-1 -right-1 bg-white dark:bg-slate-800 p-0.5 rounded-full">
+                                        <span class="material-icons text-purple-500 text-sm">home</span>
+                                    </div>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex justify-between items-start">
+                                        <h4 class="font-bold text-slate-900 dark:text-white truncate">Bolinha</h4>
+                                        <span
+                                            class="text-xs font-bold bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 px-2 py-0.5 rounded-full">Today</span>
+                                    </div>
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Cat • Pet Sitting</p>
+                                    <div
+                                        class="flex items-center gap-4 text-xs font-medium text-slate-700 dark:text-slate-300">
+                                        <div class="flex items-center gap-1">
+                                            <span class="material-icons text-[14px] text-slate-400">schedule</span>
+                                            14:00
+                                        </div>
+                                        <div class="flex items-center gap-1 truncate">
+                                            <span class="material-icons text-[14px] text-slate-400">person</span> Maria
+                                            S.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Appointment 2 -->
+                            <div
+                                class="flex items-start gap-4 p-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-lg border border-transparent hover:border-slate-100 dark:hover:border-slate-800 transition-colors">
+                                <div class="relative">
+                                    <img alt="Rex Dog" class="w-12 h-12 rounded-full object-cover shadow-sm"
+                                        data-alt="Close up of a beagle dog face looking forward"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuC0iaTJp5EVO3fioMdWFmQaMUZlEMV0xByd0_j-HAYSOKeOZSLRZA225U0JDNnksEfGH6nO8oClxypWOXhpw6v6StGKJCaVBOMIV2mtaKTcCi84pAbFdQg8tmtMslqFL1MUyko4yIZhqoiEkrMtxrGrEGho9Q3GXVvGeM5NmnwvEDWBRZPMqqfZsE5fuXmMvRiHcGPjMr_AZQxs4LVWtgPFVp1YfDiusYJseAoYi9hH1gn57m9A2WFGOU3Tj4RuHvWkUJ3ZEjGaom4" />
+                                    <div
+                                        class="absolute -bottom-1 -right-1 bg-white dark:bg-slate-800 p-0.5 rounded-full">
+                                        <span class="material-icons text-primary text-sm">directions_walk</span>
+                                    </div>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex justify-between items-start">
+                                        <h4 class="font-bold text-slate-900 dark:text-white truncate">Rex</h4>
+                                        <span
+                                            class="text-xs font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">Tom.</span>
+                                    </div>
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Dog • Walking</p>
+                                    <div
+                                        class="flex items-center gap-4 text-xs font-medium text-slate-700 dark:text-slate-300">
+                                        <div class="flex items-center gap-1">
+                                            <span class="material-icons text-[14px] text-slate-400">schedule</span>
+                                            09:00
+                                        </div>
+                                        <div class="flex items-center gap-1 truncate">
+                                            <span class="material-icons text-[14px] text-slate-400">person</span> João
+                                            P.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Appointment 3 -->
+                            <div
+                                class="flex items-start gap-4 p-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-lg border border-transparent hover:border-slate-100 dark:hover:border-slate-800 transition-colors">
+                                <div class="relative">
+                                    <img alt="Thor Dog" class="w-12 h-12 rounded-full object-cover shadow-sm"
+                                        data-alt="Large husky dog looking alert"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLIv7Q3Qa5znWw0xn3KbLgpErdLmZ1cvL8PCvoI29Z8DzR-YHu0PL2HwT6PDe0KAGplJw8QeGEszQDs4fr5-bKZpByfkE6QpL_x3WxwFPpoOO17DQCDMSfZv6WdugLRBJlygiZ9EQmsx-0u1UUGuKZ99Fj4bpLTxRyBpGWT366Cc2_OtVeBofJUm6Lgepa56QWHJtxa20HIkTZpixgcD6WeOyFsxi_aT8_70mMytfGiE0H4PwZ_0okAgCZ__bNVOm63RkIzNgJArc" />
+                                    <div
+                                        class="absolute -bottom-1 -right-1 bg-white dark:bg-slate-800 p-0.5 rounded-full">
+                                        <span class="material-icons text-primary text-sm">directions_walk</span>
+                                    </div>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex justify-between items-start">
+                                        <h4 class="font-bold text-slate-900 dark:text-white truncate">Thor</h4>
+                                        <span
+                                            class="text-xs font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">Tue</span>
+                                    </div>
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Dog • Walking</p>
+                                    <div
+                                        class="flex items-center gap-4 text-xs font-medium text-slate-700 dark:text-slate-300">
+                                        <div class="flex items-center gap-1">
+                                            <span class="material-icons text-[14px] text-slate-400">schedule</span>
+                                            10:00
+                                        </div>
+                                        <div class="flex items-center gap-1 truncate">
+                                            <span class="material-icons text-[14px] text-slate-400">person</span> Carlos
+                                            M.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Appointment 4 -->
+                            <div
+                                class="flex items-start gap-4 p-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-lg border border-transparent hover:border-slate-100 dark:hover:border-slate-800 transition-colors opacity-60">
+                                <div class="relative">
+                                    <img alt="Luna Dog" class="w-12 h-12 rounded-full object-cover shadow-sm grayscale"
+                                        data-alt="Small brown puppy sitting on grass"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCnZlU7N1H0IF7MolrPPo8jFHH5iiMC0GvB30er3HVufLi6aPibqI-jeSUjdblDeLd3oEOfn1tYP1qdU47ygp02Zgx0r4XFg2IkIDKnnyRhZePvYbBzbJGuk7FI7KWvwRC0OzpDELVJE4CrqjQBH7zNlyqhRXeCS_5cvuWsLmRKy_wfg75oTQ_2HwfLNrRqV-jX6WDOwXBGbKOw7QR-KK_2o3t4-x2X4bHU0UySprpQFPQLiJVsYfw9iTFGmCwGAcHL8Drf5K02k38" />
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex justify-between items-start">
+                                        <h4 class="font-bold text-slate-900 dark:text-white truncate">Luna</h4>
+                                        <span
+                                            class="text-xs font-medium text-slate-500 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">Fri</span>
+                                    </div>
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Dog • Grooming</p>
+                                    <div
+                                        class="flex items-center gap-4 text-xs font-medium text-slate-700 dark:text-slate-300">
+                                        <div class="flex items-center gap-1">
+                                            <span class="material-icons text-[14px] text-slate-400">schedule</span>
+                                            15:00
+                                        </div>
+                                        <div class="flex items-center gap-1 truncate">
+                                            <span class="material-icons text-[14px] text-slate-400">person</span> Ana B.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-auto pt-4 border-t border-slate-100 dark:border-slate-800">
+                            <button
+                                class="w-full py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-medium text-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center justify-center gap-2">
+                                <span class="material-icons text-[18px]">sync</span>
+                                Sync Calendar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>
