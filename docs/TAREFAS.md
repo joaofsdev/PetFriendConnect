@@ -12,13 +12,13 @@
 ## 🗓️ Sprint 1 - Setup e Autenticação (Semana 1)
 
 ### João - Backend
-- [ ] Inicializar projeto Node.js com Express
-- [ ] Configurar Prisma e conexão MySQL
-- [ ] Criar schema do banco (todas as tabelas)
-- [ ] Executar migrations
-- [ ] Implementar CRUD de Usuários
-- [ ] Implementar autenticação (JWT)
-- [ ] Criar middleware de autenticação
+- [x] Inicializar projeto Node.js com Express
+- [x] Configurar Prisma e conexão MySQL
+- [x] Criar schema do banco (todas as tabelas)
+- [x] Executar migrations
+- [x] Implementar CRUD de Usuários
+- [x] Implementar autenticação (JWT)
+- [x] Criar middleware de autenticação
 
 ### Iago - Frontend
 - [ ] Inicializar projeto React (Create React App ou Vite)
@@ -39,12 +39,12 @@
 ## 🗓️ Sprint 2 - CRUD de Pets (Semana 2)
 
 ### João - Backend
-- [ ] Implementar POST /api/pets (criar)
-- [ ] Implementar GET /api/pets (listar)
-- [ ] Implementar GET /api/pets/:id (detalhe)
-- [ ] Implementar PUT /api/pets/:id (atualizar)
-- [ ] Implementar DELETE /api/pets/:id (remover)
-- [ ] Adicionar validações com express-validator
+- [x] Implementar POST /api/pets (criar)
+- [x] Implementar GET /api/pets (listar)
+- [x] Implementar GET /api/pets/:id (detalhe)
+- [x] Implementar PUT /api/pets/:id (atualizar)
+- [x] Implementar DELETE /api/pets/:id (remover)
+- [x] Adicionar validações com express-validator
 
 ### Iago - Frontend
 - [ ] Criar página "Meus Pets"
@@ -63,16 +63,16 @@
 ## 🗓️ Sprint 3 - Agendamento (Semana 3)
 
 ### João - Backend
-- [ ] Implementar CRUD de Serviços
-- [ ] Implementar gestão de Agenda (disponibilidade)
-- [ ] **Implementar transação de reserva (CRÍTICO)**
-  - [ ] Verificar disponibilidade com lock
-  - [ ] Criar reserva
-  - [ ] Bloquear agenda
-  - [ ] Registrar log
-  - [ ] Rollback em caso de erro
-- [ ] Implementar listagem de reservas
-- [ ] Implementar cancelamento de reserva
+- [ ] 🔄 Implementar CRUD de Serviços
+- [x] Implementar gestão de Agenda (disponibilidade)
+- [x] **Implementar transação de reserva (CRÍTICO)**
+  - [x] Verificar disponibilidade com lock
+  - [x] Criar reserva
+  - [x] Bloquear agenda
+  - [x] Registrar log
+  - [x] Rollback em caso de erro
+- [x] Implementar listagem de reservas
+- [x] Implementar cancelamento de reserva
 
 ### Iago - Frontend
 - [ ] Criar página de listagem de Cuidadores
@@ -96,10 +96,10 @@
 
 ### João - Backend
 - [ ] Revisar e otimizar queries
-- [ ] Adicionar tratamento de erros global
+- [x] Adicionar tratamento de erros global
 - [ ] Documentar API (Swagger/Postman)
 - [ ] Testar cenários de concorrência
-- [ ] Criar seeds para dados de teste
+- [x] Criar seeds para dados de teste
 
 ### Iago - Frontend
 - [ ] Melhorar responsividade
@@ -180,12 +180,17 @@
 - Geolocalização de cuidadores
 
 ### 🚧 Em Progresso
-
+- CRUD de Serviços (João)
 
 ### 👀 Em Revisão
 
 
 ### ✅ Concluído
+- Setup projeto Node.js + Express + Prisma + MySQL (João)
+- Autenticação JWT completa: registro, login, middleware (João)
+- CRUD de Pets com validações (João)
+- Sistema de Agendamento com transação ACID (João)
+- Seeds para dados de teste (João)
 
 
 ---
@@ -193,20 +198,20 @@
 ## 🎯 Critérios de Aceite por Feature
 
 ### CRUD de Pets
-- [ ] Usuário consegue cadastrar pet com todos os campos
-- [ ] Campos obrigatórios são validados
-- [ ] Usuário consegue ver lista de seus pets
-- [ ] Usuário consegue editar informações do pet
-- [ ] Usuário consegue excluir pet (com confirmação)
-- [ ] Apenas o dono pode ver/editar seus pets
+- [x] Usuário consegue cadastrar pet com todos os campos
+- [x] Campos obrigatórios são validados
+- [x] Usuário consegue ver lista de seus pets
+- [x] Usuário consegue editar informações do pet
+- [x] Usuário consegue excluir pet (com confirmação)
+- [x] Apenas o dono pode ver/editar seus pets
 
 ### Transação de Agendamento
-- [ ] Sistema verifica disponibilidade antes de confirmar
-- [ ] Reserva é criada apenas se horário disponível
-- [ ] Horário é bloqueado após confirmação
-- [ ] Dois usuários não conseguem reservar mesmo horário
-- [ ] Em caso de erro, nenhuma alteração é persistida
-- [ ] Log de confirmação é registrado
+- [x] Sistema verifica disponibilidade antes de confirmar
+- [x] Reserva é criada apenas se horário disponível
+- [x] Horário é bloqueado após confirmação
+- [x] Dois usuários não conseguem reservar mesmo horário
+- [x] Em caso de erro, nenhuma alteração é persistida
+- [x] Log de confirmação é registrado
 
 ---
 
