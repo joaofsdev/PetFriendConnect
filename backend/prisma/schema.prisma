@@ -1,0 +1,117 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum TipoUsuario {
+  DONO
+  CUIDADOR
+  ADMIN
+}
+
+enum StatusReserva {
+  PENDENTE
+  CONFIRMADA
+  CANCELADA
+  CONCLUIDA
+}
+
+model Usuario {
+  id        Int         @id @default(autoincrement())
+  nome      String
+  email     String      @unique
+  senha     String
+  tipo      TipoUsuario
+  telefone  String?
+  endereco  String?
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  // Relações
+  pets               Pet[]
+  reservasDono       Reserva[]  @relation("DonoReservas")
+  reservasCuidador   Reserva[]  @relation("CuidadorReservas")
+  agendas            Agenda[]
+  servicos           Servico[]
+}
+
+model Pet {
+  id          Int      @id @default(autoincrement())
+  nome        String
+  especie     String
+  raca        String?
+  idade       Int?
+  observacoes String?  @db.Text
+  donoId      Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relações
+  dono     Usuario   @relation(fields: [donoId], references: [id])
+  reservas Reserva[]
+}
+
+model Servico {
+  id         Int      @id @default(autoincrement())
+  nome       String
+  descricao  String?
+  preco      Decimal  @db.Decimal(10, 2)
+  cuidadorId Int
+  createdAt  DateTime @default(now())
+
+  // Relações
+  cuidador Usuario   @relation(fields: [cuidadorId], references: [id])
+  reservas Reserva[]
+}
+
+model Agenda {
+  id         Int      @id @default(autoincrement())
+  cuidadorId Int
+  data       DateTime @db.Date
+  horaInicio String
+  horaFim    String
+  disponivel Boolean  @default(true)
+  reservaId  Int?     @unique
+
+  // Relações
+  cuidador Usuario  @relation(fields: [cuidadorId], references: [id])
+  reserva  Reserva? @relation(fields: [reservaId], references: [id])
+
+  @@index([cuidadorId, data, disponivel])
+}
+
+model Reserva {
+  id         Int           @id @default(autoincrement())
+  donoId     Int
+  cuidadorId Int
+  petId      Int
+  servicoId  Int
+  dataInicio DateTime
+  dataFim    DateTime
+  status     StatusReserva @default(PENDENTE)
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+
+  // Relações
+  dono     Usuario  @relation("DonoReservas", fields: [donoId], references: [id])
+  cuidador Usuario  @relation("CuidadorReservas", fields: [cuidadorId], references: [id])
+  pet      Pet      @relation(fields: [petId], references: [id])
+  servico  Servico  @relation(fields: [servicoId], references: [id])
+  agenda   Agenda?
+  logs     Log[]
+}
+
+model Log {
+  id        Int      @id @default(autoincrement())
+  tipo      String
+  reservaId Int?
+  mensagem  String
+  createdAt DateTime @default(now())
+
+  // Relações
+  reserva Reserva? @relation(fields: [reservaId], references: [id])
+}
