@@ -124,25 +124,21 @@
 ## 🗓️ Sprint 5 - Painel Administrativo (Semana 5)
 
 ### João - Backend
-- [ ] Implementar middleware de autorização admin
-- [ ] Criar CRUD de usuários (admin)
   - [ ] GET /api/admin/usuarios (listar todos)
   - [ ] GET /api/admin/usuarios/:id (detalhes)
   - [ ] PUT /api/admin/usuarios/:id (editar)
   - [ ] DELETE /api/admin/usuarios/:id (desativar)
   - [ ] PATCH /api/admin/usuarios/:id/ativar (reativar)
-- [ ] Implementar gestão de denúncias
   - [ ] GET /api/admin/denuncias (listar)
   - [ ] GET /api/admin/denuncias/:id (detalhes)
   - [ ] PATCH /api/admin/denuncias/:id (atualizar status)
-- [ ] Implementar dashboard de estatísticas
   - [ ] GET /api/admin/dashboard (view vw_dashboard_admin)
-- [ ] Implementar configurações do sistema
   - [ ] GET /api/admin/configuracoes
   - [ ] PUT /api/admin/configuracoes/:chave
-- [ ] Implementar logs de auditoria
   - [ ] Registrar todas as ações de admin
   - [ ] GET /api/admin/logs
+ [ ] Painel administrativo completo (João)
+ [ ] CRUD admin: usuários, denúncias, dashboard, configs, logs (João)
 
 ### Iago - Frontend
 - [ ] Criar página Dashboard Admin
