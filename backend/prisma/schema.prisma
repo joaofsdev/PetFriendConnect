@@ -20,6 +20,13 @@ enum StatusReserva {
   CONCLUIDA
 }
 
+enum StatusDenuncia {
+  ABERTA
+  EM_ANALISE
+  RESOLVIDA
+  REJEITADA
+}
+
 model Usuario {
   id        Int         @id @default(autoincrement())
   nome      String
@@ -28,6 +35,7 @@ model Usuario {
   tipo      TipoUsuario
   telefone  String?
   endereco  String?
+  ativo     Boolean     @default(true)
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
 
@@ -37,6 +45,8 @@ model Usuario {
   reservasCuidador   Reserva[]  @relation("CuidadorReservas")
   agendas            Agenda[]
   servicos           Servico[]
+  denunciasFeitas    Denuncia[] @relation("DenunciaAutor")
+  denunciasRecebidas Denuncia[] @relation("DenunciaAlvo")
 }
 
 model Pet {
@@ -114,4 +124,30 @@ model Log {
 
   // Relações
   reserva Reserva? @relation(fields: [reservaId], references: [id])
+}
+
+model Denuncia {
+  id          Int             @id @default(autoincrement())
+  autorId     Int
+  alvoId      Int
+  motivo      String
+  descricao   String          @db.Text
+  status      StatusDenuncia  @default(ABERTA)
+  parecer     String?         @db.Text
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  // Relações
+  autor Usuario @relation("DenunciaAutor", fields: [autorId], references: [id])
+  alvo  Usuario @relation("DenunciaAlvo", fields: [alvoId], references: [id])
+
+  @@index([status])
+}
+
+model Configuracao {
+  id        Int      @id @default(autoincrement())
+  chave     String   @unique
+  valor     String   @db.Text
+  descricao String?
+  updatedAt DateTime @updatedAt
 }
