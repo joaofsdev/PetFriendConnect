@@ -15,7 +15,6 @@
 - [Requisitos Funcionais](#-requisitos-funcionais)
 - [Requisitos Não Funcionais](#-requisitos-não-funcionais)
 - [Tecnologias](#-tecnologias)
-- [Organização de Tarefas](#-organização-de-tarefas)
 - [Como Executar](#-como-executar)
 
 ---
