@@ -12,13 +12,13 @@
 ## 🗓️ Sprint 1 - Setup e Autenticação (Semana 1)
 
 ### João - Backend
-- [x] Inicializar projeto Node.js com Express
-- [x] Configurar Prisma e conexão MySQL
-- [x] Criar schema do banco (todas as tabelas)
-- [x] Executar migrations
-- [x] Implementar CRUD de Usuários
-- [x] Implementar autenticação (JWT)
-- [x] Criar middleware de autenticação
+- [ ] Inicializar projeto Node.js com Express
+- [ ] Configurar Prisma e conexão MySQL
+- [ ] Criar schema do banco (todas as tabelas)
+- [ ] Executar migrations
+- [ ] Implementar CRUD de Usuários
+- [ ] Implementar autenticação (JWT)
+- [ ] Criar middleware de autenticação
 
 ### Iago - Frontend
 - [ ] Inicializar projeto React (Create React App ou Vite)
@@ -39,12 +39,12 @@
 ## 🗓️ Sprint 2 - CRUD de Pets (Semana 2)
 
 ### João - Backend
-- [x] Implementar POST /api/pets (criar)
-- [x] Implementar GET /api/pets (listar)
-- [x] Implementar GET /api/pets/:id (detalhe)
-- [x] Implementar PUT /api/pets/:id (atualizar)
-- [x] Implementar DELETE /api/pets/:id (remover)
-- [x] Adicionar validações com express-validator
+- [ ] Implementar POST /api/pets (criar)
+- [ ] Implementar GET /api/pets (listar)
+- [ ] Implementar GET /api/pets/:id (detalhe)
+- [ ] Implementar PUT /api/pets/:id (atualizar)
+- [ ] Implementar DELETE /api/pets/:id (remover)
+- [ ] Adicionar validações com express-validator
 
 ### Iago - Frontend
 - [ ] Criar página "Meus Pets"
@@ -64,15 +64,15 @@
 
 ### João - Backend
 - [ ] 🔄 Implementar CRUD de Serviços
-- [x] Implementar gestão de Agenda (disponibilidade)
-- [x] **Implementar transação de reserva (CRÍTICO)**
-  - [x] Verificar disponibilidade com lock
-  - [x] Criar reserva
-  - [x] Bloquear agenda
-  - [x] Registrar log
-  - [x] Rollback em caso de erro
-- [x] Implementar listagem de reservas
-- [x] Implementar cancelamento de reserva
+- [ ] Implementar gestão de Agenda (disponibilidade)
+- [ ] **Implementar transação de reserva (CRÍTICO)**
+  - [ ] Verificar disponibilidade com lock
+  - [ ] Criar reserva
+  - [ ] Bloquear agenda
+  - [ ] Registrar log
+  - [ ] Rollback em caso de erro
+- [ ] Implementar listagem de reservas
+- [ ] Implementar cancelamento de reserva
 
 ### Iago - Frontend
 - [ ] Criar página de listagem de Cuidadores
@@ -96,10 +96,10 @@
 
 ### João - Backend
 - [ ] Revisar e otimizar queries
-- [x] Adicionar tratamento de erros global
+- [ ] Adicionar tratamento de erros global
 - [ ] Documentar API (Swagger/Postman)
 - [ ] Testar cenários de concorrência
-- [x] Criar seeds para dados de teste
+- [ ] Criar seeds para dados de teste
 
 ### Iago - Frontend
 - [ ] Melhorar responsividade
