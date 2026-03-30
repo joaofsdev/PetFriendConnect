@@ -2,7 +2,14 @@ import { useState } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 
-const navItemsDono = [
+type NavItem = {
+  icon: string;
+  label: string;
+  to: string;
+  badge?: number;
+};
+
+const navItemsDono: NavItem[] = [
   { icon: "dashboard", label: "Painel", to: "/dashboard/dono" },
   { icon: "pets", label: "Meus Pets", to: "/meus-pets" },
   { icon: "search", label: "Cuidadores", to: "/encontrar-cuidadores" },
@@ -10,7 +17,7 @@ const navItemsDono = [
   { icon: "settings", label: "Configurações", to: "/configuracoes" },
 ];
 
-const navItemsCuidador = [
+const navItemsCuidador: NavItem[] = [
   { icon: "dashboard", label: "Painel", to: "/dashboard/cuidador" },
   { icon: "calendar_today", label: "Agenda", to: "/minha-agenda" },
   {
@@ -23,7 +30,7 @@ const navItemsCuidador = [
   { icon: "settings", label: "Configurações", to: "/configuracoes" },
 ];
 
-const navItemsAdmin = [
+const navItemsAdmin: NavItem[] = [
   { icon: "dashboard", label: "Painel", to: "/admin" },
   { icon: "people", label: "Usuários", to: "/admin/usuarios" },
   { icon: "flag", label: "Denúncias", to: "/admin/denuncias" },
@@ -35,21 +42,34 @@ export default function MainLayout() {
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { user } = useAuth();
+  const isAdminArea = location.pathname.startsWith("/admin");
 
-  const navItems =
-    user?.role === "admin"
-      ? navItemsAdmin
-      : user?.role === "cuidador"
-        ? navItemsCuidador
-        : navItemsDono;
+  let navItems = navItemsDono;
+  if (isAdminArea || user?.role === "admin") navItems = navItemsAdmin;
+  if (!isAdminArea && user?.role === "cuidador") navItems = navItemsCuidador;
+
+  let roleLabel = "Dono de Pet";
+  if (!isAdminArea && user?.role === "cuidador") {
+    roleLabel = "Cuidador(a) Profissional";
+  }
+  if (isAdminArea || user?.role === "admin") roleLabel = "Administrador";
+
+  const homeDestination = isAdminArea ? "/admin" : "/";
 
   return (
     <div className="bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-200 h-screen overflow-hidden flex font-display">
       {/* Overlay mobile */}
       {sidebarOpen && (
-        <div
+        <button
+          type="button"
+          aria-label="Fechar menu lateral"
           className="fixed inset-0 bg-black/40 z-20 lg:hidden"
           onClick={() => setSidebarOpen(false)}
+          onKeyDown={(event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              setSidebarOpen(false);
+            }
+          }}
         />
       )}
 
@@ -67,7 +87,7 @@ export default function MainLayout() {
           {/* Logo */}
           <div className="h-16 flex items-center px-6 border-b border-slate-100 dark:border-slate-800">
             <Link
-              to="/"
+              to={homeDestination}
               className="flex items-center gap-2 text-primary font-bold text-xl"
             >
               <span className="material-icons">pets</span>
@@ -94,7 +114,7 @@ export default function MainLayout() {
                     {item.icon}
                   </span>
                   {item.label}
-                  {"badge" in item && item.badge && (
+                  {item.badge && (
                     <span className="ml-auto bg-red-500 text-white text-xs px-2 py-0.5 rounded-full font-bold">
                       {item.badge}
                     </span>
@@ -118,11 +138,7 @@ export default function MainLayout() {
                 {user?.name ?? "Usuário"}
               </p>
               <p className="text-xs text-slate-500 dark:text-slate-400 truncate capitalize">
-                {user?.role === "cuidador"
-                  ? "Cuidador(a) Profissional"
-                  : user?.role === "admin"
-                    ? "Administrador"
-                    : "Dono de Pet"}
+                {roleLabel}
               </p>
             </div>
             <span className="material-icons text-slate-400 text-sm">

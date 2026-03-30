@@ -177,7 +177,8 @@ export default function Agendamento() {
       if (day <= rangeStart) {
         setRangeStart(day);
         setRangeEnd(null);
-      } else setRangeEnd(day);
+      }
+      if (day > rangeStart) setRangeEnd(day);
     }
   }
 
@@ -265,6 +266,9 @@ export default function Agendamento() {
                 {STEPS.map((label, i) => {
                   const done = i < step;
                   const current = i === step;
+                  let stepBadgeClass =
+                    "bg-white dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-600 text-slate-500";
+                  if (done || current) stepBadgeClass = "bg-primary text-white";
                   return (
                     <li key={label} className="relative">
                       {i < STEPS.length - 1 && (
@@ -274,13 +278,7 @@ export default function Agendamento() {
                       )}
                       <div className="relative flex items-center gap-4">
                         <span
-                          className={`w-8 h-8 flex items-center justify-center rounded-full z-10 font-bold text-sm transition-colors ${
-                            done
-                              ? "bg-primary text-white"
-                              : current
-                                ? "bg-primary text-white"
-                                : "bg-white dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-600 text-slate-500"
-                          }`}
+                          className={`w-8 h-8 flex items-center justify-center rounded-full z-10 font-bold text-sm transition-colors ${stepBadgeClass}`}
                         >
                           {done ? (
                             <span className="material-icons text-sm">
@@ -311,9 +309,9 @@ export default function Agendamento() {
           </div>
           <p className="text-xs text-slate-400 mt-8">
             Precisa de ajuda?{" "}
-            <a href="#" className="text-primary hover:underline">
+            <button type="button" className="text-primary hover:underline">
               Fale conosco
-            </a>
+            </button>
           </p>
         </div>
 
@@ -472,16 +470,23 @@ export default function Agendamento() {
                         ))}
                       </div>
                       <div className="grid grid-cols-7 gap-1 text-center text-sm">
-                        {calDays.map((d, i) => (
-                          <button
-                            key={i}
-                            disabled={!d.current}
-                            onClick={() => d.current && handleDayClick(d.day)}
-                            className={`p-2 rounded transition-colors ${!d.current ? "text-slate-300 dark:text-slate-600 pointer-events-none" : getDayStyle(d.day)}`}
-                          >
-                            {d.day}
-                          </button>
-                        ))}
+                        {calDays.map((d) => {
+                          const disabledDay = !d.current;
+                          const dayClass = disabledDay
+                            ? "text-slate-300 dark:text-slate-600 pointer-events-none"
+                            : getDayStyle(d.day);
+
+                          return (
+                            <button
+                              key={`${d.current ? "current" : "outside"}-${d.day}`}
+                              disabled={!d.current}
+                              onClick={() => d.current && handleDayClick(d.day)}
+                              className={`p-2 rounded transition-colors ${dayClass}`}
+                            >
+                              {d.day}
+                            </button>
+                          );
+                        })}
                       </div>
 
                       {/* Legenda hospedagem */}
@@ -672,16 +677,7 @@ export default function Agendamento() {
                         {dateLabel()}
                       </p>
                     </div>
-                    {!isBoarding ? (
-                      <div>
-                        <p className="text-xs text-slate-500 dark:text-slate-400">
-                          Horário
-                        </p>
-                        <p className="font-medium text-slate-900 dark:text-white">
-                          {selectedTime}
-                        </p>
-                      </div>
-                    ) : (
+                    {isBoarding ? (
                       <>
                         <div>
                           <p className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
@@ -706,6 +702,15 @@ export default function Agendamento() {
                           </p>
                         </div>
                       </>
+                    ) : (
+                      <div>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">
+                          Horário
+                        </p>
+                        <p className="font-medium text-slate-900 dark:text-white">
+                          {selectedTime}
+                        </p>
+                      </div>
                     )}
                   </div>
 
@@ -797,14 +802,4 @@ export default function Agendamento() {
       )}
     </div>
   );
-
-  function errorMsg() {
-    if (!isBoarding)
-      return "Por favor, selecione uma data e horário para continuar.";
-    if (!rangeStart || !rangeEnd)
-      return "Por favor, selecione o período de hospedagem.";
-    if (!checkInTime) return "Por favor, selecione o horário de check-in.";
-    if (!checkOutTime) return "Por favor, selecione o horário de check-out.";
-    return "";
-  }
 }

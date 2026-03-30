@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import type { SyntheticEvent } from "react";
 
 type Section = "perfil" | "seguranca" | "preferencias";
 
@@ -6,8 +7,8 @@ function Toggle({
   enabled,
   onChange,
 }: {
-  enabled: boolean;
-  onChange: () => void;
+  readonly enabled: boolean;
+  readonly onChange: () => void;
 }) {
   return (
     <button
@@ -81,12 +82,12 @@ export default function Configuracoes() {
     setTimeout(() => setSavedMsg(""), 3000);
   }
 
-  function handleSavePerfil(e: React.FormEvent<HTMLFormElement>) {
+  function handleSavePerfil(e: SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
     showSaved("Dados pessoais salvos com sucesso!");
   }
 
-  function handleSaveSenha(e: React.FormEvent<HTMLFormElement>) {
+  function handleSaveSenha(e: SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
     if (novaSenha !== confirmarSenha) {
       setSenhaError("As senhas não coincidem.");
@@ -103,7 +104,7 @@ export default function Configuracoes() {
     showSaved("Senha atualizada com sucesso!");
   }
 
-  function handleSavePreferencias(e: React.FormEvent<HTMLFormElement>) {
+  function handleSavePreferencias(e: SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
     showSaved("Preferências salvas com sucesso!");
   }
@@ -441,15 +442,7 @@ export default function Configuracoes() {
                     perfis de pets. Esta ação não pode ser desfeita.
                   </p>
                   <div className="mt-4 flex items-center gap-3 flex-wrap">
-                    {!showDeleteConfirm ? (
-                      <button
-                        type="button"
-                        onClick={() => setShowDeleteConfirm(true)}
-                        className="px-4 py-2 border border-transparent font-medium rounded-lg text-white bg-red-600 hover:bg-red-700 text-sm transition-colors"
-                      >
-                        Excluir Conta
-                      </button>
-                    ) : (
+                    {showDeleteConfirm ? (
                       <>
                         <p className="text-sm font-medium text-red-700 dark:text-red-300">
                           Tem certeza? Esta ação é irreversível.
@@ -468,6 +461,14 @@ export default function Configuracoes() {
                           Confirmar Exclusão
                         </button>
                       </>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => setShowDeleteConfirm(true)}
+                        className="px-4 py-2 border border-transparent font-medium rounded-lg text-white bg-red-600 hover:bg-red-700 text-sm transition-colors"
+                      >
+                        Excluir Conta
+                      </button>
                     )}
                   </div>
                 </div>
