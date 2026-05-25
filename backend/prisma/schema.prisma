@@ -1,0 +1,144 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum TipoUsuario {
+  DONO
+  CUIDADOR
+  ADMIN
+}
+
+enum StatusReserva {
+  PENDENTE
+  CONFIRMADA
+  CANCELADA
+  CONCLUIDA
+}
+
+model Usuario {
+  id                Int           @id @default(autoincrement())
+  nome              String
+  email             String        @unique
+  senha             String
+  tipo              TipoUsuario
+  telefone          String?
+  endereco          String?
+  descricao         String?       @db.LongText
+  fotoPerfil        String?
+  ativo             Boolean       @default(true)
+  dataCriacao       DateTime      @default(now())
+  dataAtualizacao   DateTime      @updatedAt
+
+  // Relacionamentos
+  pets              Pet[]
+  servicosCriados   Servico[]
+  agendas           Agenda[]
+  reservasFeitas    Reserva[]     @relation("ReservasFeitas")
+  reservasRecebidas Reserva[]     @relation("ReservasRecebidas")
+  logs              Log[]
+
+  @@index([email])
+  @@index([tipo])
+}
+
+model Pet {
+  id                Int           @id @default(autoincrement())
+  nome              String
+  raca              String
+  idade             Int
+  descricao         String?       @db.LongText
+  fotoPet           String?
+  donoId            Int
+  dataCriacao       DateTime      @default(now())
+  dataAtualizacao   DateTime      @updatedAt
+
+  // Relacionamentos
+  dono              Usuario       @relation(fields: [donoId], references: [id], onDelete: Cascade)
+  reservas          Reserva[]
+
+  @@index([donoId])
+}
+
+model Servico {
+  id                Int           @id @default(autoincrement())
+  nome              String
+  descricao         String?       @db.LongText
+  preco             Decimal       @db.Decimal(10, 2)
+  duracao           Int           // em minutos
+  cuidadorId        Int
+  ativo             Boolean       @default(true)
+  dataCriacao       DateTime      @default(now())
+  dataAtualizacao   DateTime      @updatedAt
+
+  // Relacionamentos
+  cuidador          Usuario       @relation(fields: [cuidadorId], references: [id], onDelete: Cascade)
+  agendas           Agenda[]
+  reservas          Reserva[]
+
+  @@index([cuidadorId])
+}
+
+model Agenda {
+  id                Int           @id @default(autoincrement())
+  cuidadorId        Int
+  servicoId         Int
+  data              DateTime
+  disponivel        Boolean       @default(true)
+  reservaId         Int?
+  dataCriacao       DateTime      @default(now())
+  dataAtualizacao   DateTime      @updatedAt
+
+  // Relacionamentos
+  cuidador          Usuario       @relation(fields: [cuidadorId], references: [id], onDelete: Cascade)
+  servico           Servico       @relation(fields: [servicoId], references: [id], onDelete: Cascade)
+  reservas          Reserva[]
+
+  @@index([cuidadorId, data, disponivel])
+}
+
+model Reserva {
+  id                Int           @id @default(autoincrement())
+  agendaId          Int
+  donoId            Int
+  cuidadorId        Int
+  petId             Int
+  servicoId         Int
+  status            StatusReserva @default(PENDENTE)
+  dataReserva       DateTime      @default(now())
+  dataAtualizacao   DateTime      @updatedAt
+
+  // Relacionamentos
+  agenda            Agenda        @relation(fields: [agendaId], references: [id], onDelete: Cascade)
+  dono              Usuario       @relation("ReservasFeitas", fields: [donoId], references: [id], onDelete: Cascade)
+  cuidador          Usuario       @relation("ReservasRecebidas", fields: [cuidadorId], references: [id], onDelete: Cascade)
+  pet               Pet           @relation(fields: [petId], references: [id], onDelete: Cascade)
+  servico           Servico       @relation(fields: [servicoId], references: [id], onDelete: Cascade)
+
+  @@index([agendaId])
+  @@index([donoId])
+  @@index([cuidadorId])
+  @@index([petId])
+  @@index([status])
+}
+
+model Log {
+  id                Int           @id @default(autoincrement())
+  usuarioId         Int
+  acao              String
+  descricao         String?       @db.LongText
+  dataLog           DateTime      @default(now())
+
+  // Relacionamentos
+  usuario           Usuario       @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@index([usuarioId])
+  @@index([dataLog])
+}

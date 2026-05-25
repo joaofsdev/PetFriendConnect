@@ -45,14 +45,14 @@ export default function MainLayout() {
   const isAdminArea = location.pathname.startsWith("/admin");
 
   let navItems = navItemsDono;
-  if (isAdminArea || user?.role === "admin") navItems = navItemsAdmin;
-  if (!isAdminArea && user?.role === "cuidador") navItems = navItemsCuidador;
+  if (isAdminArea || user?.tipo === "ADMIN") navItems = navItemsAdmin;
+  if (!isAdminArea && user?.tipo === "CUIDADOR") navItems = navItemsCuidador;
 
   let roleLabel = "Dono de Pet";
-  if (!isAdminArea && user?.role === "cuidador") {
+  if (!isAdminArea && user?.tipo === "CUIDADOR") {
     roleLabel = "Cuidador(a) Profissional";
   }
-  if (isAdminArea || user?.role === "admin") roleLabel = "Administrador";
+  if (isAdminArea || user?.tipo === "ADMIN") roleLabel = "Administrador";
 
   const homeDestination = isAdminArea ? "/admin" : "/";
 
@@ -135,7 +135,7 @@ export default function MainLayout() {
             />
             <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold text-slate-900 dark:text-white truncate">
-                {user?.name ?? "Usuário"}
+                {user?.nome ?? "Usuário"}
               </p>
               <p className="text-xs text-slate-500 dark:text-slate-400 truncate capitalize">
                 {roleLabel}

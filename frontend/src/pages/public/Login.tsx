@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
+import { ApiError } from "../../services/api";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -9,23 +10,42 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
+  const [rememberMe, setRememberMe] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    // TODO: substituir por chamada real à API
-    // Simulação: qualquer login redireciona como cuidador
-    login({ name: "Ana Silva", role: "cuidador" });
-    navigate("/dashboard/cuidador");
+    setErrorMessage("");
+    setIsSubmitting(true);
+
+    try {
+      const user = await login({ email, senha: password, rememberMe });
+
+      if (user.tipo === "ADMIN") {
+        navigate("/admin");
+        return;
+      }
+
+      navigate(
+        user.tipo === "CUIDADOR" ? "/dashboard/cuidador" : "/dashboard/dono",
+      );
+    } catch (error) {
+      if (error instanceof ApiError) {
+        setErrorMessage(error.message);
+      } else {
+        setErrorMessage("Não foi possível fazer login. Tente novamente.");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
-    <main className="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-[url('https://images.unsplash.com/photo-1450778869180-41d0601e046e?q=80&w=2500&auto=format&fit=crop')] bg-cover bg-center bg-no-repeat relative">
-      {/* Overlay */}
+    <main className="grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-[url('https://images.unsplash.com/photo-1450778869180-41d0601e046e?q=80&w=2500&auto=format&fit=crop')] bg-cover bg-center bg-no-repeat relative">
       <div className="absolute inset-0 bg-background-light/90 dark:bg-background-dark/95 backdrop-blur-sm" />
 
       <div className="relative w-full max-w-md space-y-8">
-        {/* Header */}
         <div className="text-center">
           <h2 className="mt-6 text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
             Bem-vindo de volta!
@@ -35,10 +55,14 @@ export default function Login() {
           </p>
         </div>
 
-        {/* Card */}
         <div className="bg-white dark:bg-[#1A2332] py-8 px-6 shadow-xl rounded-xl border border-slate-200 dark:border-slate-700">
           <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Email */}
+            {errorMessage && (
+              <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900/40 dark:bg-red-950/30 dark:text-red-200">
+                {errorMessage}
+              </div>
+            )}
+
             <div>
               <label
                 htmlFor="email"
@@ -66,7 +90,6 @@ export default function Login() {
               </div>
             </div>
 
-            {/* Senha */}
             <div>
               <label
                 htmlFor="password"
@@ -103,7 +126,6 @@ export default function Login() {
               </div>
             </div>
 
-            {/* Lembrar-me & Esqueceu */}
             <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <input
@@ -129,16 +151,15 @@ export default function Login() {
               </a>
             </div>
 
-            {/* Submit */}
             <button
               type="submit"
-              className="flex w-full justify-center rounded-lg bg-primary px-3 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-600 transition-colors"
+              disabled={isSubmitting}
+              className="flex w-full justify-center rounded-lg bg-primary px-3 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-70 transition-colors"
             >
-              Entrar
+              {isSubmitting ? "Entrando..." : "Entrar"}
             </button>
           </form>
 
-          {/* Divisor */}
           <div className="mt-6">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
