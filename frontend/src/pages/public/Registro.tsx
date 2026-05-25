@@ -1,9 +1,14 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, type FormEvent } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
+import { ApiError } from "../../services/api";
 
-type Role = "contratante" | "cuidador";
+type Role = "dono" | "cuidador";
 
 export default function Registro() {
+  const navigate = useNavigate();
+  const { register } = useAuth();
+
   const [role, setRole] = useState<Role>("cuidador");
   const [showPassword, setShowPassword] = useState(false);
 
@@ -12,15 +17,38 @@ export default function Registro() {
   const [password, setPassword] = useState("");
   const [location, setLocation] = useState("");
   const [about, setAbout] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    // TODO: implementar lógica de cadastro
-    console.log({ role, name, email, password, location, about });
+    setErrorMessage("");
+    setIsSubmitting(true);
+
+    try {
+      const user = await register({
+        nome: name,
+        email,
+        senha: password,
+        tipo: role === "cuidador" ? "CUIDADOR" : "DONO",
+      });
+
+      navigate(
+        user.tipo === "CUIDADOR" ? "/dashboard/cuidador" : "/dashboard/dono",
+      );
+    } catch (error) {
+      if (error instanceof ApiError) {
+        setErrorMessage(error.message);
+      } else {
+        setErrorMessage("Não foi possível criar a conta. Tente novamente.");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
-    <main className="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-[url('https://images.unsplash.com/photo-1450778869180-41d0601e046e?q=80&w=2500&auto=format&fit=crop')] bg-cover bg-center bg-no-repeat relative">
+    <main className="grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-[url('https://images.unsplash.com/photo-1450778869180-41d0601e046e?q=80&w=2500&auto=format&fit=crop')] bg-cover bg-center bg-no-repeat relative">
       {/* Overlay */}
       <div className="absolute inset-0 bg-background-light/90 dark:bg-background-dark/95 backdrop-blur-sm" />
 
@@ -43,9 +71,9 @@ export default function Registro() {
             <div className="grid grid-cols-2 p-1 bg-slate-100 dark:bg-slate-800 rounded-lg">
               <button
                 type="button"
-                onClick={() => setRole("contratante")}
+                onClick={() => setRole("dono")}
                 className={`flex items-center justify-center py-2.5 text-sm font-medium rounded-md transition-colors ${
-                  role === "contratante"
+                  role === "dono"
                     ? "bg-primary text-white shadow-sm ring-1 ring-black/5"
                     : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
                 }`}
@@ -67,6 +95,11 @@ export default function Registro() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
+            {errorMessage && (
+              <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900/40 dark:bg-red-950/30 dark:text-red-200">
+                {errorMessage}
+              </div>
+            )}
             {/* Nome */}
             <div>
               <label
@@ -207,11 +240,14 @@ export default function Registro() {
             <div>
               <button
                 type="submit"
-                className="flex w-full justify-center rounded-lg bg-primary px-3 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-colors"
+                disabled={isSubmitting}
+                className="flex w-full justify-center rounded-lg bg-primary px-3 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 transition-colors"
               >
-                {role === "cuidador"
-                  ? "Cadastrar como Cuidador"
-                  : "Cadastrar como Contratante"}
+                {isSubmitting
+                  ? "Cadastrando..."
+                  : role === "cuidador"
+                    ? "Cadastrar como Cuidador"
+                    : "Cadastrar como Dono"}
               </button>
             </div>
           </form>

@@ -1,75 +1,78 @@
-import { useState } from "react";
-
-interface Pet {
-  id: number;
-  name: string;
-  breed: string;
-  age: string;
-  img: string;
-  badges: { label: string; icon: string; color: string }[];
-}
-
-const initialPets: Pet[] = [
-  {
-    id: 1,
-    name: "Buddy",
-    breed: "Golden Retriever",
-    age: "3 anos",
-    img: "https://images.unsplash.com/photo-1552053831-71594a27632d?w=400&q=80",
-    badges: [
-      {
-        label: "Medicação",
-        icon: "medical_services",
-        color:
-          "bg-red-50 text-red-700 border-red-100 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800",
-      },
-    ],
-  },
-  {
-    id: 2,
-    name: "Luna",
-    breed: "Siamesa",
-    age: "2 anos",
-    img: "https://images.unsplash.com/photo-1526336024174-e58f5cdd8e13?w=400&q=80",
-    badges: [
-      {
-        label: "Cuidados Especiais",
-        icon: "star",
-        color:
-          "bg-amber-50 text-amber-700 border-amber-100 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-800",
-      },
-    ],
-  },
-  {
-    id: 3,
-    name: "Max",
-    breed: "Beagle",
-    age: "5 anos",
-    img: "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=400&q=80",
-    badges: [],
-  },
-  {
-    id: 4,
-    name: "Oliver",
-    breed: "SRD",
-    age: "1 ano",
-    img: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400&q=80",
-    badges: [
-      {
-        label: "Vacinas Pendentes",
-        icon: "vaccines",
-        color:
-          "bg-blue-50 text-blue-700 border-blue-100 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800",
-      },
-    ],
-  },
-];
+import { useEffect, useState, type FormEvent } from "react";
+import {
+  listarPets,
+  criarPet,
+  atualizarPet,
+  removerPet,
+  type Pet,
+  type CriarPetPayload,
+} from "../services/pets";
 
 export default function MeusPets() {
-  const [pets, setPets] = useState<Pet[]>(initialPets);
+  const [pets, setPets] = useState<Pet[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [showForm, setShowForm] = useState(false);
+  const [editingPet, setEditingPet] = useState<Pet | null>(null);
 
-  function handleDelete(id: number) {
-    setPets((prev) => prev.filter((p) => p.id !== id));
+  useEffect(() => {
+    fetchPets();
+  }, []);
+
+  async function fetchPets() {
+    try {
+      setLoading(true);
+      const res = await listarPets();
+      setPets(res.data);
+    } catch {
+      setError("Erro ao carregar pets.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleDelete(id: number) {
+    if (!confirm("Tem certeza que deseja remover este pet?")) return;
+    try {
+      await removerPet(id);
+      setPets((prev) => prev.filter((p) => p.id !== id));
+    } catch {
+      setError("Erro ao remover pet.");
+    }
+  }
+
+  function openEdit(pet: Pet) {
+    setEditingPet(pet);
+    setShowForm(true);
+  }
+
+  function openCreate() {
+    setEditingPet(null);
+    setShowForm(true);
+  }
+
+  async function handleSubmit(data: CriarPetPayload) {
+    try {
+      if (editingPet) {
+        const res = await atualizarPet(editingPet.id, data);
+        setPets((prev) => prev.map((p) => (p.id === editingPet.id ? res.data : p)));
+      } else {
+        const res = await criarPet(data);
+        setPets((prev) => [...prev, res.data]);
+      }
+      setShowForm(false);
+      setEditingPet(null);
+    } catch {
+      setError("Erro ao salvar pet.");
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <span className="material-icons animate-spin text-primary text-4xl">refresh</span>
+      </div>
+    );
   }
 
   return (
@@ -77,28 +80,39 @@ export default function MeusPets() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          {/* Breadcrumb */}
           <nav className="flex items-center gap-1 text-sm text-slate-400 mb-2">
             <span className="material-icons text-xl">home</span>
             <span className="material-icons text-xl">chevron_right</span>
-            <span className="hover:text-slate-600 cursor-pointer">Perfil</span>
-            <span className="material-icons text-xl">chevron_right</span>
-            <span className="text-slate-900 dark:text-white font-medium">
-              Meus Pets
-            </span>
+            <span className="text-slate-900 dark:text-white font-medium">Meus Pets</span>
           </nav>
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
-            Meus Pets
-          </h2>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Meus Pets</h2>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
             Gerencie os perfis dos seus amigos peludos.
           </p>
         </div>
-        <button className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:bg-blue-600 transition-colors shadow-sm self-start sm:self-auto">
+        <button
+          onClick={openCreate}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:bg-blue-600 transition-colors shadow-sm self-start sm:self-auto"
+        >
           <span className="material-icons text-lg">add</span>
           Adicionar Pet
         </button>
       </div>
+
+      {error && (
+        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900/40 dark:bg-red-950/30 dark:text-red-200">
+          {error}
+        </div>
+      )}
+
+      {/* Modal/Form */}
+      {showForm && (
+        <PetForm
+          pet={editingPet}
+          onSubmit={handleSubmit}
+          onCancel={() => { setShowForm(false); setEditingPet(null); }}
+        />
+      )}
 
       {/* Pet Grid */}
       {pets.length > 0 ? (
@@ -108,16 +122,17 @@ export default function MeusPets() {
               key={pet.id}
               className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden group hover:-translate-y-0.5 transition-all duration-300"
             >
-              {/* Imagem */}
-              <div className="relative h-48 w-full bg-slate-200">
-                <img
-                  src={pet.img}
-                  alt={pet.name}
-                  className="w-full h-full object-cover"
-                />
-                {/* Botões de ação no hover */}
+              <div className="relative h-48 w-full bg-slate-200 flex items-center justify-center">
+                {pet.fotoPet ? (
+                  <img src={pet.fotoPet} alt={pet.nome} className="w-full h-full object-cover" />
+                ) : (
+                  <span className="material-icons text-6xl text-slate-400">pets</span>
+                )}
                 <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button className="bg-white/90 dark:bg-slate-900/90 p-1.5 rounded-full text-slate-600 dark:text-slate-300 hover:text-primary shadow-sm backdrop-blur-sm">
+                  <button
+                    onClick={() => openEdit(pet)}
+                    className="bg-white/90 dark:bg-slate-900/90 p-1.5 rounded-full text-slate-600 dark:text-slate-300 hover:text-primary shadow-sm backdrop-blur-sm"
+                  >
                     <span className="material-icons text-sm">edit</span>
                   </button>
                   <button
@@ -128,67 +143,111 @@ export default function MeusPets() {
                   </button>
                 </div>
               </div>
-
-              {/* Info */}
               <div className="p-5">
                 <div className="flex justify-between items-start">
                   <div>
-                    <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-                      {pet.name}
-                    </h3>
-                    <p className="text-sm text-slate-500 dark:text-slate-400">
-                      {pet.breed}
-                    </p>
+                    <h3 className="text-lg font-bold text-slate-900 dark:text-white">{pet.nome}</h3>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">{pet.raca || "Sem raça definida"}</p>
                   </div>
-                  <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary dark:bg-primary/20 dark:text-blue-300">
-                    {pet.age}
-                  </span>
-                </div>
-
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {pet.badges.length > 0 ? (
-                    pet.badges.map((badge) => (
-                      <span
-                        key={badge.label}
-                        className={`inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium border ${badge.color}`}
-                      >
-                        <span className="material-icons text-[14px]">
-                          {badge.icon}
-                        </span>
-                        {badge.label}
-                      </span>
-                    ))
-                  ) : (
-                    <span className="text-xs text-slate-400 italic">
-                      Sem observações especiais
+                  {pet.idade != null && (
+                    <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary dark:bg-primary/20 dark:text-blue-300">
+                      {pet.idade} {pet.idade === 1 ? "ano" : "anos"}
                     </span>
                   )}
                 </div>
+                {pet.descricao && (
+                  <p className="mt-3 text-sm text-slate-600 dark:text-slate-400 line-clamp-2">{pet.descricao}</p>
+                )}
               </div>
             </div>
           ))}
         </div>
       ) : (
-        /* Empty State */
         <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-12 text-center max-w-2xl mx-auto w-full">
           <div className="mx-auto h-32 w-32 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-6">
-            <span className="material-icons text-6xl text-slate-400 dark:text-slate-500">
-              pets
-            </span>
+            <span className="material-icons text-6xl text-slate-400 dark:text-slate-500">pets</span>
           </div>
-          <h3 className="text-xl font-medium text-slate-900 dark:text-white">
-            Nenhum pet cadastrado
-          </h3>
+          <h3 className="text-xl font-medium text-slate-900 dark:text-white">Nenhum pet cadastrado</h3>
           <p className="mt-2 text-sm text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
-            Você ainda não adicionou nenhum amigo. Comece cadastrando seu
-            primeiro pet para encontrar cuidadores ideais.
+            Comece cadastrando seu primeiro pet para encontrar cuidadores ideais.
           </p>
-          <button className="mt-6 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:bg-blue-600 transition-colors shadow-sm">
+          <button
+            onClick={openCreate}
+            className="mt-6 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:bg-blue-600 transition-colors shadow-sm"
+          >
             <span className="material-icons text-lg">add_circle</span>
             Cadastrar meu primeiro pet
           </button>
         </div>
       )}
+    </div>
+  );
+}
+
+function PetForm({
+  pet,
+  onSubmit,
+  onCancel,
+}: {
+  pet: Pet | null;
+  onSubmit: (data: CriarPetPayload) => Promise<void>;
+  onCancel: () => void;
+}) {
+  const [nome, setNome] = useState(pet?.nome ?? "");
+  const [especie, setEspecie] = useState("");
+  const [raca, setRaca] = useState(pet?.raca ?? "");
+  const [idade, setIdade] = useState(pet?.idade?.toString() ?? "");
+  const [observacoes, setObservacoes] = useState(pet?.descricao ?? "");
+  const [submitting, setSubmitting] = useState(false);
+
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    setSubmitting(true);
+    await onSubmit({
+      nome,
+      especie: especie || "Não informada",
+      raca: raca || undefined,
+      idade: idade ? parseInt(idade) : undefined,
+      observacoes: observacoes || undefined,
+    });
+    setSubmitting(false);
+  }
+
+  return (
+    <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
+      <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">
+        {pet ? "Editar Pet" : "Novo Pet"}
+      </h3>
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Nome *</label>
+          <input required value={nome} onChange={(e) => setNome(e.target.value)} className="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800/50 text-slate-900 dark:text-white px-3 py-2 text-sm" />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Espécie *</label>
+          <input required value={especie} onChange={(e) => setEspecie(e.target.value)} placeholder="Cachorro, Gato..." className="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800/50 text-slate-900 dark:text-white px-3 py-2 text-sm" />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Raça</label>
+          <input value={raca} onChange={(e) => setRaca(e.target.value)} className="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800/50 text-slate-900 dark:text-white px-3 py-2 text-sm" />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Idade</label>
+          <input type="number" min="0" value={idade} onChange={(e) => setIdade(e.target.value)} className="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800/50 text-slate-900 dark:text-white px-3 py-2 text-sm" />
+        </div>
+        <div className="sm:col-span-2">
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Observações</label>
+          <textarea rows={3} value={observacoes} onChange={(e) => setObservacoes(e.target.value)} className="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800/50 text-slate-900 dark:text-white px-3 py-2 text-sm" />
+        </div>
+        <div className="sm:col-span-2 flex justify-end gap-3">
+          <button type="button" onClick={onCancel} className="px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800">
+            Cancelar
+          </button>
+          <button type="submit" disabled={submitting} className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:bg-blue-600 disabled:opacity-70">
+            {submitting ? "Salvando..." : pet ? "Atualizar" : "Cadastrar"}
+          </button>
+        </div>
+      </form>
     </div>
   );
 }
