@@ -2,7 +2,6 @@ const { body, validationResult } = require("express-validator");
 const { sendSuccess, sendError } = require("../utils/response.js");
 const AuthService = require("../services/authService.js");
 
-// Validar dados de registro
 const validateRegister = [
   body("nome")
     .trim()
@@ -23,13 +22,11 @@ const validateRegister = [
   body("endereco").optional().trim(),
 ];
 
-// Validar dados de login
 const validateLogin = [
   body("email").trim().isEmail().withMessage("Email inválido").normalizeEmail(),
   body("senha").notEmpty().withMessage("Senha é obrigatória"),
 ];
 
-// Middleware para verificar erros de validação
 const handleValidationErrors = (req, res, next) => {
   const erros = validationResult(req);
 
@@ -47,7 +44,6 @@ const handleValidationErrors = (req, res, next) => {
   next();
 };
 
-// POST /api/auth/register
 const register = async (req, res, next) => {
   try {
     const { nome, email, senha, tipo, telefone, endereco } = req.body;
@@ -75,7 +71,6 @@ const register = async (req, res, next) => {
   }
 };
 
-// POST /api/auth/login
 const login = async (req, res, next) => {
   try {
     const { email, senha } = req.body;
@@ -96,7 +91,6 @@ const login = async (req, res, next) => {
   }
 };
 
-// GET /api/auth/me
 const me = async (req, res, next) => {
   try {
     const usuario = await AuthService.obterUsuarioPorId(req.user.id);
