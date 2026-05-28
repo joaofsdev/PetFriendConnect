@@ -13,7 +13,6 @@ class AuthService {
   static async register(dados) {
     const { nome, email, senha, tipo, telefone, endereco } = dados;
 
-    // Validar se usuário já existe
     const usuarioExistente = await prisma.usuario.findUnique({
       where: { email },
     });
@@ -22,7 +21,6 @@ class AuthService {
       throw new ConflictError("Email já cadastrado");
     }
 
-    // Validar tipo de usuário
     const tiposValidos = ["DONO", "CUIDADOR", "ADMIN"];
     if (!tiposValidos.includes(tipo)) {
       throw new ValidationError(
@@ -30,10 +28,8 @@ class AuthService {
       );
     }
 
-    // Hash da senha
     const senhaHash = await bcryptjs.hash(senha, 10);
 
-    // Criar usuário
     const usuario = await prisma.usuario.create({
       data: {
         nome,
@@ -55,7 +51,6 @@ class AuthService {
       },
     });
 
-    // Gerar token JWT
     const token = jwt.sign(
       { id: usuario.id, email: usuario.email, tipo: usuario.tipo },
       process.env.JWT_SECRET,
@@ -69,7 +64,6 @@ class AuthService {
   }
 
   static async login(email, senha) {
-    // Buscar usuário pelo email
     const usuario = await prisma.usuario.findUnique({
       where: { email },
     });
@@ -85,19 +79,16 @@ class AuthService {
       throw new UnauthorizedError("Email ou senha inválidos");
     }
 
-    // Verificar se usuário está ativo
     if (!usuario.ativo) {
       throw new UnauthorizedError("Usuário inativo");
     }
 
-    // Gerar token JWT
     const token = jwt.sign(
       { id: usuario.id, email: usuario.email, tipo: usuario.tipo },
       process.env.JWT_SECRET,
       { expiresIn: "7d" },
     );
 
-    // Retornar usuário sem a senha
     const { senha: _, ...usuarioSemSenha } = usuario;
 
     return {
