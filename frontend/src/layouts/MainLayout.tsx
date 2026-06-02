@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 
 type NavItem = {
   icon: string;
@@ -42,19 +42,19 @@ export default function MainLayout() {
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { user } = useAuth();
-  const isAdminArea = location.pathname.startsWith("/admin");
+  const isAdmin = user?.tipo === "ADMIN";
 
   let navItems = navItemsDono;
-  if (isAdminArea || user?.tipo === "ADMIN") navItems = navItemsAdmin;
-  if (!isAdminArea && user?.tipo === "CUIDADOR") navItems = navItemsCuidador;
+  if (isAdmin) navItems = navItemsAdmin;
+  if (!isAdmin && user?.tipo === "CUIDADOR") navItems = navItemsCuidador;
 
   let roleLabel = "Dono de Pet";
-  if (!isAdminArea && user?.tipo === "CUIDADOR") {
+  if (!isAdmin && user?.tipo === "CUIDADOR") {
     roleLabel = "Cuidador(a) Profissional";
   }
-  if (isAdminArea || user?.tipo === "ADMIN") roleLabel = "Administrador";
+  if (isAdmin) roleLabel = "Administrador";
 
-  const homeDestination = isAdminArea ? "/admin" : "/";
+  const homeDestination = isAdmin ? "/admin" : "/";
 
   return (
     <div className="bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-200 h-screen overflow-hidden flex font-display">

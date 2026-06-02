@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import {
   loginUsuario,
@@ -8,23 +8,12 @@ import {
   type LoginPayload,
   type RegisterPayload,
 } from "../services/auth";
+import { AuthContext, type AuthContextType } from "./authContextValue";
 
 const STORAGE_KEYS = {
   user: "petfriend:user",
   token: "petfriend:token",
 } as const;
-
-interface AuthContextType {
-  user: AuthUser | null;
-  accessToken: string | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  login: (payload: LoginPayload & { rememberMe?: boolean }) => Promise<AuthUser>;
-  register: (payload: RegisterPayload) => Promise<AuthUser>;
-  logout: () => void;
-}
-
-const AuthContext = createContext<AuthContextType | null>(null);
 
 function getStorage(rememberMe = true): Storage {
   return rememberMe ? localStorage : sessionStorage;
@@ -60,30 +49,45 @@ function clearStorage() {
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<AuthUser | null>(null);
-  const [accessToken, setAccessToken] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [initialAuth] = useState(loadFromStorage);
+  const [user, setUser] = useState<AuthUser | null>(initialAuth.user);
+  const [accessToken, setAccessToken] = useState<string | null>(
+    initialAuth.token,
+  );
+  const [isLoading, setIsLoading] = useState(
+    Boolean(initialAuth.user && initialAuth.token),
+  );
 
   useEffect(() => {
-    const { user: storedUser, token } = loadFromStorage();
-    if (storedUser && token) {
-      setUser(storedUser);
-      setAccessToken(token);
-      // Validate token by fetching current user
-      obterUsuarioLogado()
-        .then((res) => {
+    if (!initialAuth.user || !initialAuth.token) {
+      return;
+    }
+
+    let isMounted = true;
+
+    obterUsuarioLogado()
+      .then((res) => {
+        if (isMounted) {
           setUser(res.data);
-        })
-        .catch(() => {
+        }
+      })
+      .catch(() => {
+        if (isMounted) {
           clearStorage();
           setUser(null);
           setAccessToken(null);
-        })
-        .finally(() => setIsLoading(false));
-    } else {
-      setIsLoading(false);
-    }
-  }, []);
+        }
+      })
+      .finally(() => {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [initialAuth]);
 
   async function login(payload: LoginPayload & { rememberMe?: boolean }) {
     const response = await loginUsuario(payload);
@@ -103,6 +107,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return usuario;
   }
 
+  function completeSocialLogin(data: { usuario: AuthUser; token: string }) {
+    saveToStorage(data.usuario, data.token);
+    setUser(data.usuario);
+    setAccessToken(data.token);
+    return data.usuario;
+  }
+
   function logout() {
     clearStorage();
     setUser(null);
@@ -116,14 +127,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isLoading,
     login,
     register,
+    completeSocialLogin,
     logout,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
-
-export function useAuth() {
-  const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error("useAuth deve ser usado dentro de AuthProvider");
-  return ctx;
 }

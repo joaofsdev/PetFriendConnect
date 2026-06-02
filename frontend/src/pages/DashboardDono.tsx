@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 import { listarPets, type Pet } from "../services/pets";
 import { listarReservas, type Reserva } from "../services/reservas";
 

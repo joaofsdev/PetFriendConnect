@@ -25,7 +25,15 @@ const {
 } = require("../src/utils/errors");
 
 describe("AuthService", () => {
-  beforeEach(() => jest.clearAllMocks());
+  beforeEach(() => {
+    jest.clearAllMocks();
+    global.fetch = jest.fn();
+    process.env.API_URL = "http://localhost:3001";
+    process.env.GOOGLE_CLIENT_ID = "google-client-id";
+    process.env.GOOGLE_CLIENT_SECRET = "google-client-secret";
+    process.env.FACEBOOK_CLIENT_ID = "facebook-client-id";
+    process.env.FACEBOOK_CLIENT_SECRET = "facebook-client-secret";
+  });
 
   describe("register", () => {
     const dadosValidos = {
@@ -67,6 +75,14 @@ describe("AuthService", () => {
 
       await expect(
         AuthService.register({ ...dadosValidos, tipo: "INVALIDO" }),
+      ).rejects.toThrow(ValidationError);
+    });
+
+    it("deve impedir cadastro publico de ADMIN", async () => {
+      prisma.usuario.findUnique.mockResolvedValue(null);
+
+      await expect(
+        AuthService.register({ ...dadosValidos, tipo: "ADMIN" }),
       ).rejects.toThrow(ValidationError);
     });
   });
@@ -177,6 +193,121 @@ describe("AuthService", () => {
       await expect(AuthService.obterUsuarioPorId(999)).rejects.toThrow(
         ValidationError,
       );
+    });
+  });
+
+  describe("OAuth social", () => {
+    it("deve gerar URL OAuth do Google com state assinado", () => {
+      const url = AuthService.gerarUrlOAuth("google", "CUIDADOR");
+
+      expect(url).toContain("https://accounts.google.com/o/oauth2/v2/auth");
+      expect(url).toContain("client_id=google-client-id");
+      expect(url).toContain("scope=openid+email+profile");
+    });
+
+    it("deve criar usuario via OAuth Google quando email ainda nao existe", async () => {
+      const state = jwt.sign(
+        { provider: "google", tipo: "DONO", purpose: "oauth-login" },
+        process.env.JWT_SECRET,
+      );
+
+      global.fetch
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ({ access_token: "google-access-token" }),
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ({
+            sub: "google-user-id",
+            email: "social@test.com",
+            email_verified: true,
+            name: "Social User",
+            picture: "https://example.com/avatar.jpg",
+          }),
+        });
+
+      prisma.usuario.findUnique.mockResolvedValue(null);
+      prisma.usuario.create.mockResolvedValue({
+        id: 10,
+        nome: "Social User",
+        email: "social@test.com",
+        tipo: "DONO",
+        telefone: null,
+        endereco: null,
+        descricao: null,
+        fotoPerfil: "https://example.com/avatar.jpg",
+        ativo: true,
+        dataCriacao: new Date(),
+        dataAtualizacao: new Date(),
+      });
+
+      const resultado = await AuthService.loginOAuth("google", "code", state);
+
+      expect(resultado.token).toBeDefined();
+      expect(resultado.usuario.email).toBe("social@test.com");
+      expect(prisma.usuario.create).toHaveBeenCalled();
+    });
+
+    it("deve autenticar usuario existente via OAuth Facebook", async () => {
+      const state = jwt.sign(
+        { provider: "facebook", tipo: "DONO", purpose: "oauth-login" },
+        process.env.JWT_SECRET,
+      );
+
+      global.fetch
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ({ access_token: "facebook-access-token" }),
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ({
+            id: "facebook-user-id",
+            email: "existente@test.com",
+            name: "Usuario Existente",
+            picture: { data: { url: "https://example.com/facebook.jpg" } },
+          }),
+        });
+
+      prisma.usuario.findUnique.mockResolvedValue({
+        id: 11,
+        nome: "Usuario Existente",
+        email: "existente@test.com",
+        senha: "hash",
+        tipo: "DONO",
+        ativo: true,
+      });
+
+      const resultado = await AuthService.loginOAuth("facebook", "code", state);
+
+      expect(resultado.token).toBeDefined();
+      expect(resultado.usuario.senha).toBeUndefined();
+      expect(prisma.usuario.create).not.toHaveBeenCalled();
+    });
+
+    it("deve recusar OAuth sem email", async () => {
+      const state = jwt.sign(
+        { provider: "facebook", tipo: "DONO", purpose: "oauth-login" },
+        process.env.JWT_SECRET,
+      );
+
+      global.fetch
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ({ access_token: "facebook-access-token" }),
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ({
+            id: "facebook-user-id",
+            name: "Sem Email",
+          }),
+        });
+
+      await expect(
+        AuthService.loginOAuth("facebook", "code", state),
+      ).rejects.toThrow(UnauthorizedError);
     });
   });
 });

@@ -1,7 +1,8 @@
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuth } from "../../hooks/useAuth";
 import { ApiError } from "../../services/api";
+import { getSocialLoginUrl, type SocialProvider } from "../../services/oauth";
 
 type Role = "dono" | "cuidador";
 
@@ -45,6 +46,12 @@ export default function Registro() {
     } finally {
       setIsSubmitting(false);
     }
+  }
+
+  function handleSocialLogin(provider: SocialProvider) {
+    window.location.assign(
+      getSocialLoginUrl(provider, role === "cuidador" ? "CUIDADOR" : "DONO"),
+    );
   }
 
   return (
@@ -270,6 +277,7 @@ export default function Registro() {
               {/* Google */}
               <button
                 type="button"
+                onClick={() => handleSocialLogin("google")}
                 className="flex w-full items-center justify-center gap-3 rounded-lg bg-white dark:bg-slate-800 px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 shadow-sm ring-1 ring-inset ring-slate-300 dark:ring-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
               >
                 <svg
@@ -301,6 +309,7 @@ export default function Registro() {
               {/* Facebook */}
               <button
                 type="button"
+                onClick={() => handleSocialLogin("facebook")}
                 className="flex w-full items-center justify-center gap-3 rounded-lg bg-white dark:bg-slate-800 px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 shadow-sm ring-1 ring-inset ring-slate-300 dark:ring-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
               >
                 <svg

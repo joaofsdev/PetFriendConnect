@@ -23,4 +23,10 @@ router.post(
 // GET /api/auth/me
 router.get("/me", authenticate, authController.me);
 
+// OAuth social
+router.get("/google", authController.iniciarOAuth("google"));
+router.get("/google/callback", authController.callbackOAuth("google"));
+router.get("/facebook", authController.iniciarOAuth("facebook"));
+router.get("/facebook/callback", authController.callbackOAuth("facebook"));
+
 module.exports = router;

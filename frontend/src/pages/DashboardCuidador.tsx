@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 import { listarReservas, type Reserva } from "../services/reservas";
 import { listarMinhaAgenda, type AgendaSlot } from "../services/agenda";
 

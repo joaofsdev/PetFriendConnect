@@ -5,6 +5,7 @@ import ProtectedRoute from "../components/ProtectedRoute";
 import Home from "../pages/Home";
 import Login from "../pages/public/Login";
 import Registro from "../pages/public/Registro";
+import OAuthCallback from "../pages/public/OAuthCallback";
 import DashboardCuidador from "../pages/DashboardCuidador";
 import DashboardDono from "../pages/DashboardDono";
 import MeusPets from "../pages/MeusPets";
@@ -29,6 +30,7 @@ const router = createBrowserRouter([
     children: [
       { path: "/login", element: <Login /> },
       { path: "/registro", element: <Registro /> },
+      { path: "/oauth/callback", element: <OAuthCallback /> },
     ],
   },
 
@@ -38,21 +40,44 @@ const router = createBrowserRouter([
       {
         element: <MainLayout />,
         children: [
-          { path: "/dashboard/cuidador", element: <DashboardCuidador /> },
-          { path: "/dashboard/dono", element: <DashboardDono /> },
-          { path: "/meus-pets", element: <MeusPets /> },
-          { path: "/encontrar-cuidadores", element: <EncontrarCuidadores /> },
-          { path: "/agendamento", element: <Agendamento /> },
-          { path: "/minhas-reservas", element: <MinhasReservas /> },
           { path: "/configuracoes", element: <Configuracoes /> },
-          { path: "/minha-agenda", element: <MinhaAgenda /> },
-          { path: "/meus-servicos", element: <MeusServicos /> },
-          { path: "/perfil-cuidador/:id", element: <PerfilCuidador /> },
-          { path: "/admin", element: <DashboardAdmin /> },
-          { path: "/admin/usuarios", element: <AdminUsuarios /> },
-          { path: "/admin/denuncias", element: <AdminDenuncias /> },
-          { path: "/admin/logs", element: <AdminLogs /> },
-          { path: "/admin/configuracoes", element: <AdminConfiguracoes /> },
+          {
+            element: <ProtectedRoute allowedTypes={["DONO"]} />,
+            children: [
+              { path: "/dashboard/dono", element: <DashboardDono /> },
+              { path: "/meus-pets", element: <MeusPets /> },
+              {
+                path: "/encontrar-cuidadores",
+                element: <EncontrarCuidadores />,
+              },
+              { path: "/agendamento", element: <Agendamento /> },
+              { path: "/perfil-cuidador/:id", element: <PerfilCuidador /> },
+            ],
+          },
+          {
+            element: <ProtectedRoute allowedTypes={["CUIDADOR"]} />,
+            children: [
+              { path: "/dashboard/cuidador", element: <DashboardCuidador /> },
+              { path: "/minha-agenda", element: <MinhaAgenda /> },
+              { path: "/meus-servicos", element: <MeusServicos /> },
+            ],
+          },
+          {
+            element: <ProtectedRoute allowedTypes={["DONO", "CUIDADOR"]} />,
+            children: [
+              { path: "/minhas-reservas", element: <MinhasReservas /> },
+            ],
+          },
+          {
+            element: <ProtectedRoute allowedTypes={["ADMIN"]} />,
+            children: [
+              { path: "/admin", element: <DashboardAdmin /> },
+              { path: "/admin/usuarios", element: <AdminUsuarios /> },
+              { path: "/admin/denuncias", element: <AdminDenuncias /> },
+              { path: "/admin/logs", element: <AdminLogs /> },
+              { path: "/admin/configuracoes", element: <AdminConfiguracoes /> },
+            ],
+          },
         ],
       },
     ],

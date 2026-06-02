@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import type { SyntheticEvent } from "react";
-import { listarCuidadores, type Servico as CuidadorServico } from "../services/cuidadores";
+import { listarCuidadores } from "../services/cuidadores";
 import { criarServico, editarServico, type Servico } from "../services/servicos";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 
 interface ServiceForm {
   nome: string;

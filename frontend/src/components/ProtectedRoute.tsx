@@ -1,8 +1,19 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../hooks/useAuth";
+import type { UserType } from "../services/auth";
 
-export default function ProtectedRoute() {
-  const { isAuthenticated, isLoading } = useAuth();
+function getDashboardPath(tipo?: UserType) {
+  if (tipo === "ADMIN") return "/admin";
+  if (tipo === "CUIDADOR") return "/dashboard/cuidador";
+  return "/dashboard/dono";
+}
+
+export default function ProtectedRoute({
+  allowedTypes,
+}: {
+  allowedTypes?: UserType[];
+}) {
+  const { isAuthenticated, isLoading, user } = useAuth();
 
   if (isLoading) {
     return (
@@ -14,6 +25,10 @@ export default function ProtectedRoute() {
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
+  }
+
+  if (allowedTypes && (!user || !allowedTypes.includes(user.tipo))) {
+    return <Navigate to={getDashboardPath(user?.tipo)} replace />;
   }
 
   return <Outlet />;

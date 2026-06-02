@@ -23,9 +23,18 @@ const authenticate = async (req, res, next) => {
 
     // Validar token
     const decoded = await AuthService.validarToken(token);
+    const usuario = await AuthService.obterUsuarioPorId(decoded.id);
+
+    if (!usuario.ativo) {
+      throw new UnauthorizedError("Usuário inativo");
+    }
 
     // Injetar dados do usuário na requisição
-    req.user = decoded;
+    req.user = {
+      id: usuario.id,
+      email: usuario.email,
+      tipo: usuario.tipo,
+    };
 
     next();
   } catch (erro) {

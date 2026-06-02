@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import type { SyntheticEvent } from "react";
 import { listarMinhaAgenda, adicionarSlot, deletarSlot, type AgendaSlot } from "../services/agenda";
 import { listarCuidadores, type Servico } from "../services/cuidadores";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 
 type SlotStatus = "disponivel" | "agendado";
 

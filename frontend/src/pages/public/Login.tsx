@@ -1,10 +1,12 @@
 import { useState, type FormEvent } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../../contexts/AuthContext";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
 import { ApiError } from "../../services/api";
+import { getSocialLoginUrl, type SocialProvider } from "../../services/oauth";
 
 export default function Login() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { login } = useAuth();
 
   const [email, setEmail] = useState("");
@@ -13,6 +15,7 @@ export default function Login() {
   const [rememberMe, setRememberMe] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const oauthError = searchParams.get("oauthError");
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -41,6 +44,10 @@ export default function Login() {
     }
   }
 
+  function handleSocialLogin(provider: SocialProvider) {
+    window.location.assign(getSocialLoginUrl(provider, "DONO"));
+  }
+
   return (
     <main className="grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-[url('https://images.unsplash.com/photo-1450778869180-41d0601e046e?q=80&w=2500&auto=format&fit=crop')] bg-cover bg-center bg-no-repeat relative">
       <div className="absolute inset-0 bg-background-light/90 dark:bg-background-dark/95 backdrop-blur-sm" />
@@ -60,6 +67,11 @@ export default function Login() {
             {errorMessage && (
               <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900/40 dark:bg-red-950/30 dark:text-red-200">
                 {errorMessage}
+              </div>
+            )}
+            {oauthError && !errorMessage && (
+              <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900/40 dark:bg-red-950/30 dark:text-red-200">
+                {oauthError}
               </div>
             )}
 
@@ -174,6 +186,7 @@ export default function Login() {
             <div className="mt-6 grid grid-cols-2 gap-3">
               <button
                 type="button"
+                onClick={() => handleSocialLogin("google")}
                 className="flex w-full items-center justify-center gap-3 rounded-lg bg-white dark:bg-slate-800 px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 shadow-sm ring-1 ring-inset ring-slate-300 dark:ring-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
               >
                 <svg
@@ -202,6 +215,7 @@ export default function Login() {
               </button>
               <button
                 type="button"
+                onClick={() => handleSocialLogin("facebook")}
                 className="flex w-full items-center justify-center gap-3 rounded-lg bg-white dark:bg-slate-800 px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 shadow-sm ring-1 ring-inset ring-slate-300 dark:ring-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
               >
                 <svg
