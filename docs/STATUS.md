@@ -1,22 +1,23 @@
 # Status Do Projeto
 
-Data da ultima revisao: 2026-06-08
+Data da ultima revisao: 2026-06-16
 
 ## Resumo
 
 O PetFriend Connect esta com o MVP principal funcional para donos, cuidadores e administradores. A area de usuario foi conectada com backend real, incluindo edicao de perfil, troca de senha, recuperacao de senha e preferencias de notificacao.
 
-Tambem foram corrigidos pontos tecnicos importantes em pets, servicos, reservas, admin, lint e documentacao.
+Tambem foram corrigidos pontos tecnicos importantes em pets, servicos, reservas, admin, lint, Docker e documentacao.
 
 ## Validacoes Recentes
 
-- Backend: `npm.cmd test` passou com 82 testes.
-- Frontend: `npm.cmd run lint` passou.
-- Frontend: `npm.cmd run build` passou.
+- Backend: testes automatizados passando.
+- Frontend: lint passando.
+- Frontend: build passando.
 - Prisma Client regenerado apos alteracoes no schema.
-- Backend: `npm.cmd audit --json` sem vulnerabilidades.
-- Frontend: `npm.cmd audit --json` sem vulnerabilidades.
 - Backend: OAuth social coberto por testes unitarios principais.
+- Docker Compose validado com MySQL, backend e frontend.
+- Migrations Prisma aplicadas em banco MySQL via Docker.
+- Seed executado com sucesso em ambiente Docker.
 
 ## Implementado
 
@@ -44,19 +45,10 @@ Tambem foram corrigidos pontos tecnicos importantes em pets, servicos, reservas,
 - Bloqueio de autoagendamento por mesma conta ou mesmo telefone.
 - Painel admin com usuarios, denuncias, configs, logs e dashboard.
 - Validacoes reforcadas no admin.
-- Lint geral do frontend passando.
+- Docker Compose com MySQL, backend e frontend.
+- GitHub Actions CI para backend, frontend e smoke test Docker.
 
-## Pendente Para Banco Real
-
-Ainda falta rodar e validar com MySQL real:
-
-```bash
-cd backend
-npx prisma migrate dev
-npx prisma db seed
-```
-
-Depois disso, testar manualmente:
+## Teste Manual Recomendado
 
 - Cadastro/login.
 - Recuperacao de senha.
@@ -64,6 +56,7 @@ Depois disso, testar manualmente:
 - Criacao, cancelamento e nova reserva do mesmo slot.
 - Fluxo do cuidador com servicos e agenda.
 - Fluxos admin.
+- Subida via Docker Compose com seed.
 
 ## Pendente Para Seguranca
 

@@ -10,6 +10,7 @@ Plataforma para conectar donos de pets a cuidadores locais, com gestao de pets, 
 | Backend | Node.js, Express, Prisma, JWT, bcrypt |
 | Banco | MySQL |
 | Testes | Jest no backend |
+| Infra | Docker Compose, Nginx |
 
 ## Funcionalidades
 
@@ -51,6 +52,41 @@ docs/
 ```
 
 ## Como Executar
+
+### Docker Compose
+
+O projeto possui configuracao Docker para subir MySQL, backend e frontend juntos.
+
+```bash
+copy .env.docker.example .env
+docker compose up --build
+```
+
+Servicos:
+
+- Frontend: `http://localhost:8080`
+- Backend: `http://localhost:3001`
+- MySQL: `localhost:3306`
+
+Para popular o banco local com dados de teste:
+
+```bash
+docker compose exec backend npm run seed
+```
+
+Para parar os containers sem apagar o banco:
+
+```bash
+docker compose stop
+```
+
+Para parar e remover tambem o volume do MySQL:
+
+```bash
+docker compose down -v
+```
+
+Antes de usar em producao, altere os valores sensiveis no `.env`, principalmente `JWT_SECRET`, senhas do MySQL e credenciais OAuth.
 
 ### Backend
 
@@ -115,11 +151,18 @@ npm run lint
 npm run build
 ```
 
+Docker:
+
+```bash
+docker compose config
+docker compose build
+docker compose up -d
+docker compose exec backend npm run seed
+```
+
 ## Contas Seed
 
 As contas dependem do seed atual em `backend/prisma/seed.js`.
-
-Exemplos comuns:
 
 | Tipo | Email | Senha |
 |---|---|---|
@@ -134,7 +177,6 @@ Exemplos comuns:
 
 ## Pendencias Importantes
 
-- Validar migrations e seed com MySQL real.
 - Configurar envio real de email para recuperacao de senha.
 - Fazer hardening de seguranca: CORS, Helmet, rate limit, JWT/cookies e auditoria npm.
 - Configurar credenciais OAuth reais.
