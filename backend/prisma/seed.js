@@ -3,6 +3,14 @@ const bcryptjs = require("bcryptjs");
 
 const prisma = new PrismaClient();
 
+const SEED_PASSWORDS = {
+  admin: process.env.SEED_ADMIN_PASSWORD || "admin123",
+  cuidador1: process.env.SEED_CUIDADOR1_PASSWORD || "senha123",
+  cuidador2: process.env.SEED_CUIDADOR2_PASSWORD || "senha123",
+  dono1: process.env.SEED_DONO1_PASSWORD || "senha123",
+  dono2: process.env.SEED_DONO2_PASSWORD || "senha123",
+};
+
 async function main() {
   console.log("Iniciando seed do banco de dados...");
 
@@ -19,7 +27,7 @@ async function main() {
     data: {
       nome: "Admin User",
       email: "admin@petfriend.com",
-      senha: await bcryptjs.hash("admin123", 10),
+      senha: await bcryptjs.hash(SEED_PASSWORDS.admin, 10),
       tipo: "ADMIN",
       telefone: "11999999999",
       ativo: true,
@@ -32,7 +40,7 @@ async function main() {
     data: {
       nome: "Maria Silva",
       email: "maria@petfriend.com",
-      senha: await bcryptjs.hash("senha123", 10),
+      senha: await bcryptjs.hash(SEED_PASSWORDS.cuidador1, 10),
       tipo: "CUIDADOR",
       telefone: "11988888888",
       endereco: "Rua A, 123, São Paulo",
@@ -47,7 +55,7 @@ async function main() {
     data: {
       nome: "Passeio Diário",
       descricao: "Passeio de 1 hora com seu pet",
-      preco: 50.0,
+      preco: 50,
       duracao: 60,
       cuidadorId: cuidador1.id,
       ativo: true,
@@ -78,7 +86,7 @@ async function main() {
     data: {
       nome: "João Santos",
       email: "joao@petfriend.com",
-      senha: await bcryptjs.hash("senha123", 10),
+      senha: await bcryptjs.hash(SEED_PASSWORDS.cuidador2, 10),
       tipo: "CUIDADOR",
       telefone: "11987777777",
       endereco: "Av. B, 456, São Paulo",
@@ -93,7 +101,7 @@ async function main() {
     data: {
       nome: "Banho e Tosa",
       descricao: "Banho, tosa e limpeza de unhas",
-      preco: 80.0,
+      preco: 80,
       duracao: 120,
       cuidadorId: cuidador2.id,
       ativo: true,
@@ -123,7 +131,7 @@ async function main() {
     data: {
       nome: "Carlos Oliveira",
       email: "carlos@petfriend.com",
-      senha: await bcryptjs.hash("senha123", 10),
+      senha: await bcryptjs.hash(SEED_PASSWORDS.dono1, 10),
       tipo: "DONO",
       telefone: "11986666666",
       endereco: "Rua C, 789, São Paulo",
@@ -149,7 +157,7 @@ async function main() {
     data: {
       nome: "Fernanda Costa",
       email: "fernanda@petfriend.com",
-      senha: await bcryptjs.hash("senha123", 10),
+      senha: await bcryptjs.hash(SEED_PASSWORDS.dono2, 10),
       tipo: "DONO",
       telefone: "11985555555",
       endereco: "Av. D, 321, São Paulo",
