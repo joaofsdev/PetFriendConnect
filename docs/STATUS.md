@@ -16,6 +16,7 @@ Tambem foram corrigidos pontos tecnicos importantes em pets, servicos, reservas,
 - Prisma Client regenerado apos alteracoes no schema.
 - Backend: `npm.cmd audit --json` sem vulnerabilidades.
 - Frontend: `npm.cmd audit --json` sem vulnerabilidades.
+- Backend: OAuth social coberto por testes unitarios principais.
 
 ## Implementado
 
@@ -25,6 +26,8 @@ Tambem foram corrigidos pontos tecnicos importantes em pets, servicos, reservas,
 - Middleware de autenticacao e autorizacao por tipo.
 - Bloqueio de cadastro publico de `ADMIN`.
 - Bloqueio de token para usuario inativo.
+- Protecao de rotas do frontend por tipo de usuario.
+- Header `X-Powered-By` desabilitado no Express.
 - Edicao de perfil do usuario.
 - Troca de senha com senha atual.
 - Recuperacao de senha com token hasheado e expiracao.
