@@ -84,6 +84,15 @@ const listarMinhaAgenda = async (req, res, next) => {
   }
 };
 
+const listarMeusServicos = async (req, res, next) => {
+  try {
+    const servicos = await CuidadorService.listarMeusServicos(req.user.id);
+    return sendSuccess(res, servicos, "Servicos obtidos com sucesso");
+  } catch (erro) {
+    next(erro);
+  }
+};
+
 // GET /api/cuidadores/:id/agenda
 const obterAgendaCuidador = async (req, res, next) => {
   try {
@@ -185,6 +194,7 @@ module.exports = {
   obterPerfilCuidador,
   obterAgendaCuidador,
   listarMinhaAgenda,
+  listarMeusServicos,
   criarServico,
   editarServico,
   adicionarSlot,

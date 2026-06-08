@@ -6,6 +6,8 @@ import Home from "../pages/Home";
 import Login from "../pages/public/Login";
 import Registro from "../pages/public/Registro";
 import OAuthCallback from "../pages/public/OAuthCallback";
+import EsqueciSenha from "../pages/public/EsqueciSenha";
+import RedefinirSenha from "../pages/public/RedefinirSenha";
 import DashboardCuidador from "../pages/DashboardCuidador";
 import DashboardDono from "../pages/DashboardDono";
 import MeusPets from "../pages/MeusPets";
@@ -30,6 +32,8 @@ const router = createBrowserRouter([
     children: [
       { path: "/login", element: <Login /> },
       { path: "/registro", element: <Registro /> },
+      { path: "/esqueci-senha", element: <EsqueciSenha /> },
+      { path: "/redefinir-senha", element: <RedefinirSenha /> },
       { path: "/oauth/callback", element: <OAuthCallback /> },
     ],
   },

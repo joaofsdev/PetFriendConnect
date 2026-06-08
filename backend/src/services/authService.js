@@ -10,6 +10,16 @@ const {
 
 const prisma = new PrismaClient();
 
+const RESET_TOKEN_EXPIRATION_MINUTES = 30;
+
+const hashToken = (token) =>
+  crypto.createHash("sha256").update(token).digest("hex");
+
+const buildFrontendUrl = (path) => {
+  const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+  return `${frontendUrl}${path}`;
+};
+
 class AuthService {
   static async register(dados) {
     const { nome, email, senha, tipo, telefone, endereco, descricao } = dados;
@@ -52,6 +62,8 @@ class AuthService {
         endereco: true,
         descricao: true,
         fotoPerfil: true,
+        notificacoesEmail: true,
+        notificacoesSms: true,
         ativo: true,
         dataCriacao: true,
         dataAtualizacao: true,
@@ -96,7 +108,12 @@ class AuthService {
       { expiresIn: "7d" },
     );
 
-    const { senha: _, ...usuarioSemSenha } = usuario;
+    const {
+      senha: _,
+      resetSenhaTokenHash: __,
+      resetSenhaExpiraEm: ___,
+      ...usuarioSemSenha
+    } = usuario;
 
     return {
       usuario: usuarioSemSenha,
@@ -131,6 +148,8 @@ class AuthService {
         endereco: true,
         descricao: true,
         fotoPerfil: true,
+        notificacoesEmail: true,
+        notificacoesSms: true,
         ativo: true,
         dataCriacao: true,
         dataAtualizacao: true,
@@ -191,6 +210,22 @@ class AuthService {
       atualizacao.fotoPerfil = dados.fotoPerfil?.trim() || null;
     }
 
+    if (dados.notificacoesEmail !== undefined) {
+      if (typeof dados.notificacoesEmail !== "boolean") {
+        throw new ValidationError("Preferencia de email invalida");
+      }
+
+      atualizacao.notificacoesEmail = dados.notificacoesEmail;
+    }
+
+    if (dados.notificacoesSms !== undefined) {
+      if (typeof dados.notificacoesSms !== "boolean") {
+        throw new ValidationError("Preferencia de SMS invalida");
+      }
+
+      atualizacao.notificacoesSms = dados.notificacoesSms;
+    }
+
     if (Object.keys(atualizacao).length === 0) {
       throw new ValidationError("Nenhum dado valido foi informado");
     }
@@ -209,6 +244,8 @@ class AuthService {
         endereco: true,
         descricao: true,
         fotoPerfil: true,
+        notificacoesEmail: true,
+        notificacoesSms: true,
         ativo: true,
         dataCriacao: true,
         dataAtualizacao: true,
@@ -251,6 +288,83 @@ class AuthService {
     await prisma.usuario.update({
       where: { id: usuarioId },
       data: { senha: senhaHash },
+    });
+
+    return null;
+  }
+
+  static async solicitarResetSenha(email) {
+    const usuario = await prisma.usuario.findUnique({
+      where: { email },
+      select: {
+        id: true,
+        email: true,
+        ativo: true,
+      },
+    });
+
+    if (!usuario || !usuario.ativo) {
+      return { resetUrl: null };
+    }
+
+    const token = crypto.randomBytes(32).toString("hex");
+    const resetSenhaTokenHash = hashToken(token);
+    const resetSenhaExpiraEm = new Date();
+    resetSenhaExpiraEm.setMinutes(
+      resetSenhaExpiraEm.getMinutes() + RESET_TOKEN_EXPIRATION_MINUTES,
+    );
+
+    await prisma.usuario.update({
+      where: { id: usuario.id },
+      data: {
+        resetSenhaTokenHash,
+        resetSenhaExpiraEm,
+      },
+    });
+
+    const resetUrl = buildFrontendUrl(
+      `/redefinir-senha?token=${encodeURIComponent(token)}`,
+    );
+
+    if (
+      process.env.NODE_ENV !== "production" &&
+      process.env.NODE_ENV !== "test"
+    ) {
+      console.log(
+        `Link de recuperacao de senha para ${usuario.email}: ${resetUrl}`,
+      );
+    }
+
+    return {
+      resetUrl: process.env.NODE_ENV === "production" ? null : resetUrl,
+    };
+  }
+
+  static async resetarSenha(token, novaSenha) {
+    const usuario = await prisma.usuario.findUnique({
+      where: { resetSenhaTokenHash: hashToken(token) },
+      select: {
+        id: true,
+        ativo: true,
+        resetSenhaExpiraEm: true,
+      },
+    });
+
+    if (!usuario || !usuario.ativo) {
+      throw new UnauthorizedError("Token de recuperacao invalido ou expirado");
+    }
+
+    if (!usuario.resetSenhaExpiraEm || usuario.resetSenhaExpiraEm < new Date()) {
+      throw new UnauthorizedError("Token de recuperacao invalido ou expirado");
+    }
+
+    await prisma.usuario.update({
+      where: { id: usuario.id },
+      data: {
+        senha: await bcryptjs.hash(novaSenha, 10),
+        resetSenhaTokenHash: null,
+        resetSenhaExpiraEm: null,
+      },
     });
 
     return null;
@@ -488,7 +602,12 @@ class AuthService {
         throw new UnauthorizedError("Usuário inativo");
       }
 
-      const { senha: _, ...usuarioSemSenha } = usuarioExistente;
+      const {
+        senha: _,
+        resetSenhaTokenHash: __,
+        resetSenhaExpiraEm: ___,
+        ...usuarioSemSenha
+      } = usuarioExistente;
       return usuarioSemSenha;
     }
 
@@ -512,6 +631,8 @@ class AuthService {
         endereco: true,
         descricao: true,
         fotoPerfil: true,
+        notificacoesEmail: true,
+        notificacoesSms: true,
         ativo: true,
         dataCriacao: true,
         dataAtualizacao: true,

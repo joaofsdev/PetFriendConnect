@@ -4,7 +4,7 @@ export interface Pet {
   id: number;
   nome: string;
   raca: string;
-  idade: number;
+  idade: number | null;
   descricao?: string | null;
   fotoPet?: string | null;
   donoId: number;

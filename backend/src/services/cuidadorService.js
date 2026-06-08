@@ -128,6 +128,24 @@ class CuidadorService {
   }
 
   // Criar serviço para o cuidador
+  static async listarMeusServicos(cuidadorId) {
+    return prisma.servico.findMany({
+      where: { cuidadorId },
+      orderBy: { dataCriacao: "desc" },
+      select: {
+        id: true,
+        nome: true,
+        descricao: true,
+        preco: true,
+        duracao: true,
+        cuidadorId: true,
+        ativo: true,
+        dataCriacao: true,
+        dataAtualizacao: true,
+      },
+    });
+  }
+
   static async criarServico(cuidadorId, dados) {
     const { nome, descricao, preco, duracao } = dados;
 

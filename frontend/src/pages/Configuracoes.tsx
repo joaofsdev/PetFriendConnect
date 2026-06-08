@@ -39,8 +39,10 @@ export default function Configuracoes() {
   const [savedMsg, setSavedMsg] = useState("");
   const [perfilError, setPerfilError] = useState("");
   const [senhaError, setSenhaError] = useState("");
+  const [preferenciasError, setPreferenciasError] = useState("");
   const [isSavingProfile, setIsSavingProfile] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [isSavingPreferences, setIsSavingPreferences] = useState(false);
 
   const [nome, setNome] = useState(user?.nome ?? "");
   const [email, setEmail] = useState(user?.email ?? "");
@@ -63,6 +65,8 @@ export default function Configuracoes() {
     setTelefone(user.telefone ?? "");
     setEndereco(user.endereco ?? "");
     setDescricao(user.descricao ?? "");
+    setEmailNotif(user.notificacoesEmail ?? true);
+    setSmsNotif(user.notificacoesSms ?? false);
   }, [user]);
 
   function showSaved(msg: string) {
@@ -120,6 +124,25 @@ export default function Configuracoes() {
       );
     } finally {
       setIsChangingPassword(false);
+    }
+  }
+
+  async function handleSavePreferencias() {
+    setPreferenciasError("");
+    setIsSavingPreferences(true);
+
+    try {
+      await updateProfile({
+        notificacoesEmail: emailNotif,
+        notificacoesSms: smsNotif,
+      });
+      showSaved("Preferencias salvas com sucesso!");
+    } catch (error) {
+      setPreferenciasError(
+        getErrorMessage(error, "Nao foi possivel salvar suas preferencias."),
+      );
+    } finally {
+      setIsSavingPreferences(false);
     }
   }
 
@@ -341,6 +364,13 @@ export default function Configuracoes() {
               <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
                 Preferencias de Notificacao
               </h3>
+
+              {preferenciasError && (
+                <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900/40 dark:bg-red-950/30 dark:text-red-200">
+                  {preferenciasError}
+                </div>
+              )}
+
               <div className="flex items-center justify-between border-b border-slate-100 py-3 dark:border-slate-800">
                 <div>
                   <p className="text-sm font-medium text-slate-900 dark:text-white">
@@ -369,6 +399,15 @@ export default function Configuracoes() {
                   onChange={() => setSmsNotif(!smsNotif)}
                 />
               </div>
+
+              <button
+                type="button"
+                disabled={isSavingPreferences}
+                onClick={handleSavePreferencias}
+                className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-70"
+              >
+                {isSavingPreferences ? "Salvando..." : "Salvar preferencias"}
+              </button>
             </div>
           )}
         </div>

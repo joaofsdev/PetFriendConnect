@@ -20,6 +20,22 @@ router.post(
   authController.login,
 );
 
+// POST /api/auth/forgot-password
+router.post(
+  "/forgot-password",
+  authController.validateForgotPassword,
+  authController.handleValidationErrors,
+  authController.solicitarResetSenha,
+);
+
+// POST /api/auth/reset-password
+router.post(
+  "/reset-password",
+  authController.validateResetPassword,
+  authController.handleValidationErrors,
+  authController.resetarSenha,
+);
+
 // GET /api/auth/me
 router.get("/me", authenticate, authController.me);
 

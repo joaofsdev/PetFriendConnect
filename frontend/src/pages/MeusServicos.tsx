@@ -1,8 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import type { SyntheticEvent } from "react";
-import { listarCuidadores } from "../services/cuidadores";
-import { criarServico, editarServico, type Servico } from "../services/servicos";
-import { useAuth } from "../hooks/useAuth";
+import {
+  criarServico,
+  editarServico,
+  listarMeusServicos,
+  type Servico,
+} from "../services/servicos";
 
 interface ServiceForm {
   nome: string;
@@ -14,7 +17,6 @@ interface ServiceForm {
 const defaultForm: ServiceForm = { nome: "", descricao: "", preco: "", duracao: "60" };
 
 export default function MeusServicos() {
-  const { user } = useAuth();
   const [services, setServices] = useState<Servico[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -25,28 +27,14 @@ export default function MeusServicos() {
   useEffect(() => {
     async function load() {
       try {
-        if (!user) return;
-        const res = await listarCuidadores();
-        const me = res.data.find((c) => c.id === user.id);
-        if (me) {
-          setServices(me.servicosCriados.map((s) => ({
-            id: s.id,
-            nome: s.nome,
-            descricao: s.descricao ?? null,
-            preco: s.preco,
-            duracao: s.duracao,
-            cuidadorId: user.id,
-            ativo: true,
-            dataCriacao: s.dataCriacao ?? "",
-            dataAtualizacao: "",
-          })));
-        }
+        const res = await listarMeusServicos();
+        setServices(res.data);
       } catch { /* empty */ } finally {
         setLoading(false);
       }
     }
     load();
-  }, [user]);
+  }, []);
 
   const activeCount = useMemo(() => services.filter((s) => s.ativo).length, [services]);
 

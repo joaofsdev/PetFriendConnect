@@ -1,16 +1,17 @@
 const express = require("express");
 const petController = require("../controllers/petController.js");
-const { authenticate } = require("../middlewares/authMiddleware.js");
+const { authenticate, authorize } = require("../middlewares/authMiddleware.js");
 
 const router = express.Router();
 
-router.get("/", authenticate, petController.listarPets);
+router.use(authenticate, authorize(["DONO"]));
 
-router.get("/:id", authenticate, petController.obterPet);
+router.get("/", petController.listarPets);
+
+router.get("/:id", petController.obterPet);
 
 router.post(
   "/",
-  authenticate,
   petController.validatePetCreate,
   petController.handleValidationErrors,
   petController.criarPet,
@@ -18,12 +19,11 @@ router.post(
 
 router.put(
   "/:id",
-  authenticate,
   petController.validatePetUpdate,
   petController.handleValidationErrors,
   petController.atualizarPet,
 );
 
-router.delete("/:id", authenticate, petController.removerPet);
+router.delete("/:id", petController.removerPet);
 
 module.exports = router;

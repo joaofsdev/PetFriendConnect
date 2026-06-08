@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { listarConfiguracoes, atualizarConfiguracao, type Configuracao } from "../../services/admin";
 
 export default function AdminConfiguracoes() {
@@ -8,7 +8,7 @@ export default function AdminConfiguracoes() {
   const [sucesso, setSucesso] = useState("");
   const [editados, setEditados] = useState<Record<string, string>>({});
 
-  const carregar = () => {
+  const carregar = useCallback(() => {
     setLoading(true);
     listarConfiguracoes()
       .then((res) => {
@@ -17,9 +17,12 @@ export default function AdminConfiguracoes() {
       })
       .catch((e) => setErro(e.message))
       .finally(() => setLoading(false));
-  };
+  }, []);
 
-  useEffect(() => { carregar(); }, []);
+  useEffect(() => {
+    const timer = window.setTimeout(() => carregar(), 0);
+    return () => window.clearTimeout(timer);
+  }, [carregar]);
 
   const salvar = async () => {
     setErro("");

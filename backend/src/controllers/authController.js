@@ -37,6 +37,14 @@ const validateUpdateProfile = [
   body("telefone").optional({ nullable: true }).trim(),
   body("endereco").optional({ nullable: true }).trim(),
   body("descricao").optional({ nullable: true }).trim(),
+  body("notificacoesEmail")
+    .optional()
+    .isBoolean()
+    .withMessage("Preferencia de email invalida"),
+  body("notificacoesSms")
+    .optional()
+    .isBoolean()
+    .withMessage("Preferencia de SMS invalida"),
   body("fotoPerfil")
     .optional({ nullable: true })
     .trim()
@@ -46,6 +54,17 @@ const validateUpdateProfile = [
 
 const validateChangePassword = [
   body("senhaAtual").notEmpty().withMessage("Senha atual e obrigatoria"),
+  body("novaSenha")
+    .isLength({ min: 8 })
+    .withMessage("Nova senha deve ter no minimo 8 caracteres"),
+];
+
+const validateForgotPassword = [
+  body("email").trim().isEmail().withMessage("Email invalido").normalizeEmail(),
+];
+
+const validateResetPassword = [
+  body("token").notEmpty().withMessage("Token e obrigatorio"),
   body("novaSenha")
     .isLength({ min: 8 })
     .withMessage("Nova senha deve ter no minimo 8 caracteres"),
@@ -149,6 +168,32 @@ const alterarSenha = async (req, res, next) => {
   }
 };
 
+const solicitarResetSenha = async (req, res, next) => {
+  try {
+    const resultado = await AuthService.solicitarResetSenha(req.body.email);
+
+    return sendSuccess(
+      res,
+      resultado,
+      "Se o email estiver cadastrado, enviaremos instrucoes para redefinir a senha",
+    );
+  } catch (erro) {
+    next(erro);
+  }
+};
+
+const resetarSenha = async (req, res, next) => {
+  try {
+    const { token, novaSenha } = req.body;
+
+    await AuthService.resetarSenha(token, novaSenha);
+
+    return sendSuccess(res, null, "Senha redefinida com sucesso");
+  } catch (erro) {
+    next(erro);
+  }
+};
+
 const iniciarOAuth = (provider) => (req, res, next) => {
   try {
     const tipo = req.query.tipo === "CUIDADOR" ? "CUIDADOR" : "DONO";
@@ -187,11 +232,15 @@ module.exports = {
   me,
   atualizarPerfil,
   alterarSenha,
+  solicitarResetSenha,
+  resetarSenha,
   iniciarOAuth,
   callbackOAuth,
   validateRegister,
   validateLogin,
   validateUpdateProfile,
   validateChangePassword,
+  validateForgotPassword,
+  validateResetPassword,
   handleValidationErrors,
 };

@@ -289,6 +289,77 @@ describe("AuthService", () => {
     });
   });
 
+  describe("recuperacao de senha", () => {
+    it("deve gerar link de reset para usuario ativo", async () => {
+      prisma.usuario.findUnique.mockResolvedValue({
+        id: 1,
+        email: "joao@test.com",
+        ativo: true,
+      });
+      prisma.usuario.update.mockResolvedValue({});
+      process.env.FRONTEND_URL = "http://localhost:5173";
+      process.env.NODE_ENV = "test";
+
+      const resultado = await AuthService.solicitarResetSenha("joao@test.com");
+
+      expect(resultado.resetUrl).toContain("/redefinir-senha?token=");
+      expect(prisma.usuario.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id: 1 },
+          data: expect.objectContaining({
+            resetSenhaTokenHash: expect.any(String),
+            resetSenhaExpiraEm: expect.any(Date),
+          }),
+        }),
+      );
+    });
+
+    it("deve retornar resposta generica quando email nao existe", async () => {
+      prisma.usuario.findUnique.mockResolvedValue(null);
+
+      const resultado = await AuthService.solicitarResetSenha(
+        "naoexiste@test.com",
+      );
+
+      expect(resultado.resetUrl).toBeNull();
+      expect(prisma.usuario.update).not.toHaveBeenCalled();
+    });
+
+    it("deve redefinir senha com token valido", async () => {
+      prisma.usuario.findUnique.mockResolvedValue({
+        id: 1,
+        ativo: true,
+        resetSenhaExpiraEm: new Date(Date.now() + 1000 * 60),
+      });
+      prisma.usuario.update.mockResolvedValue({});
+
+      await AuthService.resetarSenha("token-valido", "novaSenha123");
+
+      expect(prisma.usuario.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id: 1 },
+          data: expect.objectContaining({
+            senha: expect.any(String),
+            resetSenhaTokenHash: null,
+            resetSenhaExpiraEm: null,
+          }),
+        }),
+      );
+    });
+
+    it("deve recusar token expirado", async () => {
+      prisma.usuario.findUnique.mockResolvedValue({
+        id: 1,
+        ativo: true,
+        resetSenhaExpiraEm: new Date(Date.now() - 1000),
+      });
+
+      await expect(
+        AuthService.resetarSenha("token-expirado", "novaSenha123"),
+      ).rejects.toThrow(UnauthorizedError);
+    });
+  });
+
   describe("OAuth social", () => {
     it("deve gerar URL OAuth do Google com state assinado", () => {
       const url = AuthService.gerarUrlOAuth("google", "CUIDADOR");

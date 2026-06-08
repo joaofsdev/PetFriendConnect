@@ -155,12 +155,12 @@ export default function Login() {
                   Lembrar de mim
                 </label>
               </div>
-              <a
-                href="#"
+              <Link
+                to="/esqueci-senha"
                 className="text-sm font-medium text-primary hover:text-blue-500 transition-colors"
               >
                 Esqueceu a senha?
-              </a>
+              </Link>
             </div>
 
             <button

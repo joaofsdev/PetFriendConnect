@@ -21,6 +21,13 @@ router.use("/auth", authRoutes);
 router.use("/cuidadores", cuidadorRoutes);
 
 // Rotas de serviços (CRUD do cuidador)
+router.get(
+  "/servicos/me",
+  authenticate,
+  authorize(["CUIDADOR"]),
+  cuidadorController.listarMeusServicos,
+);
+
 router.post(
   "/servicos",
   authenticate,

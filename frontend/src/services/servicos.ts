@@ -26,6 +26,10 @@ export interface CriarServicoPayload {
   duracao: number;
 }
 
+export function listarMeusServicos() {
+  return apiRequest<ApiResponse<Servico[]>>("/servicos/me");
+}
+
 export function criarServico(payload: CriarServicoPayload) {
   return apiRequest<ApiResponse<Servico>>("/servicos", {
     method: "POST",

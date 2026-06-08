@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { listarDenuncias, atualizarDenuncia, type Denuncia } from "../../services/admin";
 
 const STATUS_OPTIONS = ["PENDENTE", "EM_ANALISE", "RESOLVIDA", "REJEITADA"] as const;
@@ -20,7 +20,7 @@ export default function AdminDenuncias() {
   const [novoStatus, setNovoStatus] = useState("");
   const [resolucao, setResolucao] = useState("");
 
-  const carregar = (p = page) => {
+  const carregar = useCallback((p: number) => {
     setLoading(true);
     const params: Record<string, string> = { page: String(p), limit: "15" };
     if (filtroStatus) params.status = filtroStatus;
@@ -33,9 +33,12 @@ export default function AdminDenuncias() {
       })
       .catch((e) => setErro(e.message))
       .finally(() => setLoading(false));
-  };
+  }, [filtroStatus]);
 
-  useEffect(() => { carregar(1); }, [filtroStatus]);
+  useEffect(() => {
+    const timer = window.setTimeout(() => carregar(1), 0);
+    return () => window.clearTimeout(timer);
+  }, [carregar]);
 
   const abrirEdicao = (d: Denuncia) => {
     setEditando(d);
@@ -48,7 +51,7 @@ export default function AdminDenuncias() {
     try {
       await atualizarDenuncia(editando.id, { status: novoStatus, resolucao: resolucao || undefined });
       setEditando(null);
-      carregar();
+      carregar(page);
     } catch (e: unknown) {
       setErro(e instanceof Error ? e.message : "Erro ao atualizar");
     }

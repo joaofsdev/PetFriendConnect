@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { listarLogs, type LogAdmin } from "../../services/admin";
 
 export default function AdminLogs() {
@@ -9,7 +9,7 @@ export default function AdminLogs() {
   const [totalPages, setTotalPages] = useState(1);
   const [filtroAcao, setFiltroAcao] = useState("");
 
-  const carregar = (p = page) => {
+  const carregar = useCallback((p: number) => {
     setLoading(true);
     const params: Record<string, string> = { page: String(p), limit: "30" };
     if (filtroAcao) params.acao = filtroAcao;
@@ -22,9 +22,12 @@ export default function AdminLogs() {
       })
       .catch((e) => setErro(e.message))
       .finally(() => setLoading(false));
-  };
+  }, [filtroAcao]);
 
-  useEffect(() => { carregar(1); }, [filtroAcao]);
+  useEffect(() => {
+    const timer = window.setTimeout(() => carregar(1), 0);
+    return () => window.clearTimeout(timer);
+  }, [carregar]);
 
   return (
     <div className="space-y-6">

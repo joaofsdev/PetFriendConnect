@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { listarUsuarios, desativarUsuario, ativarUsuario, type UsuarioAdmin } from "../../services/admin";
 
 export default function AdminUsuarios() {
@@ -7,14 +7,15 @@ export default function AdminUsuarios() {
   const [erro, setErro] = useState("");
   const [filtroTipo, setFiltroTipo] = useState("");
   const [busca, setBusca] = useState("");
+  const [buscaAplicada, setBuscaAplicada] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  const carregar = (p = page) => {
+  const carregar = useCallback((p: number) => {
     setLoading(true);
     const params: Record<string, string> = { page: String(p), limit: "15" };
     if (filtroTipo) params.tipo = filtroTipo;
-    if (busca) params.busca = busca;
+    if (buscaAplicada) params.busca = buscaAplicada;
 
     listarUsuarios(params)
       .then((res) => {
@@ -24,17 +25,27 @@ export default function AdminUsuarios() {
       })
       .catch((e) => setErro(e.message))
       .finally(() => setLoading(false));
+  }, [buscaAplicada, filtroTipo]);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => carregar(1), 0);
+    return () => window.clearTimeout(timer);
+  }, [carregar]);
+
+  const handleBusca = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (buscaAplicada === busca) {
+      carregar(1);
+      return;
+    }
+    setBuscaAplicada(busca);
   };
-
-  useEffect(() => { carregar(1); }, [filtroTipo]);
-
-  const handleBusca = (e: React.FormEvent) => { e.preventDefault(); carregar(1); };
 
   const toggleAtivo = async (u: UsuarioAdmin) => {
     try {
       if (u.ativo) await desativarUsuario(u.id);
       else await ativarUsuario(u.id);
-      carregar();
+      carregar(page);
     } catch (e: unknown) {
       setErro(e instanceof Error ? e.message : "Erro ao atualizar");
     }

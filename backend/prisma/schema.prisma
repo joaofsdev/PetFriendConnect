@@ -33,6 +33,10 @@ model Usuario {
   endereco          String?
   descricao         String?       @db.LongText
   fotoPerfil        String?
+  notificacoesEmail Boolean       @default(true)
+  notificacoesSms   Boolean       @default(false)
+  resetSenhaTokenHash String?     @unique
+  resetSenhaExpiraEm DateTime?
   ativo             Boolean       @default(true)
   dataCriacao       DateTime      @default(now())
   dataAtualizacao   DateTime      @updatedAt
@@ -49,13 +53,14 @@ model Usuario {
 
   @@index([email])
   @@index([tipo])
+  @@index([resetSenhaExpiraEm])
 }
 
 model Pet {
   id                Int           @id @default(autoincrement())
   nome              String
   raca              String
-  idade             Int
+  idade             Int?
   descricao         String?       @db.LongText
   fotoPet           String?
   donoId            Int

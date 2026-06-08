@@ -11,6 +11,8 @@ export interface AuthUser {
   endereco?: string | null;
   descricao?: string | null;
   fotoPerfil?: string | null;
+  notificacoesEmail?: boolean;
+  notificacoesSms?: boolean;
   ativo?: boolean;
   dataCriacao?: string;
   dataAtualizacao?: string;
@@ -49,11 +51,17 @@ export interface UpdateProfilePayload {
   endereco?: string | null;
   descricao?: string | null;
   fotoPerfil?: string | null;
+  notificacoesEmail?: boolean;
+  notificacoesSms?: boolean;
 }
 
 export interface ChangePasswordPayload {
   senhaAtual: string;
   novaSenha: string;
+}
+
+export interface ForgotPasswordData {
+  resetUrl: string | null;
 }
 
 export function registrarUsuario(payload: RegisterPayload) {
@@ -85,5 +93,19 @@ export function alterarSenha(payload: ChangePasswordPayload) {
   return apiRequest<ApiResponse<null>>("/auth/me/senha", {
     method: "PATCH",
     body: JSON.stringify(payload),
+  });
+}
+
+export function solicitarResetSenha(email: string) {
+  return apiRequest<ApiResponse<ForgotPasswordData>>("/auth/forgot-password", {
+    method: "POST",
+    body: JSON.stringify({ email }),
+  });
+}
+
+export function resetarSenha(token: string, novaSenha: string) {
+  return apiRequest<ApiResponse<null>>("/auth/reset-password", {
+    method: "POST",
+    body: JSON.stringify({ token, novaSenha }),
   });
 }
