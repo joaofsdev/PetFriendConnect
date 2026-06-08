@@ -44,6 +44,8 @@ model Usuario {
   reservasFeitas    Reserva[]     @relation("ReservasFeitas")
   reservasRecebidas Reserva[]     @relation("ReservasRecebidas")
   logs              Log[]
+  denunciasFeitas   Denuncia[]    @relation("DenunciasFeitas")
+  denunciasRecebidas Denuncia[]   @relation("DenunciasRecebidas")
 
   @@index([email])
   @@index([tipo])
@@ -141,4 +143,41 @@ model Log {
 
   @@index([usuarioId])
   @@index([dataLog])
+}
+
+enum StatusDenuncia {
+  PENDENTE
+  EM_ANALISE
+  RESOLVIDA
+  REJEITADA
+}
+
+model Denuncia {
+  id                Int             @id @default(autoincrement())
+  denuncianteId     Int
+  denunciadoId      Int
+  motivo            String
+  descricao         String?         @db.LongText
+  status            StatusDenuncia  @default(PENDENTE)
+  resolucao         String?         @db.LongText
+  dataCriacao       DateTime        @default(now())
+  dataAtualizacao   DateTime        @updatedAt
+
+  // Relacionamentos
+  denunciante       Usuario         @relation("DenunciasFeitas", fields: [denuncianteId], references: [id], onDelete: Cascade)
+  denunciado        Usuario         @relation("DenunciasRecebidas", fields: [denunciadoId], references: [id], onDelete: Cascade)
+
+  @@index([denuncianteId])
+  @@index([denunciadoId])
+  @@index([status])
+}
+
+model Configuracao {
+  id                Int           @id @default(autoincrement())
+  chave             String        @unique
+  valor             String
+  descricao         String?
+  dataAtualizacao   DateTime      @updatedAt
+
+  @@index([chave])
 }
