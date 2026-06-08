@@ -32,7 +32,7 @@ model Usuario {
   telefone          String?
   endereco          String?
   descricao         String?       @db.LongText
-  fotoPerfil        String?
+  fotoPerfil        String?       @db.LongText
   notificacoesEmail Boolean       @default(true)
   notificacoesSms   Boolean       @default(false)
   resetSenhaTokenHash String?     @unique

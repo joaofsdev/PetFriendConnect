@@ -4,6 +4,10 @@ import { ApiError } from "../services/api";
 
 type Section = "perfil" | "seguranca" | "preferencias";
 
+const ACCEPTED_PROFILE_PHOTO_TYPES = ["image/jpeg", "image/png", "image/webp"];
+const MAX_PROFILE_PHOTO_UPLOAD_BYTES = 2 * 1024 * 1024;
+const PROFILE_PHOTO_SIZE = 512;
+
 function Toggle({
   enabled,
   onChange,
@@ -33,9 +37,66 @@ function getErrorMessage(error: unknown, fallback: string) {
   return error instanceof ApiError ? error.message : fallback;
 }
 
+function fileToProfilePhoto(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    if (!ACCEPTED_PROFILE_PHOTO_TYPES.includes(file.type)) {
+      reject(new Error("Use uma imagem PNG, JPG ou WEBP."));
+      return;
+    }
+
+    if (file.size > MAX_PROFILE_PHOTO_UPLOAD_BYTES) {
+      reject(new Error("A imagem deve ter no maximo 2MB."));
+      return;
+    }
+
+    const objectUrl = URL.createObjectURL(file);
+    const image = new Image();
+
+    image.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = PROFILE_PHOTO_SIZE;
+      canvas.height = PROFILE_PHOTO_SIZE;
+
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        URL.revokeObjectURL(objectUrl);
+        reject(new Error("Nao foi possivel processar a imagem."));
+        return;
+      }
+
+      const sourceSize = Math.min(image.naturalWidth, image.naturalHeight);
+      const sourceX = Math.max((image.naturalWidth - sourceSize) / 2, 0);
+      const sourceY = Math.max((image.naturalHeight - sourceSize) / 2, 0);
+
+      ctx.drawImage(
+        image,
+        sourceX,
+        sourceY,
+        sourceSize,
+        sourceSize,
+        0,
+        0,
+        PROFILE_PHOTO_SIZE,
+        PROFILE_PHOTO_SIZE,
+      );
+
+      URL.revokeObjectURL(objectUrl);
+      resolve(canvas.toDataURL("image/jpeg", 0.82));
+    };
+
+    image.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      reject(new Error("Nao foi possivel carregar a imagem."));
+    };
+
+    image.src = objectUrl;
+  });
+}
+
 export default function Configuracoes() {
   const { user, updateProfile, changePassword } = useAuth();
   const canEditDescription = user?.tipo === "CUIDADOR";
+  const hasSavedPhone = Boolean(user?.telefone?.trim());
   const [activeSection, setActiveSection] = useState<Section>("perfil");
   const [savedMsg, setSavedMsg] = useState("");
   const [perfilError, setPerfilError] = useState("");
@@ -50,6 +111,8 @@ export default function Configuracoes() {
   const [telefone, setTelefone] = useState(user?.telefone ?? "");
   const [endereco, setEndereco] = useState(user?.endereco ?? "");
   const [descricao, setDescricao] = useState(user?.descricao ?? "");
+  const [fotoPerfil, setFotoPerfil] = useState(user?.fotoPerfil ?? "");
+  const [fotoError, setFotoError] = useState("");
 
   const [senhaAtual, setSenhaAtual] = useState("");
   const [novaSenha, setNovaSenha] = useState("");
@@ -67,6 +130,7 @@ export default function Configuracoes() {
       setTelefone(user.telefone ?? "");
       setEndereco(user.endereco ?? "");
       setDescricao(user.descricao ?? "");
+      setFotoPerfil(user.fotoPerfil ?? "");
       setEmailNotif(user.notificacoesEmail ?? true);
       setSmsNotif(user.notificacoesSms ?? false);
     }, 0);
@@ -89,6 +153,7 @@ export default function Configuracoes() {
         nome,
         telefone: telefone || null,
         endereco: endereco || null,
+        fotoPerfil: fotoPerfil || null,
         ...(canEditDescription ? { descricao: descricao || null } : {}),
       };
 
@@ -100,6 +165,21 @@ export default function Configuracoes() {
       );
     } finally {
       setIsSavingProfile(false);
+    }
+  }
+
+  async function handleProfilePhotoChange(file: File | undefined) {
+    setFotoError("");
+    if (!file) return;
+
+    try {
+      setFotoPerfil(await fileToProfilePhoto(file));
+    } catch (error) {
+      setFotoError(
+        error instanceof Error
+          ? error.message
+          : "Nao foi possivel processar a imagem.",
+      );
     }
   }
 
@@ -136,6 +216,14 @@ export default function Configuracoes() {
 
   async function handleSavePreferencias() {
     setPreferenciasError("");
+
+    if (smsNotif && !hasSavedPhone) {
+      setPreferenciasError(
+        "Cadastre um telefone antes de ativar notificacoes por SMS.",
+      );
+      return;
+    }
+
     setIsSavingPreferences(true);
 
     try {
@@ -151,6 +239,19 @@ export default function Configuracoes() {
     } finally {
       setIsSavingPreferences(false);
     }
+  }
+
+  function handleToggleSms() {
+    setPreferenciasError("");
+
+    if (!smsNotif && !hasSavedPhone) {
+      setPreferenciasError(
+        "Cadastre um telefone antes de ativar notificacoes por SMS.",
+      );
+      return;
+    }
+
+    setSmsNotif(!smsNotif);
   }
 
   const navItems: { key: Section; label: string; icon: string }[] = [
@@ -200,6 +301,65 @@ export default function Configuracoes() {
                   {perfilError}
                 </div>
               )}
+
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+                {fotoPerfil ? (
+                  <img
+                    src={fotoPerfil}
+                    alt="Foto de perfil"
+                    className="h-20 w-20 rounded-full border border-slate-200 object-cover dark:border-slate-700"
+                  />
+                ) : (
+                  <span
+                    aria-label="Perfil sem foto"
+                    className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-slate-200 text-slate-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400"
+                  >
+                    <span className="material-icons text-4xl">person</span>
+                  </span>
+                )}
+
+                <div className="space-y-2">
+                  <div className="flex flex-wrap gap-2">
+                    <label
+                      htmlFor="cfg-foto"
+                      className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
+                    >
+                      <span className="material-icons text-base">
+                        photo_camera
+                      </span>
+                      Escolher foto
+                    </label>
+                    <input
+                      id="cfg-foto"
+                      type="file"
+                      accept="image/png,image/jpeg,image/webp"
+                      className="sr-only"
+                      onChange={(event) => {
+                        void handleProfilePhotoChange(event.target.files?.[0]);
+                        event.target.value = "";
+                      }}
+                    />
+                    {fotoPerfil && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFotoError("");
+                          setFotoPerfil("");
+                        }}
+                        className="inline-flex items-center gap-2 rounded-lg border border-red-200 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 dark:border-red-900/50 dark:text-red-300 dark:hover:bg-red-950/30"
+                      >
+                        <span className="material-icons text-base">
+                          delete
+                        </span>
+                        Remover
+                      </button>
+                    )}
+                  </div>
+                  {fotoError && (
+                    <p className="text-sm text-red-500">{fotoError}</p>
+                  )}
+                </div>
+              </div>
 
               <div>
                 <label
@@ -405,9 +565,36 @@ export default function Configuracoes() {
                 </div>
                 <Toggle
                   enabled={smsNotif}
-                  onChange={() => setSmsNotif(!smsNotif)}
+                  onChange={handleToggleSms}
                 />
               </div>
+
+              {!hasSavedPhone && (
+                <div className="flex items-start gap-4 rounded-xl border border-amber-200 bg-amber-50 p-4 dark:border-amber-900/50 dark:bg-amber-950/30">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white text-amber-600 shadow-sm dark:bg-slate-900 dark:text-amber-300">
+                    <span className="material-icons text-3xl">
+                      phone_iphone
+                    </span>
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-amber-900 dark:text-amber-100">
+                      Cadastre seu telefone
+                    </p>
+                    <p className="mt-1 text-sm text-amber-800 dark:text-amber-200">
+                      Notificacoes por SMS so podem ser ativadas quando existe
+                      um telefone salvo no perfil.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => setActiveSection("perfil")}
+                      className="mt-3 inline-flex items-center gap-2 rounded-lg bg-amber-600 px-3 py-2 text-sm font-medium text-white hover:bg-amber-700"
+                    >
+                      <span className="material-icons text-base">edit</span>
+                      Ir para dados pessoais
+                    </button>
+                  </div>
+                </div>
+              )}
 
               <button
                 type="button"

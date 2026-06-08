@@ -1,12 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import { listarReservas } from "../services/reservas";
 
 type NavItem = {
   icon: string;
   label: string;
   to: string;
-  badge?: number;
 };
 
 const navItemsDono: NavItem[] = [
@@ -20,12 +20,7 @@ const navItemsDono: NavItem[] = [
 const navItemsCuidador: NavItem[] = [
   { icon: "dashboard", label: "Painel", to: "/dashboard/cuidador" },
   { icon: "calendar_today", label: "Agenda", to: "/minha-agenda" },
-  {
-    icon: "assignment",
-    label: "Minhas Reservas",
-    to: "/minhas-reservas",
-    badge: 2,
-  },
+  { icon: "assignment", label: "Minhas Reservas", to: "/minhas-reservas" },
   { icon: "medical_services", label: "Meus Serviços", to: "/meus-servicos" },
   { icon: "settings", label: "Configurações", to: "/configuracoes" },
 ];
@@ -43,8 +38,49 @@ export default function MainLayout() {
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const [reservationCount, setReservationCount] = useState(0);
   const { user, logout } = useAuth();
   const isAdmin = user?.tipo === "ADMIN";
+
+  useEffect(() => {
+    if (!user || isAdmin) {
+      return;
+    }
+
+    let ignore = false;
+
+    async function loadReservationCount() {
+      try {
+        const res = await listarReservas();
+        if (!ignore) {
+          setReservationCount(res.data.length);
+        }
+      } catch {
+        if (!ignore) {
+          setReservationCount(0);
+        }
+      }
+    }
+
+    void loadReservationCount();
+
+    const handleReservationsUpdated = () => {
+      void loadReservationCount();
+    };
+
+    window.addEventListener(
+      "petfriend:reservas-updated",
+      handleReservationsUpdated,
+    );
+
+    return () => {
+      ignore = true;
+      window.removeEventListener(
+        "petfriend:reservas-updated",
+        handleReservationsUpdated,
+      );
+    };
+  }, [isAdmin, location.pathname, user]);
 
   let navItems = navItemsDono;
   if (isAdmin) navItems = navItemsAdmin;
@@ -57,6 +93,8 @@ export default function MainLayout() {
   if (isAdmin) roleLabel = "Administrador";
 
   const homeDestination = isAdmin ? "/admin" : "/";
+  const reservationBadgeLabel =
+    reservationCount > 99 ? "99+" : String(reservationCount);
 
   function handleLogout() {
     logout();
@@ -121,9 +159,9 @@ export default function MainLayout() {
                     {item.icon}
                   </span>
                   {item.label}
-                  {item.badge && (
+                  {item.to === "/minhas-reservas" && reservationCount > 0 && (
                     <span className="ml-auto bg-red-500 text-white text-xs px-2 py-0.5 rounded-full font-bold">
-                      {item.badge}
+                      {reservationCount}
                     </span>
                   )}
                 </Link>
@@ -202,10 +240,22 @@ export default function MainLayout() {
               "Painel"}
           </h1>
           <div className="flex items-center gap-4">
-            <button className="relative p-2 text-slate-400 hover:text-primary transition-colors">
+            <Link
+              to="/minhas-reservas"
+              aria-label={
+                reservationCount > 0
+                  ? `${reservationCount} notificacoes de reservas`
+                  : "Notificacoes"
+              }
+              className="relative p-2 text-slate-400 hover:text-primary transition-colors"
+            >
               <span className="material-icons">notifications</span>
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-white dark:border-slate-900" />
-            </button>
+              {reservationCount > 0 && (
+                <span className="absolute -right-1 top-1 flex min-h-5 min-w-5 items-center justify-center rounded-full border-2 border-white bg-red-500 px-1 text-[10px] font-bold leading-none text-white dark:border-slate-900">
+                  {reservationBadgeLabel}
+                </span>
+              )}
+            </Link>
             <button
               className="lg:hidden p-2 text-slate-600"
               onClick={() => setSidebarOpen(true)}

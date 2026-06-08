@@ -1,6 +1,7 @@
 const { body, validationResult } = require("express-validator");
 const { sendSuccess, sendError } = require("../utils/response.js");
 const AuthService = require("../services/authService.js");
+const { isValidProfilePhoto } = require("../utils/profilePhoto.js");
 
 const validateRegister = [
   body("nome")
@@ -47,9 +48,10 @@ const validateUpdateProfile = [
     .withMessage("Preferencia de SMS invalida"),
   body("fotoPerfil")
     .optional({ nullable: true })
-    .trim()
-    .isURL()
-    .withMessage("Foto de perfil deve ser uma URL valida"),
+    .custom((value) => isValidProfilePhoto(value))
+    .withMessage(
+      "Foto de perfil deve ser uma URL http/https ou imagem PNG, JPG ou WEBP de ate 512KB",
+    ),
 ];
 
 const validateChangePassword = [

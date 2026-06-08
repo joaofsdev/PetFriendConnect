@@ -1,0 +1,1 @@
+ALTER TABLE `Usuario` MODIFY `fotoPerfil` LONGTEXT NULL;

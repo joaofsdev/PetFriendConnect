@@ -7,6 +7,10 @@ const {
   UnauthorizedError,
   ConflictError,
 } = require("../utils/errors.js");
+const {
+  isValidProfilePhoto,
+  normalizeProfilePhoto,
+} = require("../utils/profilePhoto.js");
 
 const prisma = new PrismaClient();
 
@@ -203,11 +207,11 @@ class AuthService {
     }
 
     if (dados.fotoPerfil !== undefined) {
-      if (dados.fotoPerfil !== null && typeof dados.fotoPerfil !== "string") {
+      if (!isValidProfilePhoto(dados.fotoPerfil)) {
         throw new ValidationError("Foto de perfil invalida");
       }
 
-      atualizacao.fotoPerfil = dados.fotoPerfil?.trim() || null;
+      atualizacao.fotoPerfil = normalizeProfilePhoto(dados.fotoPerfil);
     }
 
     if (dados.notificacoesEmail !== undefined) {
@@ -230,7 +234,21 @@ class AuthService {
       throw new ValidationError("Nenhum dado valido foi informado");
     }
 
-    await this.obterUsuarioPorId(usuarioId);
+    const usuarioAtual = await this.obterUsuarioPorId(usuarioId);
+    const telefoneFinal =
+      atualizacao.telefone !== undefined
+        ? atualizacao.telefone
+        : usuarioAtual.telefone;
+    const smsAtivoFinal =
+      atualizacao.notificacoesSms !== undefined
+        ? atualizacao.notificacoesSms
+        : usuarioAtual.notificacoesSms;
+
+    if (smsAtivoFinal && !telefoneFinal?.trim()) {
+      throw new ValidationError(
+        "Cadastre um telefone antes de ativar notificacoes por SMS",
+      );
+    }
 
     return prisma.usuario.update({
       where: { id: usuarioId },

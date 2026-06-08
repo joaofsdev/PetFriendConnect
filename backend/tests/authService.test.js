@@ -242,6 +242,69 @@ describe("AuthService", () => {
         ValidationError,
       );
     });
+
+    it("deve permitir ativar SMS quando usuario possui telefone", async () => {
+      prisma.usuario.findUnique.mockResolvedValue({
+        id: 1,
+        nome: "Joao",
+        email: "joao@test.com",
+        tipo: "DONO",
+        telefone: "11999999999",
+        notificacoesSms: false,
+        ativo: true,
+      });
+      prisma.usuario.update.mockResolvedValue({
+        id: 1,
+        nome: "Joao",
+        email: "joao@test.com",
+        tipo: "DONO",
+        telefone: "11999999999",
+        notificacoesSms: true,
+        ativo: true,
+      });
+
+      await AuthService.atualizarPerfil(1, { notificacoesSms: true });
+
+      expect(prisma.usuario.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({ notificacoesSms: true }),
+        }),
+      );
+    });
+
+    it("deve impedir ativar SMS sem telefone cadastrado", async () => {
+      prisma.usuario.findUnique.mockResolvedValue({
+        id: 1,
+        nome: "Joao",
+        email: "joao@test.com",
+        tipo: "DONO",
+        telefone: null,
+        notificacoesSms: false,
+        ativo: true,
+      });
+
+      await expect(
+        AuthService.atualizarPerfil(1, { notificacoesSms: true }),
+      ).rejects.toThrow(ValidationError);
+      expect(prisma.usuario.update).not.toHaveBeenCalled();
+    });
+
+    it("deve impedir remover telefone se SMS estiver ativo", async () => {
+      prisma.usuario.findUnique.mockResolvedValue({
+        id: 1,
+        nome: "Joao",
+        email: "joao@test.com",
+        tipo: "DONO",
+        telefone: "11999999999",
+        notificacoesSms: true,
+        ativo: true,
+      });
+
+      await expect(
+        AuthService.atualizarPerfil(1, { telefone: null }),
+      ).rejects.toThrow(ValidationError);
+      expect(prisma.usuario.update).not.toHaveBeenCalled();
+    });
   });
 
   describe("alterarSenha", () => {

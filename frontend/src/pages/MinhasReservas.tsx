@@ -87,6 +87,7 @@ export default function MinhasReservas() {
     try {
       const res = await cancelarReserva(id);
       setReservas((prev) => prev.map((r) => (r.id === id ? res.data : r)));
+      window.dispatchEvent(new Event("petfriend:reservas-updated"));
     } catch {
       setError("Erro ao cancelar reserva.");
     }

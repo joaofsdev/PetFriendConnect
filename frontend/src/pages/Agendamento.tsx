@@ -73,6 +73,7 @@ export default function Agendamento() {
         servicoId: selectedSlot.servico.id,
         agendaId: selectedSlot.id,
       });
+      window.dispatchEvent(new Event("petfriend:reservas-updated"));
       setConfirmed(true);
       setShowSuccess(true);
       setTimeout(() => setShowSuccess(false), 4000);
