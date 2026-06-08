@@ -60,13 +60,17 @@ export default function Configuracoes() {
   useEffect(() => {
     if (!user) return;
 
-    setNome(user.nome ?? "");
-    setEmail(user.email ?? "");
-    setTelefone(user.telefone ?? "");
-    setEndereco(user.endereco ?? "");
-    setDescricao(user.descricao ?? "");
-    setEmailNotif(user.notificacoesEmail ?? true);
-    setSmsNotif(user.notificacoesSms ?? false);
+    const timer = window.setTimeout(() => {
+      setNome(user.nome ?? "");
+      setEmail(user.email ?? "");
+      setTelefone(user.telefone ?? "");
+      setEndereco(user.endereco ?? "");
+      setDescricao(user.descricao ?? "");
+      setEmailNotif(user.notificacoesEmail ?? true);
+      setSmsNotif(user.notificacoesSms ?? false);
+    }, 0);
+
+    return () => window.clearTimeout(timer);
   }, [user]);
 
   function showSaved(msg: string) {

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   listarReservas,
   cancelarReserva,
@@ -62,11 +62,7 @@ export default function MinhasReservas() {
   const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState<Tab>("proximas");
 
-  useEffect(() => {
-    fetchReservas();
-  }, []);
-
-  async function fetchReservas() {
+  const fetchReservas = useCallback(async () => {
     try {
       setLoading(true);
       const res = await listarReservas();
@@ -76,7 +72,15 @@ export default function MinhasReservas() {
     } finally {
       setLoading(false);
     }
-  }
+  }, []);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      void fetchReservas();
+    }, 0);
+
+    return () => window.clearTimeout(timer);
+  }, [fetchReservas]);
 
   async function handleCancel(id: number) {
     if (!confirm("Tem certeza que deseja cancelar esta reserva?")) return;

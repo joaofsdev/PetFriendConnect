@@ -19,7 +19,11 @@ const obterUsuario = async (req, res, next) => {
 
 const editarUsuario = async (req, res, next) => {
   try {
-    const usuario = await AdminService.editarUsuario(req.params.id, req.body);
+    const usuario = await AdminService.editarUsuario(
+      req.params.id,
+      req.body,
+      req.user.id,
+    );
     await AdminService.registrarAcaoAdmin(req.user.id, "EDITAR_USUARIO", `Editou usuário #${req.params.id}`);
     return sendSuccess(res, usuario, "Usuário atualizado com sucesso");
   } catch (erro) { next(erro); }
@@ -27,7 +31,10 @@ const editarUsuario = async (req, res, next) => {
 
 const desativarUsuario = async (req, res, next) => {
   try {
-    const usuario = await AdminService.desativarUsuario(req.params.id);
+    const usuario = await AdminService.desativarUsuario(
+      req.params.id,
+      req.user.id,
+    );
     await AdminService.registrarAcaoAdmin(req.user.id, "DESATIVAR_USUARIO", `Desativou usuário #${req.params.id}`);
     return sendSuccess(res, usuario, "Usuário desativado com sucesso");
   } catch (erro) { next(erro); }

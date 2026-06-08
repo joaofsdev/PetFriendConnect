@@ -130,6 +130,7 @@ model Reserva {
   servico           Servico       @relation(fields: [servicoId], references: [id], onDelete: Cascade)
 
   @@index([agendaId])
+  @@index([agendaId, status])
   @@index([donoId])
   @@index([cuidadorId])
   @@index([petId])

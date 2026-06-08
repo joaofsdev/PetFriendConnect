@@ -3,7 +3,12 @@ jest.mock("@prisma/client", () => {
     pet: { findFirst: jest.fn() },
     servico: { findFirst: jest.fn() },
     agenda: { findFirst: jest.fn(), updateMany: jest.fn(), update: jest.fn() },
-    reserva: { findUnique: jest.fn(), create: jest.fn(), update: jest.fn() },
+    reserva: {
+      findUnique: jest.fn(),
+      findFirst: jest.fn(),
+      create: jest.fn(),
+      update: jest.fn(),
+    },
     log: { create: jest.fn() },
   };
 
@@ -145,6 +150,7 @@ describe("ReservaService", () => {
       tx.pet.findFirst.mockResolvedValue({ id: 1, nome: "Rex", raca: "Cachorro", idade: 3, fotoPet: null });
       tx.servico.findFirst.mockResolvedValue({ id: 1, nome: "Banho", descricao: null, preco: 50, duracao: 60, cuidadorId: 2 });
       tx.agenda.findFirst.mockResolvedValue({ id: 1, data: new Date(), disponivel: true, reservaId: null });
+      tx.reserva.findFirst.mockResolvedValue(null);
       tx.reserva.create.mockResolvedValue(reservaMock);
       tx.agenda.updateMany.mockResolvedValue({ count: 1 });
       tx.log.create.mockResolvedValue({});
@@ -183,6 +189,22 @@ describe("ReservaService", () => {
     });
 
     it("deve lançar ValidationError para IDs inválidos", async () => {
+      tx.pet.findFirst.mockResolvedValue({ id: 1 });
+      tx.servico.findFirst.mockResolvedValue({ id: 1, cuidadorId: 2 });
+      tx.agenda.findFirst.mockResolvedValue({
+        id: 1,
+        data: new Date(),
+        disponivel: true,
+        reservaId: null,
+      });
+      tx.reserva.findFirst.mockResolvedValue({ id: 99 });
+
+      await expect(
+        ReservaService.criarReserva(dadosReserva, 1),
+      ).rejects.toThrow(ConflictError);
+    });
+
+    it("deve lancar ValidationError para IDs invalidos", async () => {
       await expect(
         ReservaService.criarReserva({ ...dadosReserva, petId: "abc" }, 1),
       ).rejects.toThrow(ValidationError);
@@ -193,7 +215,7 @@ describe("ReservaService", () => {
     it("deve cancelar reserva com sucesso", async () => {
       tx.reserva.findUnique.mockResolvedValue(reservaMock);
       tx.reserva.update.mockResolvedValue({ ...reservaMock, status: "CANCELADA" });
-      tx.agenda.update.mockResolvedValue({});
+      tx.agenda.updateMany.mockResolvedValue({ count: 1 });
       tx.log.create.mockResolvedValue({});
 
       // Override $transaction for cancelar (uses tx internally)

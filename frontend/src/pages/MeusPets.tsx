@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useState, type FormEvent } from "react";
 import {
   listarPets,
   criarPet,
@@ -15,11 +15,7 @@ export default function MeusPets() {
   const [showForm, setShowForm] = useState(false);
   const [editingPet, setEditingPet] = useState<Pet | null>(null);
 
-  useEffect(() => {
-    fetchPets();
-  }, []);
-
-  async function fetchPets() {
+  const fetchPets = useCallback(async () => {
     try {
       setLoading(true);
       const res = await listarPets();
@@ -29,7 +25,15 @@ export default function MeusPets() {
     } finally {
       setLoading(false);
     }
-  }
+  }, []);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      void fetchPets();
+    }, 0);
+
+    return () => window.clearTimeout(timer);
+  }, [fetchPets]);
 
   async function handleDelete(id: number) {
     if (!confirm("Tem certeza que deseja remover este pet?")) return;

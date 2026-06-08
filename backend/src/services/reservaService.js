@@ -299,6 +299,20 @@ class ReservaService {
         throw new ConflictError("Horário não disponível");
       }
 
+      const reservaAtivaExistente = await tx.reserva.findFirst({
+        where: {
+          agendaId,
+          status: {
+            in: [StatusReserva.PENDENTE, StatusReserva.CONFIRMADA],
+          },
+        },
+        select: { id: true },
+      });
+
+      if (reservaAtivaExistente) {
+        throw new ConflictError("Horario ja possui uma reserva ativa");
+      }
+
       const reserva = await tx.reserva.create({
         data: {
           donoId: donoIdNumero,
@@ -497,15 +511,21 @@ class ReservaService {
         },
       });
 
-      await tx.agenda.update({
+      const agendaAtualizada = await tx.agenda.updateMany({
         where: {
           id: reserva.agendaId,
+          reservaId: reserva.id,
+          disponivel: false,
         },
         data: {
           disponivel: true,
           reservaId: null,
         },
       });
+
+      if (agendaAtualizada.count === 0) {
+        throw new ConflictError("Agenda da reserva esta inconsistente");
+      }
 
       await tx.log.create({
         data: {

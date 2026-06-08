@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { listarCuidadores, type Cuidador } from "../services/cuidadores";
 
@@ -8,11 +8,7 @@ export default function EncontrarCuidadores() {
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
 
-  useEffect(() => {
-    fetchCuidadores();
-  }, []);
-
-  async function fetchCuidadores() {
+  const fetchCuidadores = useCallback(async () => {
     try {
       setLoading(true);
       const res = await listarCuidadores();
@@ -22,7 +18,15 @@ export default function EncontrarCuidadores() {
     } finally {
       setLoading(false);
     }
-  }
+  }, []);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      void fetchCuidadores();
+    }, 0);
+
+    return () => window.clearTimeout(timer);
+  }, [fetchCuidadores]);
 
   const filtered = cuidadores.filter(
     (c) =>

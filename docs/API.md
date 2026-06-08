@@ -1,223 +1,261 @@
-# 📖 Documentação da API - PetFriend Connect
+# API - PetFriend Connect
 
-**Base URL:** `http://localhost:3001/api`
+Base URL local: `http://localhost:3001/api`
 
-Todas as respostas seguem o formato:
-```json
-{ "error": false, "message": "...", "data": {...}, "statusCode": 200 }
-```
+Todas as respostas seguem este formato:
 
----
-
-## 🔐 Autenticação
-
-| Método | Rota | Descrição | Auth |
-|--------|------|-----------|------|
-| POST | `/auth/register` | Cadastro de usuário | Não |
-| POST | `/auth/login` | Login (retorna JWT) | Não |
-| GET | `/auth/me` | Dados do usuário logado | Sim |
-
-### POST /auth/register
 ```json
 {
-  "nome": "string (obrigatório)",
-  "email": "string (obrigatório)",
-  "senha": "string (min 6 chars)",
-  "tipo": "DONO | CUIDADOR",
-  "telefone": "string (opcional)"
+  "error": false,
+  "message": "Mensagem",
+  "data": {},
+  "statusCode": 200
 }
 ```
 
-### POST /auth/login
-```json
-{
-  "email": "string",
-  "senha": "string"
-}
-```
-**Retorno:** `{ token: "jwt...", usuario: {...} }`
+Para rotas autenticadas, envie:
 
----
-
-## 🐾 Pets
-
-| Método | Rota | Descrição | Auth | Permissão |
-|--------|------|-----------|------|-----------|
-| GET | `/pets` | Listar meus pets | Sim | Qualquer |
-| GET | `/pets/:id` | Detalhe do pet | Sim | Dono do pet |
-| POST | `/pets` | Criar pet | Sim | Qualquer |
-| PUT | `/pets/:id` | Atualizar pet | Sim | Dono do pet |
-| DELETE | `/pets/:id` | Remover pet | Sim | Dono do pet |
-
-### POST /pets
-```json
-{
-  "nome": "string (obrigatório, min 2)",
-  "especie": "string (obrigatório, min 2)",
-  "raca": "string (opcional)",
-  "idade": "int >= 0 (opcional)",
-  "observacoes": "string (opcional)"
-}
-```
-
----
-
-## 👤 Cuidadores
-
-| Método | Rota | Descrição | Auth |
-|--------|------|-----------|------|
-| GET | `/cuidadores` | Listar cuidadores | Sim |
-| GET | `/cuidadores/:id` | Perfil do cuidador | Sim |
-| GET | `/cuidadores/:id/agenda` | Agenda pública (slots disponíveis) | Sim |
-
----
-
-## 🛠 Serviços (Cuidador)
-
-| Método | Rota | Descrição | Auth | Permissão |
-|--------|------|-----------|------|-----------|
-| POST | `/servicos` | Criar serviço | Sim | CUIDADOR |
-| PUT | `/servicos/:id` | Editar serviço | Sim | CUIDADOR |
-
-### POST /servicos
-```json
-{
-  "nome": "string (obrigatório)",
-  "descricao": "string (opcional)",
-  "preco": "decimal (obrigatório)",
-  "duracao": "int em minutos (obrigatório)"
-}
-```
-
----
-
-## 📅 Agenda (Cuidador)
-
-| Método | Rota | Descrição | Auth | Permissão |
-|--------|------|-----------|------|-----------|
-| GET | `/agenda` | Listar minha agenda | Sim | CUIDADOR |
-| POST | `/agenda` | Adicionar slot | Sim | CUIDADOR |
-| DELETE | `/agenda/:id` | Remover slot | Sim | CUIDADOR |
-
-### POST /agenda
-```json
-{
-  "servicoId": "int (obrigatório)",
-  "data": "datetime ISO (obrigatório)"
-}
-```
-
----
-
-## 📋 Reservas
-
-| Método | Rota | Descrição | Auth | Permissão |
-|--------|------|-----------|------|-----------|
-| GET | `/reservas` | Listar minhas reservas | Sim | DONO/CUIDADOR |
-| GET | `/reservas/:id` | Detalhe da reserva | Sim | Participante |
-| POST | `/reservas` | Criar reserva (transação ACID) | Sim | DONO |
-| PATCH | `/reservas/:id/cancelar` | Cancelar reserva | Sim | DONO |
-
-### POST /reservas
-```json
-{
-  "agendaId": "int (obrigatório)",
-  "petId": "int (obrigatório)"
-}
-```
-
----
-
-## 🔧 Admin
-
-> Todas as rotas requerem autenticação + tipo ADMIN.
-
-### Usuários
-
-| Método | Rota | Descrição |
-|--------|------|-----------|
-| GET | `/admin/usuarios` | Listar usuários |
-| GET | `/admin/usuarios/:id` | Detalhe do usuário |
-| PUT | `/admin/usuarios/:id` | Editar usuário |
-| DELETE | `/admin/usuarios/:id` | Desativar usuário |
-| PATCH | `/admin/usuarios/:id/ativar` | Reativar usuário |
-
-**Query params (GET /admin/usuarios):** `tipo`, `ativo`, `busca`, `page`, `limit`
-
-### Denúncias
-
-| Método | Rota | Descrição |
-|--------|------|-----------|
-| GET | `/admin/denuncias` | Listar denúncias |
-| GET | `/admin/denuncias/:id` | Detalhe da denúncia |
-| PATCH | `/admin/denuncias/:id` | Atualizar status |
-
-**Query params (GET /admin/denuncias):** `status` (PENDENTE, EM_ANALISE, RESOLVIDA, REJEITADA), `page`, `limit`
-
-### PATCH /admin/denuncias/:id
-```json
-{
-  "status": "PENDENTE | EM_ANALISE | RESOLVIDA | REJEITADA",
-  "resolucao": "string (opcional)"
-}
-```
-
-### Dashboard
-
-| Método | Rota | Descrição |
-|--------|------|-----------|
-| GET | `/admin/dashboard` | Estatísticas gerais |
-
-**Retorno:**
-```json
-{
-  "totalUsuarios": 10,
-  "totalPets": 5,
-  "totalReservas": 20,
-  "totalCuidadores": 4,
-  "totalDonos": 5,
-  "reservasPorStatus": { "PENDENTE": 3, "CONFIRMADA": 10, ... },
-  "usuariosRecentes": [...]
-}
-```
-
-### Configurações
-
-| Método | Rota | Descrição |
-|--------|------|-----------|
-| GET | `/admin/configuracoes` | Listar configurações |
-| PUT | `/admin/configuracoes/:chave` | Atualizar configuração |
-
-### PUT /admin/configuracoes/:chave
-```json
-{ "valor": "string" }
-```
-
-### Logs
-
-| Método | Rota | Descrição |
-|--------|------|-----------|
-| GET | `/admin/logs` | Listar logs de auditoria |
-
-**Query params:** `usuarioId`, `acao`, `page`, `limit`
-
----
-
-## 🔑 Headers de Autenticação
-
-```
+```http
 Authorization: Bearer <token_jwt>
 ```
 
----
+## Autenticacao
 
-## ⚠️ Códigos de Erro
+| Metodo | Rota | Auth | Descricao |
+|---|---|---|---|
+| POST | `/auth/register` | Nao | Cadastra DONO ou CUIDADOR |
+| POST | `/auth/login` | Nao | Autentica e retorna JWT |
+| POST | `/auth/forgot-password` | Nao | Solicita recuperacao de senha |
+| POST | `/auth/reset-password` | Nao | Redefine senha com token |
+| GET | `/auth/me` | Sim | Retorna usuario logado |
+| PUT | `/auth/me` | Sim | Atualiza perfil e preferencias |
+| PATCH | `/auth/me/senha` | Sim | Altera senha com senha atual |
 
-| Código | Significado |
-|--------|-------------|
-| 400 | Erro de validação |
-| 401 | Não autenticado / Token inválido |
-| 403 | Acesso proibido (tipo de usuário não permitido) |
-| 404 | Recurso não encontrado |
-| 409 | Conflito (ex: horário já reservado) |
-| 500 | Erro interno do servidor |
+### POST `/auth/register`
+
+```json
+{
+  "nome": "Maria Silva",
+  "email": "maria@email.com",
+  "senha": "senha123",
+  "tipo": "DONO",
+  "telefone": "11999999999",
+  "endereco": "Sao Paulo",
+  "descricao": "Opcional"
+}
+```
+
+`tipo` aceita apenas `DONO` ou `CUIDADOR`. Cadastro publico de `ADMIN` e bloqueado.
+
+### POST `/auth/login`
+
+```json
+{
+  "email": "maria@email.com",
+  "senha": "senha123"
+}
+```
+
+### POST `/auth/forgot-password`
+
+```json
+{
+  "email": "maria@email.com"
+}
+```
+
+A resposta e generica para evitar enumeracao de emails. Em ambiente local, `data.resetUrl` pode ser retornada para teste manual sem servico de email.
+
+### POST `/auth/reset-password`
+
+```json
+{
+  "token": "token_recebido",
+  "novaSenha": "novaSenha123"
+}
+```
+
+O token e armazenado no banco apenas em hash e expira em 30 minutos.
+
+### PUT `/auth/me`
+
+```json
+{
+  "nome": "Maria Silva",
+  "telefone": "11999999999",
+  "endereco": "Sao Paulo",
+  "descricao": "Cuidadora experiente",
+  "fotoPerfil": "https://exemplo.com/foto.jpg",
+  "notificacoesEmail": true,
+  "notificacoesSms": false
+}
+```
+
+### PATCH `/auth/me/senha`
+
+```json
+{
+  "senhaAtual": "senhaAtual123",
+  "novaSenha": "novaSenha123"
+}
+```
+
+## Pets
+
+Todas as rotas de pets exigem usuario autenticado do tipo `DONO`.
+
+| Metodo | Rota | Descricao |
+|---|---|---|
+| GET | `/pets` | Lista pets do dono logado |
+| GET | `/pets/:id` | Detalha um pet do dono |
+| POST | `/pets` | Cria pet |
+| PUT | `/pets/:id` | Atualiza pet |
+| DELETE | `/pets/:id` | Remove pet |
+
+### POST `/pets`
+
+```json
+{
+  "nome": "Rex",
+  "especie": "Cachorro",
+  "idade": 3,
+  "observacoes": "Amigavel"
+}
+```
+
+`idade` e opcional e pode ser `null`.
+
+## Cuidadores
+
+| Metodo | Rota | Auth | Descricao |
+|---|---|---|---|
+| GET | `/cuidadores` | Sim | Lista cuidadores ativos |
+| GET | `/cuidadores/:id` | Sim | Perfil publico do cuidador |
+| GET | `/cuidadores/:id/agenda` | Sim | Slots disponiveis |
+
+## Servicos
+
+Rotas de escrita exigem usuario `CUIDADOR`.
+
+| Metodo | Rota | Descricao |
+|---|---|---|
+| GET | `/servicos/me` | Lista servicos do cuidador logado |
+| POST | `/servicos` | Cria servico |
+| PUT | `/servicos/:id` | Atualiza servico do cuidador logado |
+
+### POST `/servicos`
+
+```json
+{
+  "nome": "Passeio",
+  "descricao": "Passeio de 1 hora",
+  "preco": 50,
+  "duracao": 60
+}
+```
+
+## Agenda
+
+Rotas exigem usuario `CUIDADOR`.
+
+| Metodo | Rota | Descricao |
+|---|---|---|
+| GET | `/agenda` | Lista agenda do cuidador |
+| POST | `/agenda` | Cria slot de disponibilidade |
+| DELETE | `/agenda/:id` | Remove slot sem reserva |
+
+### POST `/agenda`
+
+```json
+{
+  "servicoId": 1,
+  "data": "2026-06-09T13:00:00.000Z"
+}
+```
+
+## Reservas
+
+| Metodo | Rota | Permissao | Descricao |
+|---|---|---|---|
+| GET | `/reservas` | DONO/CUIDADOR/ADMIN | Lista reservas do usuario |
+| GET | `/reservas/:id` | Participante/ADMIN | Detalha reserva |
+| POST | `/reservas` | DONO | Cria reserva |
+| PATCH | `/reservas/:id/cancelar` | DONO | Cancela reserva |
+
+### POST `/reservas`
+
+```json
+{
+  "cuidadorId": 2,
+  "petId": 1,
+  "servicoId": 3,
+  "agendaId": 4
+}
+```
+
+A criacao usa transacao serializavel, valida pet do dono, servico ativo do cuidador, slot disponivel e inexistencia de reserva ativa para a mesma agenda.
+
+## Admin
+
+Todas as rotas abaixo exigem usuario `ADMIN`.
+
+### Usuarios
+
+| Metodo | Rota | Descricao |
+|---|---|---|
+| GET | `/admin/usuarios` | Lista usuarios com filtros |
+| GET | `/admin/usuarios/:id` | Detalha usuario |
+| PUT | `/admin/usuarios/:id` | Edita usuario |
+| DELETE | `/admin/usuarios/:id` | Desativa usuario |
+| PATCH | `/admin/usuarios/:id/ativar` | Ativa usuario |
+
+Filtros: `tipo`, `ativo`, `busca`, `page`, `limit`.
+
+Regras importantes:
+
+- `limit` maximo: 100.
+- Admin nao pode desativar a propria conta.
+- Edicao comum nao promove usuario para `ADMIN`.
+- Email duplicado e recusado.
+
+### Denuncias
+
+| Metodo | Rota | Descricao |
+|---|---|---|
+| GET | `/admin/denuncias` | Lista denuncias |
+| GET | `/admin/denuncias/:id` | Detalha denuncia |
+| PATCH | `/admin/denuncias/:id` | Atualiza status/resolucao |
+
+Status aceitos: `PENDENTE`, `EM_ANALISE`, `RESOLVIDA`, `REJEITADA`.
+
+### Dashboard
+
+| Metodo | Rota | Descricao |
+|---|---|---|
+| GET | `/admin/dashboard` | Estatisticas gerais |
+
+### Configuracoes
+
+| Metodo | Rota | Descricao |
+|---|---|---|
+| GET | `/admin/configuracoes` | Lista configuracoes |
+| PUT | `/admin/configuracoes/:chave` | Atualiza configuracao |
+
+### Logs
+
+| Metodo | Rota | Descricao |
+|---|---|---|
+| GET | `/admin/logs` | Lista logs de auditoria |
+
+Filtros: `usuarioId`, `acao`, `page`, `limit`.
+
+## Codigos De Erro
+
+| Codigo | Significado |
+|---|---|
+| 400 | Erro de validacao |
+| 401 | Nao autenticado ou token invalido |
+| 403 | Acesso proibido |
+| 404 | Recurso nao encontrado |
+| 409 | Conflito de dados |
+| 500 | Erro interno |

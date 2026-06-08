@@ -1,88 +1,79 @@
-# Status do Projeto
+# Status Do Projeto
+
+Data da ultima revisao: 2026-06-08
 
 ## Resumo
 
-O PetFriend Connect possui um MVP funcional para os fluxos principais de dono e cuidador. O backend principal esta coberto por testes, e o frontend passa em lint e build apos os ultimos ajustes.
+O PetFriend Connect esta com o MVP principal funcional para donos, cuidadores e administradores. A area de usuario foi conectada com backend real, incluindo edicao de perfil, troca de senha, recuperacao de senha e preferencias de notificacao.
 
-O painel administrativo e as configuracoes de perfil ainda estao parcialmente implementados. As telas existem, mas parte delas ainda nao possui API correspondente.
+Tambem foram corrigidos pontos tecnicos importantes em pets, servicos, reservas, admin, lint e documentacao.
 
 ## Validacoes Recentes
 
-- Backend: `npm test` passou com 73 testes.
-- Frontend: `npm run lint` passou.
-- Frontend: `npm run build` passou.
-- Backend: OAuth social coberto por testes unitarios principais.
-- Backend: `npm install` apontou 1 vulnerabilidade de alta severidade via `npm audit`.
+- Backend: `npm.cmd test` passou com 82 testes.
+- Frontend: `npm.cmd run lint` passou.
+- Frontend: `npm.cmd run build` passou.
+- Prisma Client regenerado apos alteracoes no schema.
+- Backend: `npm.cmd audit --json` sem vulnerabilidades.
+- Frontend: `npm.cmd audit --json` sem vulnerabilidades.
 
 ## Implementado
 
 - Cadastro e login com JWT.
-- Login social com Google e Facebook via OAuth, pendente de credenciais reais no ambiente.
+- Login social Google/Facebook, pendente de credenciais reais.
 - Hash de senha com bcrypt.
-- Middleware de autenticacao.
+- Middleware de autenticacao e autorizacao por tipo.
 - Bloqueio de cadastro publico de `ADMIN`.
-- Protecao de rotas do frontend por tipo de usuario.
-- Bloqueio de tokens antigos para usuarios inativos.
-- CRUD de pets.
+- Bloqueio de token para usuario inativo.
+- Edicao de perfil do usuario.
+- Troca de senha com senha atual.
+- Recuperacao de senha com token hasheado e expiracao.
+- Preferencias de notificacao persistidas.
+- CRUD de pets restrito a `DONO`.
+- Idade do pet opcional no banco e no frontend.
 - Listagem e perfil de cuidadores.
-- Cadastro e edicao de servicos do cuidador.
+- CRUD de servicos do cuidador.
+- `GET /api/servicos/me` para servicos do cuidador logado.
 - Gestao de agenda do cuidador.
-- Criacao de reservas com transacao.
+- Criacao de reservas com transacao serializavel.
 - Cancelamento de reservas.
-- Logs basicos de reserva.
-- Seeds de dados de teste.
-- Dashboards de dono e cuidador.
-- Testes unitarios dos services do backend.
+- Checagem de reserva ativa por agenda.
+- Painel admin com usuarios, denuncias, configs, logs e dashboard.
+- Validacoes reforcadas no admin.
+- Lint geral do frontend passando.
 
-## Parcialmente Implementado
+## Pendente Para Banco Real
 
-- Configuracoes de usuario: tela existe, mas faltam endpoints para atualizar perfil e senha.
-- Painel admin: rotas e telas existem no frontend, mas o backend admin ainda nao foi implementado.
-- Servicos do cuidador: funciona, mas o frontend lista os servicos proprios via listagem publica de cuidadores. O ideal e criar `GET /api/servicos/me`.
+Ainda falta rodar e validar com MySQL real:
 
-## Pendencias Criticas
+```bash
+cd backend
+npx prisma migrate dev
+npx prisma db seed
+```
 
-1. Criar endpoints reais para o painel admin.
-2. Criar endpoints para edicao de perfil e troca de senha.
-3. Revisar vulnerabilidade apontada pelo `npm audit`.
-4. Configurar credenciais reais de Google/Facebook OAuth no ambiente.
+Depois disso, testar manualmente:
 
-## Pendencias Tecnicas
+- Cadastro/login.
+- Recuperacao de senha.
+- CRUD de pets.
+- Criacao, cancelamento e nova reserva do mesmo slot.
+- Fluxo do cuidador com servicos e agenda.
+- Fluxos admin.
 
-- Atualizar o README principal com a stack real do projeto.
-- Corrigir textos com encoding quebrado no README principal.
-- Documentar endpoints reais em `docs/API.md` ou no README.
-- Adicionar constraint de banco para impedir mais de uma reserva por slot de agenda.
-- Revisar o relacionamento duplicado entre `Agenda.reservaId` e `Reserva.agendaId`.
-- Rodar fluxo completo manual com banco MySQL real.
+## Pendente Para Seguranca
 
-## Proximos Passos Recomendados
+- Fechar CORS por ambiente.
+- Adicionar Helmet.
+- Adicionar rate limit em login, cadastro e recuperacao de senha.
+- Avaliar troca de JWT em localStorage/sessionStorage por cookie httpOnly.
+- Revisar `JWT_SECRET` obrigatorio e forte na inicializacao.
+- Manter auditoria npm zerada a cada mudanca de dependencias.
+- Configurar envio real de email para recuperacao de senha em producao.
+- Revisar logs para nao expor dados sensiveis.
 
-### Sprint 1 - Seguranca
+## Observacoes Tecnicas
 
-- Bloquear registro publico de `ADMIN`. Concluido.
-- Adicionar protecao de rotas por papel no frontend. Concluido.
-- Impedir que usuarios inativos continuem usando tokens antigos. Concluido.
-- Configurar OAuth Google/Facebook em ambiente real.
-- Revisar exposicao de telas administrativas para usuarios comuns.
-
-### Sprint 2 - Conta do Usuario
-
-- Implementar `PUT /api/auth/me`.
-- Implementar `PATCH /api/auth/me/senha`.
-- Conectar a tela de configuracoes com a API.
-
-### Sprint 3 - Admin MVP
-
-- Implementar dashboard admin com contagens basicas.
-- Implementar listagem de usuarios.
-- Implementar ativar/desativar usuarios.
-- Implementar listagem de logs.
-- Registrar acoes administrativas relevantes.
-
-### Sprint 4 - Polimento e Entrega
-
-- Atualizar README.
-- Criar documentacao da API.
-- Rodar testes, lint e build finais.
-- Testar os fluxos completos de dono e cuidador.
+- Nao foi aplicada constraint unica simples em `Reserva.agendaId`, porque isso impediria reutilizar um slot apos cancelamento.
+- A consistencia de reservas foi reforcada por transacao, checagem de reserva ativa por agenda e indice `Reserva(agendaId, status)`.
+- `Agenda.reservaId` e `Reserva.agendaId` continuam redundantes. Remover essa redundancia exigiria uma refatoracao maior de modelo e frontend.
