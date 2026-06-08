@@ -5,10 +5,12 @@ node_modules/
 
 # Testing
 coverage/
+.eslintcache
 
 # Production
 build/
 dist/
+*.tsbuildinfo
 
 # Environment
 .env
@@ -31,11 +33,17 @@ yarn-error.log*
 # OS
 .DS_Store
 Thumbs.db
+desktop.ini
 
 # Prisma
 prisma/*.db
 prisma/*.db-journal
+backend/prisma/*.db
+backend/prisma/*.db-journal
 
 # Misc
 *.log
 .cache/
+.vite/
+.vercel/
+.netlify/
