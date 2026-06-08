@@ -1,81 +1,155 @@
-import { useState } from "react";
-import type { SyntheticEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { useAuth } from "../hooks/useAuth";
+import { ApiError } from "../services/api";
 
 type Section = "perfil" | "seguranca" | "preferencias";
 
-function Toggle({ enabled, onChange }: { readonly enabled: boolean; readonly onChange: () => void }) {
+function Toggle({
+  enabled,
+  onChange,
+}: {
+  readonly enabled: boolean;
+  readonly onChange: () => void;
+}) {
   return (
-    <button type="button" role="switch" aria-checked={enabled} onClick={onChange} className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out ${enabled ? "bg-primary" : "bg-slate-200 dark:bg-slate-700"}`}>
-      <span className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${enabled ? "translate-x-5" : "translate-x-0"}`} />
+    <button
+      type="button"
+      role="switch"
+      aria-checked={enabled}
+      onClick={onChange}
+      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out ${enabled ? "bg-primary" : "bg-slate-200 dark:bg-slate-700"}`}
+    >
+      <span
+        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${enabled ? "translate-x-5" : "translate-x-0"}`}
+      />
     </button>
   );
 }
 
-const inputClass = "shadow-sm focus:ring-primary focus:border-primary block w-full sm:text-sm border-slate-300 dark:border-slate-700 dark:bg-slate-800/50 dark:text-white rounded-lg p-2.5 bg-white";
+const inputClass =
+  "shadow-sm focus:ring-primary focus:border-primary block w-full sm:text-sm border-slate-300 dark:border-slate-700 dark:bg-slate-800/50 dark:text-white rounded-lg p-2.5 bg-white";
+
+function getErrorMessage(error: unknown, fallback: string) {
+  return error instanceof ApiError ? error.message : fallback;
+}
 
 export default function Configuracoes() {
-  const { user } = useAuth();
+  const { user, updateProfile, changePassword } = useAuth();
   const [activeSection, setActiveSection] = useState<Section>("perfil");
   const [savedMsg, setSavedMsg] = useState("");
+  const [perfilError, setPerfilError] = useState("");
+  const [senhaError, setSenhaError] = useState("");
+  const [isSavingProfile, setIsSavingProfile] = useState(false);
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
 
-  // Perfil - initialized from user context
   const [nome, setNome] = useState(user?.nome ?? "");
-  const [email] = useState(user?.email ?? "");
+  const [email, setEmail] = useState(user?.email ?? "");
   const [telefone, setTelefone] = useState(user?.telefone ?? "");
   const [endereco, setEndereco] = useState(user?.endereco ?? "");
+  const [descricao, setDescricao] = useState(user?.descricao ?? "");
 
-  // Segurança
   const [senhaAtual, setSenhaAtual] = useState("");
   const [novaSenha, setNovaSenha] = useState("");
   const [confirmarSenha, setConfirmarSenha] = useState("");
-  const [senhaError, setSenhaError] = useState("");
 
-  // Preferências
   const [emailNotif, setEmailNotif] = useState(true);
   const [smsNotif, setSmsNotif] = useState(false);
+
+  useEffect(() => {
+    if (!user) return;
+
+    setNome(user.nome ?? "");
+    setEmail(user.email ?? "");
+    setTelefone(user.telefone ?? "");
+    setEndereco(user.endereco ?? "");
+    setDescricao(user.descricao ?? "");
+  }, [user]);
 
   function showSaved(msg: string) {
     setSavedMsg(msg);
     setTimeout(() => setSavedMsg(""), 3000);
   }
 
-  function handleSavePerfil(e: SyntheticEvent<HTMLFormElement>) {
+  async function handleSavePerfil(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    // TODO: call API to update profile
-    showSaved("Dados pessoais salvos com sucesso!");
+    setPerfilError("");
+    setIsSavingProfile(true);
+
+    try {
+      await updateProfile({
+        nome,
+        telefone: telefone || null,
+        endereco: endereco || null,
+        descricao: descricao || null,
+      });
+      showSaved("Dados pessoais salvos com sucesso!");
+    } catch (error) {
+      setPerfilError(
+        getErrorMessage(error, "Nao foi possivel salvar seu perfil."),
+      );
+    } finally {
+      setIsSavingProfile(false);
+    }
   }
 
-  function handleSaveSenha(e: SyntheticEvent<HTMLFormElement>) {
+  async function handleSaveSenha(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (novaSenha !== confirmarSenha) { setSenhaError("As senhas não coincidem."); return; }
-    if (novaSenha.length < 8) { setSenhaError("A senha deve ter no mínimo 8 caracteres."); return; }
     setSenhaError("");
-    // TODO: call API to change password
-    showSaved("Senha alterada com sucesso!");
-    setSenhaAtual(""); setNovaSenha(""); setConfirmarSenha("");
+
+    if (novaSenha !== confirmarSenha) {
+      setSenhaError("As senhas nao coincidem.");
+      return;
+    }
+
+    if (novaSenha.length < 8) {
+      setSenhaError("A senha deve ter no minimo 8 caracteres.");
+      return;
+    }
+
+    setIsChangingPassword(true);
+
+    try {
+      await changePassword({ senhaAtual, novaSenha });
+      showSaved("Senha alterada com sucesso!");
+      setSenhaAtual("");
+      setNovaSenha("");
+      setConfirmarSenha("");
+    } catch (error) {
+      setSenhaError(
+        getErrorMessage(error, "Nao foi possivel alterar sua senha."),
+      );
+    } finally {
+      setIsChangingPassword(false);
+    }
   }
 
   const navItems: { key: Section; label: string; icon: string }[] = [
     { key: "perfil", label: "Dados Pessoais", icon: "person" },
-    { key: "seguranca", label: "Segurança", icon: "lock" },
-    { key: "preferencias", label: "Preferências", icon: "tune" },
+    { key: "seguranca", label: "Seguranca", icon: "lock" },
+    { key: "preferencias", label: "Preferencias", icon: "tune" },
   ];
 
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Configurações</h2>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Gerencie suas informações pessoais e preferências.</p>
+        <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
+          Configuracoes
+        </h2>
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+          Gerencie suas informacoes pessoais e preferencias.
+        </p>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-6">
-        {/* Nav */}
-        <nav className="w-full lg:w-56 shrink-0">
+      <div className="flex flex-col gap-6 lg:flex-row">
+        <nav className="w-full shrink-0 lg:w-56">
           <ul className="space-y-1">
             {navItems.map((item) => (
               <li key={item.key}>
-                <button type="button" onClick={() => setActiveSection(item.key)} className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeSection === item.key ? "bg-primary/10 text-primary" : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"}`}>
+                <button
+                  type="button"
+                  onClick={() => setActiveSection(item.key)}
+                  className={`flex w-full items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium transition-colors ${activeSection === item.key ? "bg-primary/10 text-primary" : "text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"}`}
+                >
                   <span className="material-icons text-lg">{item.icon}</span>
                   {item.label}
                 </button>
@@ -84,80 +158,229 @@ export default function Configuracoes() {
           </ul>
         </nav>
 
-        {/* Content */}
-        <div className="flex-1 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6">
+        <div className="flex-1 rounded-xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
           {activeSection === "perfil" && (
             <form onSubmit={handleSavePerfil} className="space-y-5">
-              <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Dados Pessoais</h3>
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
+                Dados Pessoais
+              </h3>
+
+              {perfilError && (
+                <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900/40 dark:bg-red-950/30 dark:text-red-200">
+                  {perfilError}
+                </div>
+              )}
+
               <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1" htmlFor="cfg-nome">Nome</label>
-                <input id="cfg-nome" type="text" value={nome} onChange={(e) => setNome(e.target.value)} className={inputClass} />
+                <label
+                  className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300"
+                  htmlFor="cfg-nome"
+                >
+                  Nome
+                </label>
+                <input
+                  id="cfg-nome"
+                  type="text"
+                  value={nome}
+                  onChange={(e) => setNome(e.target.value)}
+                  className={inputClass}
+                  required
+                />
               </div>
+
               <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1" htmlFor="cfg-email">Email</label>
-                <input id="cfg-email" type="email" value={email} disabled className={`${inputClass} opacity-60 cursor-not-allowed`} />
-                <p className="text-xs text-slate-400 mt-1">O email não pode ser alterado.</p>
+                <label
+                  className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300"
+                  htmlFor="cfg-email"
+                >
+                  Email
+                </label>
+                <input
+                  id="cfg-email"
+                  type="email"
+                  value={email}
+                  disabled
+                  className={`${inputClass} cursor-not-allowed opacity-60`}
+                />
+                <p className="mt-1 text-xs text-slate-400">
+                  O email nao pode ser alterado por esta tela.
+                </p>
               </div>
+
               <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1" htmlFor="cfg-telefone">Telefone</label>
-                <input id="cfg-telefone" type="text" value={telefone} onChange={(e) => setTelefone(e.target.value)} className={inputClass} />
+                <label
+                  className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300"
+                  htmlFor="cfg-telefone"
+                >
+                  Telefone
+                </label>
+                <input
+                  id="cfg-telefone"
+                  type="text"
+                  value={telefone}
+                  onChange={(e) => setTelefone(e.target.value)}
+                  className={inputClass}
+                />
               </div>
+
               <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1" htmlFor="cfg-endereco">Endereço</label>
-                <input id="cfg-endereco" type="text" value={endereco} onChange={(e) => setEndereco(e.target.value)} className={inputClass} />
+                <label
+                  className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300"
+                  htmlFor="cfg-endereco"
+                >
+                  Endereco
+                </label>
+                <input
+                  id="cfg-endereco"
+                  type="text"
+                  value={endereco}
+                  onChange={(e) => setEndereco(e.target.value)}
+                  className={inputClass}
+                />
               </div>
-              <button type="submit" className="px-4 py-2 rounded-lg bg-primary hover:bg-blue-600 text-white text-sm font-medium">Salvar</button>
+
+              <div>
+                <label
+                  className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300"
+                  htmlFor="cfg-descricao"
+                >
+                  Sobre voce
+                </label>
+                <textarea
+                  id="cfg-descricao"
+                  rows={4}
+                  value={descricao}
+                  onChange={(e) => setDescricao(e.target.value)}
+                  className={inputClass}
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={isSavingProfile}
+                className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-70"
+              >
+                {isSavingProfile ? "Salvando..." : "Salvar"}
+              </button>
             </form>
           )}
 
           {activeSection === "seguranca" && (
             <form onSubmit={handleSaveSenha} className="space-y-5">
-              <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Alterar Senha</h3>
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
+                Alterar Senha
+              </h3>
+
               <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1" htmlFor="cfg-senha-atual">Senha Atual</label>
-                <input id="cfg-senha-atual" type="password" value={senhaAtual} onChange={(e) => setSenhaAtual(e.target.value)} className={inputClass} />
+                <label
+                  className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300"
+                  htmlFor="cfg-senha-atual"
+                >
+                  Senha Atual
+                </label>
+                <input
+                  id="cfg-senha-atual"
+                  type="password"
+                  value={senhaAtual}
+                  onChange={(e) => setSenhaAtual(e.target.value)}
+                  className={inputClass}
+                  required
+                />
               </div>
+
               <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1" htmlFor="cfg-nova-senha">Nova Senha</label>
-                <input id="cfg-nova-senha" type="password" value={novaSenha} onChange={(e) => setNovaSenha(e.target.value)} className={inputClass} />
+                <label
+                  className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300"
+                  htmlFor="cfg-nova-senha"
+                >
+                  Nova Senha
+                </label>
+                <input
+                  id="cfg-nova-senha"
+                  type="password"
+                  value={novaSenha}
+                  onChange={(e) => setNovaSenha(e.target.value)}
+                  className={inputClass}
+                  required
+                  minLength={8}
+                />
               </div>
+
               <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1" htmlFor="cfg-confirmar-senha">Confirmar Nova Senha</label>
-                <input id="cfg-confirmar-senha" type="password" value={confirmarSenha} onChange={(e) => setConfirmarSenha(e.target.value)} className={inputClass} />
+                <label
+                  className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300"
+                  htmlFor="cfg-confirmar-senha"
+                >
+                  Confirmar Nova Senha
+                </label>
+                <input
+                  id="cfg-confirmar-senha"
+                  type="password"
+                  value={confirmarSenha}
+                  onChange={(e) => setConfirmarSenha(e.target.value)}
+                  className={inputClass}
+                  required
+                  minLength={8}
+                />
               </div>
+
               {senhaError && <p className="text-sm text-red-500">{senhaError}</p>}
-              <button type="submit" className="px-4 py-2 rounded-lg bg-primary hover:bg-blue-600 text-white text-sm font-medium">Alterar Senha</button>
+
+              <button
+                type="submit"
+                disabled={isChangingPassword}
+                className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-70"
+              >
+                {isChangingPassword ? "Alterando..." : "Alterar Senha"}
+              </button>
             </form>
           )}
 
           {activeSection === "preferencias" && (
             <div className="space-y-5">
-              <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Preferências de Notificação</h3>
-              <div className="flex items-center justify-between py-3 border-b border-slate-100 dark:border-slate-800">
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
+                Preferencias de Notificacao
+              </h3>
+              <div className="flex items-center justify-between border-b border-slate-100 py-3 dark:border-slate-800">
                 <div>
-                  <p className="text-sm font-medium text-slate-900 dark:text-white">Notificações por email</p>
-                  <p className="text-xs text-slate-500">Receba atualizações sobre reservas e mensagens.</p>
+                  <p className="text-sm font-medium text-slate-900 dark:text-white">
+                    Notificacoes por email
+                  </p>
+                  <p className="text-xs text-slate-500">
+                    Receba atualizacoes sobre reservas e mensagens.
+                  </p>
                 </div>
-                <Toggle enabled={emailNotif} onChange={() => setEmailNotif(!emailNotif)} />
+                <Toggle
+                  enabled={emailNotif}
+                  onChange={() => setEmailNotif(!emailNotif)}
+                />
               </div>
               <div className="flex items-center justify-between py-3">
                 <div>
-                  <p className="text-sm font-medium text-slate-900 dark:text-white">Notificações por SMS</p>
-                  <p className="text-xs text-slate-500">Receba lembretes de agendamentos por SMS.</p>
+                  <p className="text-sm font-medium text-slate-900 dark:text-white">
+                    Notificacoes por SMS
+                  </p>
+                  <p className="text-xs text-slate-500">
+                    Receba lembretes de agendamentos por SMS.
+                  </p>
                 </div>
-                <Toggle enabled={smsNotif} onChange={() => setSmsNotif(!smsNotif)} />
+                <Toggle
+                  enabled={smsNotif}
+                  onChange={() => setSmsNotif(!smsNotif)}
+                />
               </div>
             </div>
           )}
         </div>
       </div>
 
-      {/* Toast */}
       {savedMsg && (
-        <div className="fixed bottom-6 right-6 bg-white dark:bg-slate-800 rounded-xl shadow-xl border-l-4 border-green-500 p-4 z-50">
+        <div className="fixed bottom-6 right-6 z-50 rounded-xl border-l-4 border-green-500 bg-white p-4 shadow-xl dark:bg-slate-800">
           <div className="flex items-center gap-3">
             <span className="material-icons text-green-500">check_circle</span>
-            <p className="text-sm font-medium text-slate-900 dark:text-white">{savedMsg}</p>
+            <p className="text-sm font-medium text-slate-900 dark:text-white">
+              {savedMsg}
+            </p>
           </div>
         </div>
       )}

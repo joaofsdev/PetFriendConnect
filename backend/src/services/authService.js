@@ -12,7 +12,7 @@ const prisma = new PrismaClient();
 
 class AuthService {
   static async register(dados) {
-    const { nome, email, senha, tipo, telefone, endereco } = dados;
+    const { nome, email, senha, tipo, telefone, endereco, descricao } = dados;
 
     const usuarioExistente = await prisma.usuario.findUnique({
       where: { email },
@@ -40,6 +40,7 @@ class AuthService {
         tipo,
         telefone: telefone || null,
         endereco: endereco || null,
+        descricao: descricao || null,
         ativo: true,
       },
       select: {
@@ -49,7 +50,11 @@ class AuthService {
         tipo: true,
         telefone: true,
         endereco: true,
+        descricao: true,
+        fotoPerfil: true,
+        ativo: true,
         dataCriacao: true,
+        dataAtualizacao: true,
       },
     });
 
@@ -137,6 +142,118 @@ class AuthService {
     }
 
     return usuario;
+  }
+
+  static async atualizarPerfil(usuarioId, dados) {
+    const atualizacao = {};
+
+    if (dados.nome !== undefined) {
+      if (typeof dados.nome !== "string") {
+        throw new ValidationError("Nome invalido");
+      }
+
+      const nome = dados.nome.trim();
+      if (!nome) {
+        throw new ValidationError("Nome e obrigatorio");
+      }
+      atualizacao.nome = nome;
+    }
+
+    if (dados.telefone !== undefined) {
+      if (dados.telefone !== null && typeof dados.telefone !== "string") {
+        throw new ValidationError("Telefone invalido");
+      }
+
+      atualizacao.telefone = dados.telefone?.trim() || null;
+    }
+
+    if (dados.endereco !== undefined) {
+      if (dados.endereco !== null && typeof dados.endereco !== "string") {
+        throw new ValidationError("Endereco invalido");
+      }
+
+      atualizacao.endereco = dados.endereco?.trim() || null;
+    }
+
+    if (dados.descricao !== undefined) {
+      if (dados.descricao !== null && typeof dados.descricao !== "string") {
+        throw new ValidationError("Descricao invalida");
+      }
+
+      atualizacao.descricao = dados.descricao?.trim() || null;
+    }
+
+    if (dados.fotoPerfil !== undefined) {
+      if (dados.fotoPerfil !== null && typeof dados.fotoPerfil !== "string") {
+        throw new ValidationError("Foto de perfil invalida");
+      }
+
+      atualizacao.fotoPerfil = dados.fotoPerfil?.trim() || null;
+    }
+
+    if (Object.keys(atualizacao).length === 0) {
+      throw new ValidationError("Nenhum dado valido foi informado");
+    }
+
+    await this.obterUsuarioPorId(usuarioId);
+
+    return prisma.usuario.update({
+      where: { id: usuarioId },
+      data: atualizacao,
+      select: {
+        id: true,
+        nome: true,
+        email: true,
+        tipo: true,
+        telefone: true,
+        endereco: true,
+        descricao: true,
+        fotoPerfil: true,
+        ativo: true,
+        dataCriacao: true,
+        dataAtualizacao: true,
+      },
+    });
+  }
+
+  static async alterarSenha(usuarioId, senhaAtual, novaSenha) {
+    const usuario = await prisma.usuario.findUnique({
+      where: { id: usuarioId },
+      select: {
+        id: true,
+        senha: true,
+        ativo: true,
+      },
+    });
+
+    if (!usuario) {
+      throw new ValidationError("Usuario nao encontrado");
+    }
+
+    if (!usuario.ativo) {
+      throw new UnauthorizedError("Usuario inativo");
+    }
+
+    const senhaAtualValida = await bcryptjs.compare(senhaAtual, usuario.senha);
+
+    if (!senhaAtualValida) {
+      throw new UnauthorizedError("Senha atual invalida");
+    }
+
+    const mesmaSenha = await bcryptjs.compare(novaSenha, usuario.senha);
+
+    if (mesmaSenha) {
+      throw new ValidationError("A nova senha deve ser diferente da atual");
+    }
+
+    const senhaHash = await bcryptjs.hash(novaSenha, 10);
+
+    await prisma.usuario.update({
+      where: { id: usuarioId },
+      data: { senha: senhaHash },
+    });
+
+    return null;
   }
 
   static gerarUrlOAuth(provider, tipo = "DONO") {

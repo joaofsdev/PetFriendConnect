@@ -23,6 +23,24 @@ router.post(
 // GET /api/auth/me
 router.get("/me", authenticate, authController.me);
 
+// PUT /api/auth/me
+router.put(
+  "/me",
+  authenticate,
+  authController.validateUpdateProfile,
+  authController.handleValidationErrors,
+  authController.atualizarPerfil,
+);
+
+// PATCH /api/auth/me/senha
+router.patch(
+  "/me/senha",
+  authenticate,
+  authController.validateChangePassword,
+  authController.handleValidationErrors,
+  authController.alterarSenha,
+);
+
 // OAuth social
 router.get("/google", authController.iniciarOAuth("google"));
 router.get("/google/callback", authController.callbackOAuth("google"));

@@ -4,9 +4,13 @@ import {
   loginUsuario,
   registrarUsuario,
   obterUsuarioLogado,
+  alterarSenha,
+  atualizarPerfil,
   type AuthUser,
+  type ChangePasswordPayload,
   type LoginPayload,
   type RegisterPayload,
+  type UpdateProfilePayload,
 } from "../services/auth";
 import { AuthContext, type AuthContextType } from "./authContextValue";
 
@@ -46,6 +50,16 @@ function clearStorage() {
   localStorage.removeItem(STORAGE_KEYS.token);
   sessionStorage.removeItem(STORAGE_KEYS.user);
   sessionStorage.removeItem(STORAGE_KEYS.token);
+}
+
+function updateStoredUser(user: AuthUser) {
+  const storage = localStorage.getItem(STORAGE_KEYS.token)
+    ? localStorage
+    : sessionStorage;
+
+  if (storage.getItem(STORAGE_KEYS.token)) {
+    storage.setItem(STORAGE_KEYS.user, JSON.stringify(user));
+  }
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -107,6 +121,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return usuario;
   }
 
+  async function updateProfile(payload: UpdateProfilePayload) {
+    const response = await atualizarPerfil(payload);
+    const usuario = response.data;
+    updateStoredUser(usuario);
+    setUser(usuario);
+    return usuario;
+  }
+
+  async function changePassword(payload: ChangePasswordPayload) {
+    await alterarSenha(payload);
+  }
+
   function completeSocialLogin(data: { usuario: AuthUser; token: string }) {
     saveToStorage(data.usuario, data.token);
     setUser(data.usuario);
@@ -127,6 +153,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isLoading,
     login,
     register,
+    updateProfile,
+    changePassword,
     completeSocialLogin,
     logout,
   };

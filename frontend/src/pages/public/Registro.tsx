@@ -32,6 +32,8 @@ export default function Registro() {
         email,
         senha: password,
         tipo: role === "cuidador" ? "CUIDADOR" : "DONO",
+        endereco: role === "cuidador" ? location : undefined,
+        descricao: role === "cuidador" ? about : undefined,
       });
 
       navigate(

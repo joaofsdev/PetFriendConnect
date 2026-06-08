@@ -7,6 +7,7 @@ jest.mock("@prisma/client", () => {
     usuario: {
       findUnique: jest.fn(),
       create: jest.fn(),
+      update: jest.fn(),
     },
   };
   return { PrismaClient: jest.fn(() => mockPrisma) };
@@ -193,6 +194,98 @@ describe("AuthService", () => {
       await expect(AuthService.obterUsuarioPorId(999)).rejects.toThrow(
         ValidationError,
       );
+    });
+  });
+
+  describe("atualizarPerfil", () => {
+    it("deve atualizar perfil do usuario logado", async () => {
+      prisma.usuario.findUnique.mockResolvedValue({
+        id: 1,
+        nome: "Joao",
+        email: "joao@test.com",
+        tipo: "DONO",
+        ativo: true,
+      });
+      prisma.usuario.update.mockResolvedValue({
+        id: 1,
+        nome: "Joao Silva",
+        email: "joao@test.com",
+        tipo: "DONO",
+        telefone: "11999999999",
+        endereco: null,
+        descricao: null,
+        fotoPerfil: null,
+        ativo: true,
+        dataCriacao: new Date(),
+        dataAtualizacao: new Date(),
+      });
+
+      const usuario = await AuthService.atualizarPerfil(1, {
+        nome: "Joao Silva",
+        telefone: "11999999999",
+      });
+
+      expect(usuario.nome).toBe("Joao Silva");
+      expect(prisma.usuario.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id: 1 },
+          data: expect.objectContaining({
+            nome: "Joao Silva",
+            telefone: "11999999999",
+          }),
+        }),
+      );
+    });
+
+    it("deve lancar ValidationError se nenhum dado valido for informado", async () => {
+      await expect(AuthService.atualizarPerfil(1, {})).rejects.toThrow(
+        ValidationError,
+      );
+    });
+  });
+
+  describe("alterarSenha", () => {
+    it("deve alterar senha quando senha atual esta correta", async () => {
+      const senhaHash = await bcryptjs.hash("senhaAtual123", 10);
+      prisma.usuario.findUnique.mockResolvedValue({
+        id: 1,
+        senha: senhaHash,
+        ativo: true,
+      });
+      prisma.usuario.update.mockResolvedValue({});
+
+      await AuthService.alterarSenha(1, "senhaAtual123", "novaSenha123");
+
+      expect(prisma.usuario.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id: 1 },
+          data: expect.objectContaining({ senha: expect.any(String) }),
+        }),
+      );
+    });
+
+    it("deve lancar UnauthorizedError se senha atual estiver incorreta", async () => {
+      prisma.usuario.findUnique.mockResolvedValue({
+        id: 1,
+        senha: await bcryptjs.hash("senhaAtual123", 10),
+        ativo: true,
+      });
+
+      await expect(
+        AuthService.alterarSenha(1, "senhaErrada", "novaSenha123"),
+      ).rejects.toThrow(UnauthorizedError);
+    });
+
+    it("deve lancar ValidationError se nova senha for igual a atual", async () => {
+      prisma.usuario.findUnique.mockResolvedValue({
+        id: 1,
+        senha: await bcryptjs.hash("senhaAtual123", 10),
+        ativo: true,
+      });
+
+      await expect(
+        AuthService.alterarSenha(1, "senhaAtual123", "senhaAtual123"),
+      ).rejects.toThrow(ValidationError);
     });
   });
 

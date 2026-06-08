@@ -6,25 +6,49 @@ const validateRegister = [
   body("nome")
     .trim()
     .notEmpty()
-    .withMessage("Nome é obrigatório")
+    .withMessage("Nome e obrigatorio")
     .isLength({ min: 3 })
-    .withMessage("Nome deve ter no mínimo 3 caracteres"),
-  body("email").trim().isEmail().withMessage("Email inválido").normalizeEmail(),
+    .withMessage("Nome deve ter no minimo 3 caracteres"),
+  body("email").trim().isEmail().withMessage("Email invalido").normalizeEmail(),
   body("senha")
     .isLength({ min: 6 })
-    .withMessage("Senha deve ter no mínimo 6 caracteres"),
+    .withMessage("Senha deve ter no minimo 6 caracteres"),
   body("tipo")
     .notEmpty()
-    .withMessage("Tipo é obrigatório")
+    .withMessage("Tipo e obrigatorio")
     .isIn(["DONO", "CUIDADOR"])
     .withMessage("Tipo deve ser: DONO ou CUIDADOR"),
   body("telefone").optional().trim(),
   body("endereco").optional().trim(),
+  body("descricao").optional().trim(),
 ];
 
 const validateLogin = [
-  body("email").trim().isEmail().withMessage("Email inválido").normalizeEmail(),
-  body("senha").notEmpty().withMessage("Senha é obrigatória"),
+  body("email").trim().isEmail().withMessage("Email invalido").normalizeEmail(),
+  body("senha").notEmpty().withMessage("Senha e obrigatoria"),
+];
+
+const validateUpdateProfile = [
+  body("nome")
+    .optional()
+    .trim()
+    .isLength({ min: 3 })
+    .withMessage("Nome deve ter no minimo 3 caracteres"),
+  body("telefone").optional({ nullable: true }).trim(),
+  body("endereco").optional({ nullable: true }).trim(),
+  body("descricao").optional({ nullable: true }).trim(),
+  body("fotoPerfil")
+    .optional({ nullable: true })
+    .trim()
+    .isURL()
+    .withMessage("Foto de perfil deve ser uma URL valida"),
+];
+
+const validateChangePassword = [
+  body("senhaAtual").notEmpty().withMessage("Senha atual e obrigatoria"),
+  body("novaSenha")
+    .isLength({ min: 8 })
+    .withMessage("Nova senha deve ter no minimo 8 caracteres"),
 ];
 
 const handleValidationErrors = (req, res, next) => {
@@ -46,7 +70,8 @@ const handleValidationErrors = (req, res, next) => {
 
 const register = async (req, res, next) => {
   try {
-    const { nome, email, senha, tipo, telefone, endereco } = req.body;
+    const { nome, email, senha, tipo, telefone, endereco, descricao } =
+      req.body;
 
     const resultado = await AuthService.register({
       nome,
@@ -55,6 +80,7 @@ const register = async (req, res, next) => {
       tipo,
       telefone,
       endereco,
+      descricao,
     });
 
     return sendSuccess(
@@ -63,7 +89,7 @@ const register = async (req, res, next) => {
         usuario: resultado.usuario,
         token: resultado.token,
       },
-      "Usuário cadastrado com sucesso",
+      "Usuario cadastrado com sucesso",
       201,
     );
   } catch (erro) {
@@ -95,7 +121,29 @@ const me = async (req, res, next) => {
   try {
     const usuario = await AuthService.obterUsuarioPorId(req.user.id);
 
-    return sendSuccess(res, usuario, "Dados do usuário obtidos com sucesso");
+    return sendSuccess(res, usuario, "Dados do usuario obtidos com sucesso");
+  } catch (erro) {
+    next(erro);
+  }
+};
+
+const atualizarPerfil = async (req, res, next) => {
+  try {
+    const usuario = await AuthService.atualizarPerfil(req.user.id, req.body);
+
+    return sendSuccess(res, usuario, "Perfil atualizado com sucesso");
+  } catch (erro) {
+    next(erro);
+  }
+};
+
+const alterarSenha = async (req, res, next) => {
+  try {
+    const { senhaAtual, novaSenha } = req.body;
+
+    await AuthService.alterarSenha(req.user.id, senhaAtual, novaSenha);
+
+    return sendSuccess(res, null, "Senha alterada com sucesso");
   } catch (erro) {
     next(erro);
   }
@@ -137,9 +185,13 @@ module.exports = {
   register,
   login,
   me,
+  atualizarPerfil,
+  alterarSenha,
   iniciarOAuth,
   callbackOAuth,
   validateRegister,
   validateLogin,
+  validateUpdateProfile,
+  validateChangePassword,
   handleValidationErrors,
 };
