@@ -27,9 +27,8 @@ function loadFromStorage(): { user: AuthUser | null; token: string | null } {
   try {
     for (const storage of [localStorage, sessionStorage]) {
       const token = storage.getItem(STORAGE_KEYS.token);
-      const userRaw = storage.getItem(STORAGE_KEYS.user);
-      if (token && userRaw) {
-        return { user: JSON.parse(userRaw) as AuthUser, token };
+      if (token) {
+        return { user: null, token };
       }
     }
   } catch { /* ignore */ }
@@ -68,12 +67,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [accessToken, setAccessToken] = useState<string | null>(
     initialAuth.token,
   );
-  const [isLoading, setIsLoading] = useState(
-    Boolean(initialAuth.user && initialAuth.token),
-  );
+  const [isLoading, setIsLoading] = useState(Boolean(initialAuth.token));
 
   useEffect(() => {
-    if (!initialAuth.user || !initialAuth.token) {
+    if (!initialAuth.token) {
       return;
     }
 
@@ -83,6 +80,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .then((res) => {
         if (isMounted) {
           setUser(res.data);
+          updateStoredUser(res.data);
         }
       })
       .catch(() => {

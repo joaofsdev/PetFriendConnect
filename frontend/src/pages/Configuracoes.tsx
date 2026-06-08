@@ -35,6 +35,7 @@ function getErrorMessage(error: unknown, fallback: string) {
 
 export default function Configuracoes() {
   const { user, updateProfile, changePassword } = useAuth();
+  const canEditDescription = user?.tipo === "CUIDADOR";
   const [activeSection, setActiveSection] = useState<Section>("perfil");
   const [savedMsg, setSavedMsg] = useState("");
   const [perfilError, setPerfilError] = useState("");
@@ -84,12 +85,14 @@ export default function Configuracoes() {
     setIsSavingProfile(true);
 
     try {
-      await updateProfile({
+      const profilePayload = {
         nome,
         telefone: telefone || null,
         endereco: endereco || null,
-        descricao: descricao || null,
-      });
+        ...(canEditDescription ? { descricao: descricao || null } : {}),
+      };
+
+      await updateProfile(profilePayload);
       showSaved("Dados pessoais salvos com sucesso!");
     } catch (error) {
       setPerfilError(
@@ -266,21 +269,23 @@ export default function Configuracoes() {
                 />
               </div>
 
-              <div>
-                <label
-                  className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300"
-                  htmlFor="cfg-descricao"
-                >
-                  Sobre voce
-                </label>
-                <textarea
-                  id="cfg-descricao"
-                  rows={4}
-                  value={descricao}
-                  onChange={(e) => setDescricao(e.target.value)}
-                  className={inputClass}
-                />
-              </div>
+              {canEditDescription && (
+                <div>
+                  <label
+                    className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300"
+                    htmlFor="cfg-descricao"
+                  >
+                    Sobre voce
+                  </label>
+                  <textarea
+                    id="cfg-descricao"
+                    rows={4}
+                    value={descricao}
+                    onChange={(e) => setDescricao(e.target.value)}
+                    className={inputClass}
+                  />
+                </div>
+              )}
 
               <button
                 type="submit"

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 
 type NavItem = {
@@ -40,8 +40,10 @@ const navItemsAdmin: NavItem[] = [
 
 export default function MainLayout() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { user } = useAuth();
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const { user, logout } = useAuth();
   const isAdmin = user?.tipo === "ADMIN";
 
   let navItems = navItemsDono;
@@ -55,6 +57,11 @@ export default function MainLayout() {
   if (isAdmin) roleLabel = "Administrador";
 
   const homeDestination = isAdmin ? "/admin" : "/";
+
+  function handleLogout() {
+    logout();
+    navigate("/login", { replace: true });
+  }
 
   return (
     <div className="bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-200 h-screen overflow-hidden flex font-display">
@@ -127,12 +134,50 @@ export default function MainLayout() {
 
         {/* User Profile */}
         <div className="p-4 border-t border-slate-100 dark:border-slate-800">
-          <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer transition-colors">
-            <img
-              src="https://i.pravatar.cc/150?img=47"
-              alt="Foto de perfil"
-              className="w-10 h-10 rounded-full object-cover border border-slate-200 dark:border-slate-700"
-            />
+          {profileMenuOpen && (
+            <div className="mb-2 rounded-lg border border-slate-200 bg-white p-1 shadow-lg dark:border-slate-700 dark:bg-slate-900">
+              <Link
+                to="/configuracoes"
+                onClick={() => {
+                  setProfileMenuOpen(false);
+                  setSidebarOpen(false);
+                }}
+                className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800"
+              >
+                <span className="material-icons text-base">settings</span>
+                Configuracoes
+              </Link>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50 dark:text-red-300 dark:hover:bg-red-950/30"
+              >
+                <span className="material-icons text-base">logout</span>
+                Sair
+              </button>
+            </div>
+          )}
+
+          <button
+            type="button"
+            onClick={() => setProfileMenuOpen((open) => !open)}
+            aria-expanded={profileMenuOpen}
+            className="flex w-full items-center gap-3 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer transition-colors text-left"
+          >
+            {user?.fotoPerfil ? (
+              <img
+                src={user.fotoPerfil}
+                alt="Foto de perfil"
+                className="w-10 h-10 rounded-full object-cover border border-slate-200 dark:border-slate-700"
+              />
+            ) : (
+              <span
+                aria-label="Perfil sem foto"
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-slate-200 text-slate-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400"
+              >
+                <span className="material-icons text-2xl">person</span>
+              </span>
+            )}
             <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold text-slate-900 dark:text-white truncate">
                 {user?.nome ?? "Usuário"}
@@ -142,9 +187,9 @@ export default function MainLayout() {
               </p>
             </div>
             <span className="material-icons text-slate-400 text-sm">
-              expand_more
+              {profileMenuOpen ? "expand_less" : "expand_more"}
             </span>
-          </div>
+          </button>
         </div>
       </aside>
 
