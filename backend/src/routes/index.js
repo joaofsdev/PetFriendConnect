@@ -3,6 +3,7 @@ const authRoutes = require("./authRoutes.js");
 const cuidadorRoutes = require("./cuidadorRoutes.js");
 const reservaRoutes = require("./reservaRoutes.js");
 const petRoutes = require("./petRoutes.js");
+const adminRoutes = require("./adminRoutes.js");
 const { authenticate, authorize } = require("../middlewares/authMiddleware.js");
 const cuidadorController = require("../controllers/cuidadorController.js");
 
@@ -59,5 +60,8 @@ router.delete(
 
 router.use("/reservas", reservaRoutes);
 router.use("/pets", petRoutes);
+
+// Rotas de admin (protegidas)
+router.use("/admin", authenticate, authorize(["ADMIN"]), adminRoutes);
 
 module.exports = router;
