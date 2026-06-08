@@ -1,5 +1,6 @@
 jest.mock("@prisma/client", () => {
   const mockTx = {
+    usuario: { findUnique: jest.fn(), findFirst: jest.fn() },
     pet: { findFirst: jest.fn() },
     servico: { findFirst: jest.fn() },
     agenda: { findFirst: jest.fn(), updateMany: jest.fn(), update: jest.fn() },
@@ -62,7 +63,19 @@ const reservaMock = {
 };
 
 describe("ReservaService", () => {
-  beforeEach(() => jest.clearAllMocks());
+  beforeEach(() => {
+    jest.clearAllMocks();
+    tx.usuario.findUnique.mockResolvedValue({
+      id: 1,
+      email: "dono@test.com",
+      telefone: "11911111111",
+    });
+    tx.usuario.findFirst.mockResolvedValue({
+      id: 2,
+      email: "cuidador@test.com",
+      telefone: "11922222222",
+    });
+  });
 
   describe("listarReservas", () => {
     it("deve listar reservas do dono", async () => {
@@ -162,6 +175,24 @@ describe("ReservaService", () => {
     });
 
     it("deve lançar ForbiddenError se pet não pertence ao dono", async () => {
+      await expect(
+        ReservaService.criarReserva({ ...dadosReserva, cuidadorId: 1 }, 1),
+      ).rejects.toThrow(ForbiddenError);
+    });
+
+    it("deve impedir reserva quando dono e cuidador usam o mesmo telefone", async () => {
+      tx.usuario.findFirst.mockResolvedValue({
+        id: 2,
+        email: "cuidador@test.com",
+        telefone: "(11) 91111-1111",
+      });
+
+      await expect(
+        ReservaService.criarReserva(dadosReserva, 1),
+      ).rejects.toThrow(ForbiddenError);
+    });
+
+    it("deve lancar ForbiddenError se pet nao pertence ao dono", async () => {
       tx.pet.findFirst.mockResolvedValue(null);
 
       await expect(

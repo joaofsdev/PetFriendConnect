@@ -38,6 +38,7 @@ Tambem foram corrigidos pontos tecnicos importantes em pets, servicos, reservas,
 - Criacao de reservas com transacao serializavel.
 - Cancelamento de reservas.
 - Checagem de reserva ativa por agenda.
+- Bloqueio de autoagendamento por mesma conta ou mesmo telefone.
 - Painel admin com usuarios, denuncias, configs, logs e dashboard.
 - Validacoes reforcadas no admin.
 - Lint geral do frontend passando.

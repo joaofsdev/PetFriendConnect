@@ -28,6 +28,12 @@ const addMinutes = (date, minutes) => {
   return result;
 };
 
+const normalizeEmail = (value) =>
+  typeof value === "string" ? value.trim().toLowerCase() : "";
+
+const normalizePhone = (value) =>
+  typeof value === "string" ? value.replace(/\D/g, "") : "";
+
 const mapReserva = (reserva) => {
   const dataInicio = reserva.agenda?.data || reserva.dataInicio || null;
   const duracao = reserva.servico?.duracao || 0;
@@ -240,6 +246,41 @@ class ReservaService {
     const donoIdNumero = toPositiveInt(donoId, "ID do usuário logado");
 
     return this.executarTransacao(async (tx) => {
+      if (donoIdNumero === cuidadorId) {
+        throw new ForbiddenError("Voce nao pode reservar um servico proprio");
+      }
+
+      const [dono, cuidador] = await Promise.all([
+        tx.usuario.findUnique({
+          where: { id: donoIdNumero },
+          select: { id: true, email: true, telefone: true },
+        }),
+        tx.usuario.findFirst({
+          where: { id: cuidadorId, tipo: "CUIDADOR", ativo: true },
+          select: { id: true, email: true, telefone: true },
+        }),
+      ]);
+
+      if (!dono) {
+        throw new NotFoundError("Dono nao encontrado");
+      }
+
+      if (!cuidador) {
+        throw new NotFoundError("Cuidador nao encontrado");
+      }
+
+      const mesmoEmail =
+        normalizeEmail(dono.email) &&
+        normalizeEmail(dono.email) === normalizeEmail(cuidador.email);
+      const donoTelefone = normalizePhone(dono.telefone);
+      const cuidadorTelefone = normalizePhone(cuidador.telefone);
+      const mesmoTelefone =
+        donoTelefone.length >= 8 && donoTelefone === cuidadorTelefone;
+
+      if (mesmoEmail || mesmoTelefone) {
+        throw new ForbiddenError("Voce nao pode reservar um servico proprio");
+      }
+
       const pet = await tx.pet.findFirst({
         where: {
           id: petId,

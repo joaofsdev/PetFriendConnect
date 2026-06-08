@@ -195,6 +195,8 @@ Rotas exigem usuario `CUIDADOR`.
 
 A criacao usa transacao serializavel, valida pet do dono, servico ativo do cuidador, slot disponivel e inexistencia de reserva ativa para a mesma agenda.
 
+Tambem e bloqueada a tentativa de reservar um servico proprio quando o dono e o cuidador sao a mesma conta ou quando as contas compartilham o mesmo telefone normalizado.
+
 ## Admin
 
 Todas as rotas abaixo exigem usuario `ADMIN`.
