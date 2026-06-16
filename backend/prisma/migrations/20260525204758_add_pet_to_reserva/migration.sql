@@ -5,7 +5,7 @@
 
 */
 -- AlterTable
-ALTER TABLE `reserva` ADD COLUMN `petId` INTEGER NOT NULL;
+ALTER TABLE `Reserva` ADD COLUMN `petId` INTEGER NOT NULL;
 
 -- CreateIndex
 CREATE INDEX `Reserva_petId_idx` ON `Reserva`(`petId`);
