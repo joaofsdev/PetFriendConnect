@@ -74,6 +74,15 @@ Para popular o banco local com dados de teste:
 docker compose exec backend npm run seed
 ```
 
+Para expor o site temporariamente na internet com Cloudflare Quick Tunnel:
+
+```bash
+docker compose --profile tunnel up -d
+docker compose logs -f cloudflared
+```
+
+O log do `cloudflared` exibira uma URL publica `https://...trycloudflare.com`. Use essa URL para apresentar o site. Como o frontend chama a API por `/api`, a mesma URL publica acessa frontend e backend.
+
 Para parar os containers sem apagar o banco:
 
 ```bash
@@ -131,7 +140,7 @@ FACEBOOK_CLIENT_SECRET=""
 Frontend:
 
 ```env
-VITE_API_URL=http://localhost:3001/api
+VITE_API_URL=/api
 ```
 
 ## Comandos De Validacao
@@ -158,6 +167,7 @@ docker compose config
 docker compose build
 docker compose up -d
 docker compose exec backend npm run seed
+docker compose --profile tunnel up -d
 ```
 
 ## Contas Seed
