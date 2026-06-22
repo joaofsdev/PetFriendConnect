@@ -23,6 +23,25 @@ const validateServico = [
     .withMessage("Duração deve ser um inteiro maior que zero"),
 ];
 
+// Validar edição de serviço (campos opcionais)
+const validateServicoUpdate = [
+  body("nome")
+    .optional()
+    .trim()
+    .isLength({ min: 3 })
+    .withMessage("Nome deve ter no mínimo 3 caracteres"),
+  body("descricao").optional({ nullable: true }).trim(),
+  body("preco")
+    .optional()
+    .isFloat({ min: 0.01 })
+    .withMessage("Preço deve ser um valor válido"),
+  body("duracao")
+    .optional()
+    .isInt({ min: 1 })
+    .withMessage("Duração deve ser um inteiro maior que zero"),
+  body("ativo").optional().isBoolean().withMessage("Ativo deve ser booleano"),
+];
+
 // Validar adição de slot
 const validateSlot = [
   body("servicoId").isInt({ min: 1 }).withMessage("ID do serviço inválido"),
@@ -200,6 +219,7 @@ module.exports = {
   adicionarSlot,
   deletarSlot,
   validateServico,
+  validateServicoUpdate,
   validateSlot,
   handleValidationErrors,
 };

@@ -1,12 +1,22 @@
 const express = require("express");
+const rateLimit = require("express-rate-limit");
 const authController = require("../controllers/authController.js");
 const { authenticate } = require("../middlewares/authMiddleware.js");
 
 const router = express.Router();
 
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  message: { error: true, message: "Muitas tentativas. Tente novamente em 15 minutos.", statusCode: 429 },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 // POST /api/auth/register
 router.post(
   "/register",
+  authLimiter,
   authController.validateRegister,
   authController.handleValidationErrors,
   authController.register,
@@ -15,6 +25,7 @@ router.post(
 // POST /api/auth/login
 router.post(
   "/login",
+  authLimiter,
   authController.validateLogin,
   authController.handleValidationErrors,
   authController.login,
@@ -23,6 +34,7 @@ router.post(
 // POST /api/auth/forgot-password
 router.post(
   "/forgot-password",
+  authLimiter,
   authController.validateForgotPassword,
   authController.handleValidationErrors,
   authController.solicitarResetSenha,

@@ -40,6 +40,8 @@ router.put(
   "/servicos/:id",
   authenticate,
   authorize(["CUIDADOR"]),
+  cuidadorController.validateServicoUpdate,
+  cuidadorController.handleValidationErrors,
   cuidadorController.editarServico,
 );
 
