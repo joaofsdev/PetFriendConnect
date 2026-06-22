@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { listarUsuarios, desativarUsuario, ativarUsuario, type UsuarioAdmin } from "../../services/admin";
+import { listarUsuarios, desativarUsuario, ativarUsuario, editarUsuario, type UsuarioAdmin } from "../../services/admin";
 
 export default function AdminUsuarios() {
   const [usuarios, setUsuarios] = useState<UsuarioAdmin[]>([]);
@@ -10,6 +10,12 @@ export default function AdminUsuarios() {
   const [buscaAplicada, setBuscaAplicada] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+
+  // Modal de edição
+  const [editando, setEditando] = useState<UsuarioAdmin | null>(null);
+  const [formEdit, setFormEdit] = useState({ nome: "", email: "", tipo: "" as string });
+  const [editErro, setEditErro] = useState("");
+  const [editLoading, setEditLoading] = useState(false);
 
   const carregar = useCallback((p: number) => {
     setLoading(true);
@@ -48,6 +54,33 @@ export default function AdminUsuarios() {
       carregar(page);
     } catch (e: unknown) {
       setErro(e instanceof Error ? e.message : "Erro ao atualizar");
+    }
+  };
+
+  const abrirEdicao = (u: UsuarioAdmin) => {
+    setEditando(u);
+    setFormEdit({ nome: u.nome, email: u.email, tipo: u.tipo });
+    setEditErro("");
+  };
+
+  const salvarEdicao = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editando) return;
+    setEditLoading(true);
+    setEditErro("");
+    try {
+      const dados: Record<string, string> = {};
+      if (formEdit.nome !== editando.nome) dados.nome = formEdit.nome;
+      if (formEdit.email !== editando.email) dados.email = formEdit.email;
+      if (formEdit.tipo !== editando.tipo) dados.tipo = formEdit.tipo;
+      if (Object.keys(dados).length === 0) { setEditando(null); return; }
+      await editarUsuario(editando.id, dados);
+      setEditando(null);
+      carregar(page);
+    } catch (err: unknown) {
+      setEditErro(err instanceof Error ? err.message : "Erro ao salvar");
+    } finally {
+      setEditLoading(false);
     }
   };
 
@@ -114,7 +147,13 @@ export default function AdminUsuarios() {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-slate-500">{new Date(u.dataCriacao).toLocaleDateString("pt-BR")}</td>
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3 flex gap-2">
+                    <button
+                      onClick={() => abrirEdicao(u)}
+                      className="rounded px-2 py-1 text-xs font-medium bg-blue-50 text-blue-600 hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-400"
+                    >
+                      Editar
+                    </button>
                     <button
                       onClick={() => toggleAtivo(u)}
                       className={`rounded px-2 py-1 text-xs font-medium ${u.ativo ? "bg-red-50 text-red-600 hover:bg-red-100 dark:bg-red-900/30 dark:text-red-400" : "bg-green-50 text-green-600 hover:bg-green-100 dark:bg-green-900/30 dark:text-green-400"}`}
@@ -135,6 +174,57 @@ export default function AdminUsuarios() {
           <button onClick={() => carregar(page - 1)} disabled={page <= 1} className="rounded-lg border px-3 py-1 text-sm disabled:opacity-40 dark:border-slate-700">Anterior</button>
           <span className="text-sm text-slate-600 dark:text-slate-400">Página {page} de {totalPages}</span>
           <button onClick={() => carregar(page + 1)} disabled={page >= totalPages} className="rounded-lg border px-3 py-1 text-sm disabled:opacity-40 dark:border-slate-700">Próxima</button>
+        </div>
+      )}
+
+      {/* Modal de edição */}
+      {editando && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={() => setEditando(null)}>
+          <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl dark:bg-slate-900" onClick={(e) => e.stopPropagation()}>
+            <h3 className="mb-4 text-lg font-bold text-slate-900 dark:text-white">Editar Usuário</h3>
+            {editErro && <p className="mb-3 text-sm text-red-500">{editErro}</p>}
+            <form onSubmit={salvarEdicao} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Nome</label>
+                <input
+                  value={formEdit.nome}
+                  onChange={(e) => setFormEdit((f) => ({ ...f, nome: e.target.value }))}
+                  className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-950 dark:text-white"
+                  required
+                  minLength={3}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Email</label>
+                <input
+                  type="email"
+                  value={formEdit.email}
+                  onChange={(e) => setFormEdit((f) => ({ ...f, email: e.target.value }))}
+                  className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-950 dark:text-white"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Tipo</label>
+                <select
+                  value={formEdit.tipo}
+                  onChange={(e) => setFormEdit((f) => ({ ...f, tipo: e.target.value }))}
+                  className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-950 dark:text-white"
+                  disabled={editando.tipo === "ADMIN"}
+                >
+                  <option value="DONO">Dono</option>
+                  <option value="CUIDADOR">Cuidador</option>
+                  {editando.tipo === "ADMIN" && <option value="ADMIN">Admin</option>}
+                </select>
+              </div>
+              <div className="flex justify-end gap-3 pt-2">
+                <button type="button" onClick={() => setEditando(null)} className="rounded-lg border px-4 py-2 text-sm dark:border-slate-700">Cancelar</button>
+                <button type="submit" disabled={editLoading} className="rounded-lg bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700 disabled:opacity-50">
+                  {editLoading ? "Salvando..." : "Salvar"}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { listarDenuncias, atualizarDenuncia, type Denuncia } from "../../services/admin";
+import { listarDenuncias, obterDenuncia, atualizarDenuncia, type Denuncia } from "../../services/admin";
 
 const STATUS_OPTIONS = ["PENDENTE", "EM_ANALISE", "RESOLVIDA", "REJEITADA"] as const;
 const STATUS_COLORS: Record<string, string> = {
@@ -19,6 +19,7 @@ export default function AdminDenuncias() {
   const [editando, setEditando] = useState<Denuncia | null>(null);
   const [novoStatus, setNovoStatus] = useState("");
   const [resolucao, setResolucao] = useState("");
+  const [detalhando, setDetalhando] = useState<Denuncia | null>(null);
 
   const carregar = useCallback((p: number) => {
     setLoading(true);
@@ -44,6 +45,15 @@ export default function AdminDenuncias() {
     setEditando(d);
     setNovoStatus(d.status);
     setResolucao(d.resolucao ?? "");
+  };
+
+  const abrirDetalhe = async (d: Denuncia) => {
+    try {
+      const res = await obterDenuncia(d.id);
+      setDetalhando(res.data);
+    } catch {
+      setDetalhando(d);
+    }
   };
 
   const salvar = async () => {
@@ -102,7 +112,10 @@ export default function AdminDenuncias() {
                 </div>
                 <div className="flex items-center gap-2">
                   <span className={`rounded-full px-2 py-0.5 text-xs ${STATUS_COLORS[d.status] ?? ""}`}>{d.status.replace("_", " ")}</span>
-                  <button onClick={() => abrirEdicao(d)} className="rounded p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-800">
+                  <button onClick={() => abrirDetalhe(d)} className="rounded p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-800" title="Ver detalhes">
+                    <span className="material-icons text-lg">visibility</span>
+                  </button>
+                  <button onClick={() => abrirEdicao(d)} className="rounded p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-800" title="Editar">
                     <span className="material-icons text-lg">edit</span>
                   </button>
                 </div>
@@ -140,6 +153,55 @@ export default function AdminDenuncias() {
             <div className="mt-6 flex justify-end gap-2">
               <button onClick={() => setEditando(null)} className="rounded-lg border px-4 py-2 text-sm dark:border-slate-700">Cancelar</button>
               <button onClick={salvar} className="rounded-lg bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700">Salvar</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de detalhe */}
+      {detalhando && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setDetalhando(null)}>
+          <div className="w-full max-w-lg rounded-xl bg-white p-6 dark:bg-slate-900" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Denúncia #{detalhando.id}</h3>
+              <span className={`rounded-full px-2 py-0.5 text-xs ${STATUS_COLORS[detalhando.status] ?? ""}`}>{detalhando.status.replace("_", " ")}</span>
+            </div>
+            <div className="mt-4 space-y-3 text-sm">
+              <div>
+                <span className="font-medium text-slate-700 dark:text-slate-300">Motivo:</span>
+                <p className="text-slate-900 dark:text-white">{detalhando.motivo}</p>
+              </div>
+              {detalhando.descricao && (
+                <div>
+                  <span className="font-medium text-slate-700 dark:text-slate-300">Descrição:</span>
+                  <p className="text-slate-600 dark:text-slate-400">{detalhando.descricao}</p>
+                </div>
+              )}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <span className="font-medium text-slate-700 dark:text-slate-300">Denunciante:</span>
+                  <p className="text-slate-900 dark:text-white">{detalhando.denunciante.nome}</p>
+                  <p className="text-xs text-slate-500">{detalhando.denunciante.email}</p>
+                </div>
+                <div>
+                  <span className="font-medium text-slate-700 dark:text-slate-300">Denunciado:</span>
+                  <p className="text-slate-900 dark:text-white">{detalhando.denunciado.nome}</p>
+                  <p className="text-xs text-slate-500">{detalhando.denunciado.email}</p>
+                </div>
+              </div>
+              {detalhando.resolucao && (
+                <div>
+                  <span className="font-medium text-slate-700 dark:text-slate-300">Resolução:</span>
+                  <p className="text-slate-600 dark:text-slate-400">{detalhando.resolucao}</p>
+                </div>
+              )}
+              <div className="flex gap-4 text-xs text-slate-500">
+                <span>Criada: {new Date(detalhando.dataCriacao).toLocaleDateString("pt-BR")}</span>
+                <span>Atualizada: {new Date(detalhando.dataAtualizacao).toLocaleDateString("pt-BR")}</span>
+              </div>
+            </div>
+            <div className="mt-6 flex justify-end">
+              <button onClick={() => setDetalhando(null)} className="rounded-lg border px-4 py-2 text-sm dark:border-slate-700">Fechar</button>
             </div>
           </div>
         </div>
