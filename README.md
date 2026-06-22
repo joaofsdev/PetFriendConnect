@@ -188,5 +188,15 @@ As contas dependem do seed atual em `backend/prisma/seed.js`.
 ## Pendencias Importantes
 
 - Configurar envio real de email para recuperacao de senha.
-- Fazer hardening de seguranca: CORS, Helmet, rate limit, JWT/cookies e auditoria npm.
 - Configurar credenciais OAuth reais.
+
+## Seguranca Em Producao
+
+Antes de expor o sistema em producao:
+
+1. **JWT_SECRET**: defina um valor forte e unico (minimo 32 caracteres aleatorios). O servidor recusa iniciar em producao com os valores default (`change_me_for_production`, `troque_esta_chave_em_producao`).
+2. **Senhas de seed**: as contas criadas pelo `npm run seed` usam senhas fracas (`admin123`, `senha123`). Altere-as ou remova esses usuarios antes de ir a producao. As senhas podem ser configuradas via variaveis de ambiente (`SEED_ADMIN_PASSWORD`, etc.) no `.env`.
+3. **MySQL**: troque `MYSQL_ROOT_PASSWORD` e `MYSQL_PASSWORD` no `.env` para valores fortes.
+4. **CORS**: em producao, apenas a origem definida em `FRONTEND_URL` e aceita.
+5. **Rate limit**: login, cadastro e recuperacao de senha possuem limite de 10 tentativas a cada 15 minutos por IP.
+6. **Helmet**: headers de seguranca (CSP, HSTS, X-Frame-Options, etc.) sao aplicados automaticamente.
